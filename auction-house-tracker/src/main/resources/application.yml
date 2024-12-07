@@ -7,9 +7,14 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # create, update, validate 등 필요에 맞게 설정
+      ddl-auto: create # create, update, validate 등 필요에 맞게 설정
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect # MySQL 8 기준
-    show-sql: true # SQL 쿼리 로깅
+        use_sql_comments: true
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
 
