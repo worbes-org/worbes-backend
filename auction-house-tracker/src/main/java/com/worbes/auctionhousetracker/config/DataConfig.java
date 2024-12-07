@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataConfig {
 
     @Bean
-    public CommandLineRunner loadItemClasses(ItemClassService itemClassService) {
+    public CommandLineRunner itemClassDataLoader(ItemClassService itemClassService) {
         return new ItemClassDataLoader(itemClassService);
     }
 }
