@@ -3,21 +3,29 @@ package com.worbes.auctionhousetracker.config;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import com.worbes.auctionhousetracker.service.ItemClassService;
+import lombok.Getter;
 import org.springframework.boot.CommandLineRunner;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ItemClassDataLoader implements CommandLineRunner {
     private final ItemClassService itemClassService;
 
+    @Getter
+    private final List<ItemClass> itemClasses;
+
     public ItemClassDataLoader(ItemClassService itemClassService) {
         this.itemClassService = itemClassService;
+        this.itemClasses = createItemClasses();
     }
 
     @Override
     public void run(String... args) {
-        List<ItemClass> itemClasses = Arrays.asList(
+        itemClasses.forEach(itemClassService::saveItemClass);
+    }
+
+    private List<ItemClass> createItemClasses() {
+        return List.of(
                 new ItemClass(0L, new Language(
                         "Consumable", "Consumible", "Consumível", "Verbrauchbares", "Consumable", "Consumible",
                         "Consommable", "Consumabili", "Расходуемые", "소비용품", "消耗品", "消耗品")),
@@ -61,7 +69,5 @@ public class ItemClassDataLoader implements CommandLineRunner {
                         "Profession", "Profesión", "Profissão", "Beruf", "Profession", "Profesión",
                         "Métier", "Professione", "Профессия", "전문 기술", "專業技能", "专业技能"))
         );
-
-        itemClasses.forEach(itemClassService::saveItemClass);
     }
 }
