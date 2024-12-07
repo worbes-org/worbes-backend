@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,9 @@ public class ItemClassService {
             return;
         }
         itemClassRepository.save(itemClass);
+    }
+
+    public List<ItemClass> getAllItemClasses() {
+        return itemClassRepository.findAll();
     }
 }
