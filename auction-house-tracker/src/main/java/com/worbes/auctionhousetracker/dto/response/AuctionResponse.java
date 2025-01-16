@@ -4,19 +4,25 @@ package com.worbes.auctionhousetracker.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
 public class AuctionResponse {
-    private long id;
+    private List<AuctionDto> auctions;
 
-    private Map<String, Long> item;
+    @Data
+    public static class AuctionDto {
+        private long id;
 
-    private long quantity;
+        private Map<String, Long> item;
 
-    @JsonProperty("unit_price")
-    private long unitPrice;
+        private long quantity;
 
-    @JsonProperty("time_left")
-    private String timeLeft;
+        @JsonProperty("unit_price")
+        private long unitPrice;
+
+        @JsonProperty("time_left")
+        private String timeLeft;
+    }
 }
