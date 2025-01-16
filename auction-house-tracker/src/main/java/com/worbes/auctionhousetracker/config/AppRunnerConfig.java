@@ -12,13 +12,7 @@ public class AppRunnerConfig {
 
     @Bean
     @Order(1)
-    public CommandLineRunner itemClassRunner(ItemClassService itemClassService, BearerTokenHandler bearerTokenHandler) {
-        return new ItemClassRunner(itemClassService, bearerTokenHandler);
-    }
-
-    @Bean
-    @Order(2)
-    public CommandLineRunner itemSubclassRunner(ItemClassService itemClassService, ItemSubclassService itemSubclassService, BearerTokenHandler bearerTokenHandler) {
-        return new ItemSubclassRunner(itemClassService, itemSubclassService, bearerTokenHandler);
+    public CommandLineRunner itemClassRunner(ItemClassService itemClassService, ItemSubclassService itemSubclassService) {
+        return new ItemClassRunner(itemClassService, itemSubclassService);
     }
 }
