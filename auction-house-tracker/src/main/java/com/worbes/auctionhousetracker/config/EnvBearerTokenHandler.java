@@ -13,7 +13,6 @@ public class EnvBearerTokenHandler implements BearerTokenHandler{
 
     @Override
     public String getToken() {
-        log.info(apiToken);
-        return apiToken;
+        return "Bearer " + apiToken;
     }
 }
