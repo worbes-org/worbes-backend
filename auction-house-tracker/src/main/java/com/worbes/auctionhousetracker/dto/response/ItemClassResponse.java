@@ -15,5 +15,12 @@ public class ItemClassResponse {
     private Language name;
 
     @JsonProperty("item_subclasses")
-    private List<ItemSubclassResponse> subclassResponses;
+    private List<Subclass> subclassResponses;
+
+    @Data
+    public static class Subclass {
+
+        private Long id;
+        private Language name;
+    }
 }
