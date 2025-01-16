@@ -26,6 +26,11 @@ public class ItemClassDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if(!itemClassService.getAll().isEmpty()) {
+            log.info("아이템 클래스가 이미 저장되어 있습니다.");
+            return;
+        }
+
         RestTemplate restTemplate = new RestTemplate();
 
         URI uri = UriComponentsBuilder.fromHttpUrl(ITEM_CLASS_INDEX_URL)
@@ -63,7 +68,7 @@ public class ItemClassDataLoader implements CommandLineRunner {
 
             ItemClassListResponse responseBody = response.getBody();
             List<ItemClass> collect = responseBody.getItemClasses().stream().map(ItemClass::new).toList();
-            collect.forEach(itemClassService::saveItemClass);
+            collect.forEach(itemClassService::save);
 
         } catch (Exception e) {
             log.error("Error occurred: ", e);
