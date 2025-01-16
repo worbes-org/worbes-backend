@@ -15,11 +15,15 @@ public class ItemClassService {
 
     private final ItemClassRepository itemClassRepository;
 
-    public void saveItemClass(ItemClass itemClass) {
+    public ItemClass get(Long id) {
+        return itemClassRepository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+    public void save(ItemClass itemClass) {
         itemClassRepository.save(itemClass);
     }
 
-    public List<ItemClass> getAllItemClasses() {
+    public List<ItemClass> getAll() {
         return itemClassRepository.findAll();
     }
 }
