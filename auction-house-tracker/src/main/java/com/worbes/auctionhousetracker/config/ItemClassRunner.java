@@ -13,13 +13,13 @@ import java.net.URI;
 import java.util.List;
 
 @Slf4j
-public class ItemClassDataLoader implements CommandLineRunner {
+public class ItemClassRunner implements CommandLineRunner {
 
     private static final String ITEM_CLASS_INDEX_URL = "https://kr.api.blizzard.com/data/wow/item-class/index";
     private final ItemClassService itemClassService;
     private final BearerTokenHandler bearerTokenHandler;
 
-    public ItemClassDataLoader(ItemClassService itemClassService, BearerTokenHandler bearerTokenHandler) {
+    public ItemClassRunner(ItemClassService itemClassService, BearerTokenHandler bearerTokenHandler) {
         this.itemClassService = itemClassService;
         this.bearerTokenHandler = bearerTokenHandler;
     }

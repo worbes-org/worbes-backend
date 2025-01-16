@@ -18,14 +18,14 @@ import java.net.URI;
 import java.util.List;
 
 @Slf4j
-public class ItemSubclassDataLoader implements CommandLineRunner {
+public class ItemSubclassRunner implements CommandLineRunner {
 
     private final ItemClassService itemClassService;
     private final ItemSubclassService itemSubclassService;
     private final BearerTokenHandler bearerTokenHandler;
 
 
-    public ItemSubclassDataLoader(ItemClassService itemClassService, ItemSubclassService itemSubclassService, BearerTokenHandler bearerTokenHandler) {
+    public ItemSubclassRunner(ItemClassService itemClassService, ItemSubclassService itemSubclassService, BearerTokenHandler bearerTokenHandler) {
         this.itemClassService = itemClassService;
         this.itemSubclassService = itemSubclassService;
         this.bearerTokenHandler = bearerTokenHandler;
