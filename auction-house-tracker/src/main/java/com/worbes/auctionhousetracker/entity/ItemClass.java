@@ -1,6 +1,6 @@
 package com.worbes.auctionhousetracker.entity;
 
-import com.worbes.auctionhousetracker.dto.previewItem.ItemClassDto;
+import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -24,8 +24,8 @@ public class ItemClass {
         this.names = names;
     }
 
-    public ItemClass(ItemClassDto itemClassDto) {
-        this.id = itemClassDto.getId();
-        this.names = itemClassDto.getName();
+    public ItemClass(ItemClassResponse response) {
+        this.id = response.getId();
+        this.names = response.getName();
     }
 }
