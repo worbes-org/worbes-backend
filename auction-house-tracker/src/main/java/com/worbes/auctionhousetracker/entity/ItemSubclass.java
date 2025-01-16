@@ -1,19 +1,24 @@
 package com.worbes.auctionhousetracker.entity;
 
+import com.worbes.auctionhousetracker.entity.embeded.ItemSubclassId;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemSubclass {
 
-    @Id
-    private Long id;
+    @EmbeddedId
+    private ItemSubclassId id;
 
     @ManyToOne
+    @MapsId("itemClassId")
     private ItemClass itemClass;
 
     @Embedded
@@ -36,5 +41,11 @@ public class ItemSubclass {
     })
     private Language verboseName;
 
+    public ItemSubclass(ItemSubclassId id, ItemClass itemClass, Language displayName, Language verboseName) {
+        this.id = id;
+        this.itemClass = itemClass;
+        this.displayName = displayName;
+        this.verboseName = verboseName;
+    }
 }
 
