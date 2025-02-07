@@ -35,10 +35,15 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         use_sql_comments: true
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
     org.hibernate.SQL: debug
+    org.springframework.cache: trace
 
 ---
 spring:
