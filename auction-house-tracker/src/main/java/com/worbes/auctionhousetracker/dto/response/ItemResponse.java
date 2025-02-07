@@ -2,9 +2,9 @@ package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
-import com.worbes.auctionhousetracker.enums.BindingType;
-import com.worbes.auctionhousetracker.enums.InventoryType;
-import com.worbes.auctionhousetracker.enums.QualityType;
+import com.worbes.auctionhousetracker.entity.enums.BindingType;
+import com.worbes.auctionhousetracker.entity.enums.InventoryType;
+import com.worbes.auctionhousetracker.entity.enums.QualityType;
 import lombok.Data;
 
 import java.util.Map;

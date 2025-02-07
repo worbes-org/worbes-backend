@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.enums;
+package com.worbes.auctionhousetracker.entity.enums;
 
 public enum QualityType {
     POOR,
