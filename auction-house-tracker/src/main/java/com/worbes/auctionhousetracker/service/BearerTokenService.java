@@ -1,17 +1,16 @@
-package com.worbes.auctionhousetracker.config;
+package com.worbes.auctionhousetracker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
 @Slf4j
-public class EnvBearerTokenHandler implements BearerTokenHandler{
+@Service
+public class BearerTokenService {
 
     @Value("${blizzard.api.token}")
     private String apiToken;
 
-    @Override
     public String getToken() {
         return "Bearer " + apiToken;
     }

@@ -1,5 +1,6 @@
 package com.worbes.auctionhousetracker.entity;
 
+import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.embeded.ItemSubclassId;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import jakarta.persistence.*;
@@ -46,6 +47,13 @@ public class ItemSubclass {
         this.itemClass = itemClass;
         this.displayName = displayName;
         this.verboseName = verboseName;
+    }
+
+    public ItemSubclass(ItemClass itemClass, ItemSubclassResponse response) {
+        this.id = new ItemSubclassId(itemClass.getId(), response.getId());
+        this.itemClass = itemClass;
+        this.displayName = response.getDisplayName();
+        this.verboseName = response.getVerboseName();
     }
 }
 

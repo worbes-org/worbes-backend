@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.config;
+package com.worbes.auctionhousetracker.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;

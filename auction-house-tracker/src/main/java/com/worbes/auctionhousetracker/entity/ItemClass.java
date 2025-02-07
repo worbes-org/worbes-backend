@@ -24,7 +24,7 @@ public class ItemClass {
         this.names = names;
     }
 
-    public ItemClass(ItemClassesIndexResponse.ItemClasses response) {
+    public ItemClass(ItemClassesIndexResponse.ItemClass response) {
         this.id = response.getId();
         this.names = response.getName();
     }

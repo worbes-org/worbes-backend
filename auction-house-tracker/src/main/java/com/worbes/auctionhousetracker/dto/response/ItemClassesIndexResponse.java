@@ -3,6 +3,8 @@ package com.worbes.auctionhousetracker.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -10,11 +12,17 @@ import java.util.List;
 public class ItemClassesIndexResponse {
 
     @JsonProperty("item_classes")
-    private List<ItemClasses> itemClasses;
+    private List<ItemClass> itemClasses;
 
-    @Data
-    public static class ItemClasses {
+    @Getter
+    @Setter
+    public static class ItemClass {
         private Long id;
         private Language name;
+
+        public ItemClass(Long id, Language name) {
+            this.id = id;
+            this.name = name;
+        }
     }
 }

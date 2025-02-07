@@ -1,16 +1,11 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.config.BearerTokenHandler;
-import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
-import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
+import com.worbes.auctionhousetracker.client.BlizzardRestClient;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -18,13 +13,20 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemClassService {
-
+    public static final int ITEM_CLASS_SIZE = 18;
     private final ItemClassRepository itemClassRepository;
-    private final RestClient restClient;
-    private final BearerTokenHandler bearerTokenHandler;
+    private final BlizzardRestClient restClient;
+
+    public Long count() {
+        return itemClassRepository.count();
+    }
 
     public ItemClass get(Long id) {
         return itemClassRepository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+    public List<ItemClass> getAll() {
+        return itemClassRepository.findAll();
     }
 
     public void save(ItemClass itemClass) {
@@ -35,35 +37,14 @@ public class ItemClassService {
         itemClassRepository.saveAll(itemClasses);
     }
 
-    public List<ItemClass> getAll() {
-        return itemClassRepository.findAll();
-    }
-
-    public ItemClassesIndexResponse fetchItemClassesIndex() {
-        return restClient.get()
-                .uri(UriComponentsBuilder.fromHttpUrl("https://kr.api.blizzard.com/data/wow/item-class/index")
-                        .queryParam("namespace", "static-kr")
-                        .queryParam(":region", "kr")
-                        .queryParam("locale", "kr")
-                        .build()
-                        .toUri())
-                .header("Authorization", bearerTokenHandler.getToken())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(ItemClassesIndexResponse.class);
-    }
-
-    public ItemClassResponse fetchItemClass(Long id) {
-        return restClient.get()
-                .uri(UriComponentsBuilder.fromHttpUrl("https://kr.api.blizzard.com/data/wow/item-class/{id}")
-                        .queryParam("namespace", "static-kr")
-                        .queryParam(":region", "kr")
-                        .queryParam("locale", "kr")
-                        .buildAndExpand(id)
-                        .toUri())
-                .header("Authorization", bearerTokenHandler.getToken())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(ItemClassResponse.class);
+    public void init() {
+        if(count() == ITEM_CLASS_SIZE) {
+            log.info("모든 아이템 클래스가 이미 저장되어 있습니다.");
+            return;
+        }
+        //TODO: API 호출 실패 시 처리(재시도..)
+        //TODO: saveAll() 실패 시 처리
+        saveAll(restClient.fetchItemClassesIndex());
+        log.info("아이템 클래스 저장 완료");
     }
 }
