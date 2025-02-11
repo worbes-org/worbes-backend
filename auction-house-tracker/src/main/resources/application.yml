@@ -15,7 +15,10 @@ spring:
 blizzard:
   api:
     base-url: https://kr.api.blizzard.com/data/wow
-    token: ${BLIZZARD_API_TOKEN}
+    token-url: https://oauth.battle.net/token
+    encoding: UTF-8
+    id: ${BLIZZARD_CLIENT_ID}
+    secret: ${BLIZZARD_CLIENT_SECRET}
 
 ---
 spring:
@@ -29,7 +32,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create # create, update, validate
+      ddl-auto: update # create, update, validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

@@ -17,8 +17,9 @@ spring:
 blizzard:
   api:
     base-url: https://kr.api.blizzard.com/data/wow
-    token: ${BLIZZARD_API_TOKEN}
-
+    token-url: https://oauth.battle.net/token
+    id: ${BLIZZARD_CLIENT_ID}
+    secret: ${BLIZZARD_CLIENT_SECRET}
 ---
 spring:
   config:
