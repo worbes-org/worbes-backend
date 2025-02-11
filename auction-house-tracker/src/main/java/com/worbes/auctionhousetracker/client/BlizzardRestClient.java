@@ -1,6 +1,5 @@
 package com.worbes.auctionhousetracker.client;
 
-import com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class BlizzardRestClient {
 
     private final RestClient restClient;
-    private final RestClientConfigProperties properties;
 
     public List<ItemClass> fetchItemClassesIndex() {
         ItemClassesIndexResponse response = restClient.get()

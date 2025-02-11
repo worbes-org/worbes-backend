@@ -9,4 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 public class RestClientConfigProperties {
     private String baseUrl;
+    private String tokenUrl;
+    private String encoding;
+    private String id;
+    private String secret;
 }
