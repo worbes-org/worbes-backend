@@ -6,8 +6,8 @@ import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.ItemSubclass;
 import com.worbes.auctionhousetracker.exception.BlizzardApiException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -17,10 +17,13 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class BlizzardRestClient {
 
     private final RestClient restClient;
+
+    public BlizzardRestClient(@Qualifier("apiClient") RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public List<ItemClass> fetchItemClassesIndex() {
         ItemClassesIndexResponse response = restClient.get()

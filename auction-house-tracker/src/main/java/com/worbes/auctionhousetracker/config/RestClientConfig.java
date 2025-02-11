@@ -9,6 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(RestClientConfigProperties.class)
@@ -23,5 +26,19 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
+    }
+
+    @Bean
+    public RestClient oauth2Client() {
+        String encodedCredentials = getEncodedCredentials(properties.getId(), properties.getSecret());
+        return RestClient.builder()
+                .baseUrl(properties.getTokenUrl())
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .defaultHeader("Authorization", String.format("Basic %s", encodedCredentials))
+                .build();
+    }
+
+    private String getEncodedCredentials(String id, String secret) {
+        return Base64.getEncoder().encodeToString(String.format("%s:%s", id, secret).getBytes(StandardCharsets.UTF_8));
     }
 }

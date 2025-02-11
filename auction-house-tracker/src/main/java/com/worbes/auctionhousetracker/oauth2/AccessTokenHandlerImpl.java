@@ -1,41 +1,25 @@
 package com.worbes.auctionhousetracker.oauth2;
 
-import com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Optional;
 
 @Slf4j
 @Component
 public class AccessTokenHandlerImpl implements AccessTokenHandler{
 
+
     private final RestClient restClient;
     private final StringRedisTemplate redisTemplate;
 
-    public AccessTokenHandlerImpl(
-            RestClient.Builder builder,
-            RestClientConfigProperties properties,
-            StringRedisTemplate redisTemplate
-    ) {
+    public AccessTokenHandlerImpl(@Qualifier("oauth2Client") RestClient restClient, StringRedisTemplate redisTemplate) {
+        this.restClient = restClient;
         this.redisTemplate = redisTemplate;
-        String encodedCredentials = getEncodedCredentials(properties.getId(), properties.getSecret());
-        this.restClient = builder
-                .baseUrl(properties.getTokenUrl())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .defaultHeader("Authorization", String.format("Basic %s", encodedCredentials))
-                .build();
-    }
-
-    private String getEncodedCredentials(String id, String secret) {
-        return Base64.getEncoder().encodeToString(String.format("%s:%s", id, secret).getBytes(StandardCharsets.UTF_8));
     }
 
     /**
