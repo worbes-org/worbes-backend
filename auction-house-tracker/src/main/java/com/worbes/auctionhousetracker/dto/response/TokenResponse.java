@@ -1,9 +1,11 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class TokenResponse {
     /**
      * The access token used on future requests to the API.

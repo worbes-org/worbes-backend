@@ -1,7 +1,8 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.client.BlizzardRestClient;
+import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
+import com.worbes.auctionhousetracker.oauth2.ApiCrawler;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemClassService {
-    public static final int ITEM_CLASS_SIZE = 18;
+    public static final long ITEM_CLASS_SIZE = 18;
     private final ItemClassRepository itemClassRepository;
-    private final BlizzardRestClient restClient;
+    private final ApiCrawler apiCrawler;
 
     public Long count() {
         return itemClassRepository.count();
@@ -37,14 +38,11 @@ public class ItemClassService {
         itemClassRepository.saveAll(itemClasses);
     }
 
-    public void init() {
-        if(count() == ITEM_CLASS_SIZE) {
-            log.info("모든 아이템 클래스가 이미 저장되어 있습니다.");
-            return;
-        }
-        //TODO: API 호출 실패 시 처리(재시도..)
-        //TODO: saveAll() 실패 시 처리
-        saveAll(restClient.fetchItemClassesIndex());
-        log.info("아이템 클래스 저장 완료");
+    public List<ItemClass> fetchItemClassesIndex() {
+        return apiCrawler.fetchData("/item-class/index", ItemClassesIndexResponse.class)
+                .getItemClasses()
+                .stream()
+                .map(ItemClass::new)
+                .toList();
     }
 }

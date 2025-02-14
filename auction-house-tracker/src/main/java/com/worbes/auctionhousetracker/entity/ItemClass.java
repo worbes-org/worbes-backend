@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,5 +29,18 @@ public class ItemClass {
     public ItemClass(ItemClassesIndexResponse.ItemClass response) {
         this.id = response.getId();
         this.names = response.getName();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ItemClass itemClass = (ItemClass) object;
+        return Objects.equals(id, itemClass.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

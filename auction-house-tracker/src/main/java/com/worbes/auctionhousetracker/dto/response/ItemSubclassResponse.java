@@ -2,9 +2,11 @@ package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ItemSubclassResponse {
 
     @JsonProperty("subclass_id")
