@@ -3,7 +3,7 @@ package com.worbes.auctionhousetracker.service;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.ItemSubclass;
-import com.worbes.auctionhousetracker.oauth2.ApiCrawler;
+import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemSubclassRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -25,7 +26,7 @@ class ItemSubclassServiceTest {
     ItemSubclassRepository itemSubclassRepository;
 
     @Mock
-    ApiCrawler apiCrawler;
+    RestApiClient restApiClient;
 
     @InjectMocks
     ItemSubclassService itemSubclassService;
@@ -86,7 +87,7 @@ class ItemSubclassServiceTest {
         Long subclassId = 2L;
         ItemSubclassResponse itemSubclassResponse = mock(ItemSubclassResponse.class);
         given(itemClass.getId()).willReturn(1L);
-        given(apiCrawler.fetchData(anyString(), eq(ItemSubclassResponse.class)))
+        given(restApiClient.get(anyString(), Map.of("namespace", "static-kr"), eq(ItemSubclassResponse.class)))
                 .willReturn(itemSubclassResponse);
 
         // When
@@ -94,6 +95,6 @@ class ItemSubclassServiceTest {
 
         // Then
         assertThat(result).isNotNull(); // Verify that a non-null ItemSubclass is returned
-        verify(apiCrawler, times(1)).fetchData(anyString(), eq(ItemSubclassResponse.class)); // Verify fetchData was called once
+        verify(restApiClient, times(1)).get(anyString(), Map.of("namespace", "static-kr"), eq(ItemSubclassResponse.class)); // Verify fetchData was called once
     }
 }

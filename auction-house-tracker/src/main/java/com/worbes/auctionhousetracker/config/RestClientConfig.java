@@ -19,7 +19,6 @@ public class RestClientConfig {
     @Bean
     public RestClient apiClient() {
         return RestClient.builder()
-                .baseUrl(properties.getBaseUrl())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();

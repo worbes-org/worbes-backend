@@ -11,5 +11,4 @@ public class OAuth2ConfigProperties {
     private String tokenUrl;
     private String id;
     private String secret;
-    private String tokenKey;
 }

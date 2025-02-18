@@ -6,8 +6,8 @@ import com.worbes.auctionhousetracker.exception.BlizzardApiException;
 import com.worbes.auctionhousetracker.exception.InternalServerErrorApiException;
 import com.worbes.auctionhousetracker.exception.TooManyRequestsApiException;
 import com.worbes.auctionhousetracker.exception.UnauthorizedApiException;
-import com.worbes.auctionhousetracker.service.AccessTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,8 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.web.client.RestClient;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,10 +34,11 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
+@Slf4j
 @ActiveProfiles("test")
-@RestClientTest(ApiCrawler.class)
+@RestClientTest(RestApiClient.class)
 @EnableConfigurationProperties(RestClientConfigProperties.class)
-class ApiCrawlerImplTest {
+class RestClientImplTest {
 
     @Autowired
     RestClientConfigProperties properties;
@@ -44,7 +47,7 @@ class ApiCrawlerImplTest {
     MockRestServiceServer server;
 
     @Autowired
-    ApiCrawler apiCrawler;
+    RestApiClient restApiClient;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -58,12 +61,13 @@ class ApiCrawlerImplTest {
         // Given: 서버가 정상 응답을 반환
         String path = "/";
         String expectedResponse = "{\"data\":\"sampleData\"}";
+        Map<String, String> params = Map.of("namespace", "static-kr");
         Class<String> responseType = String.class;
-        server.expect(ExpectedCount.once(), requestTo(startsWith(properties.getBaseUrl())))
+        server.expect(ExpectedCount.once(), requestTo(startsWith(properties.getBaseUrlKr())))
                 .andRespond(MockRestResponseCreators.withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
 
         // When: fetchData 호출
-        String result = apiCrawler.fetchData(path, responseType);
+        String result = restApiClient.get(path, params, responseType);
 
         // Then: 응답이 정상적으로 반환되어야 한다
         assertEquals(expectedResponse, result);
@@ -78,12 +82,12 @@ class ApiCrawlerImplTest {
         // Given: 서버가 TOO_MANY_REQUESTS 상태 코드로 응답
         String path = "/";
         Class<String> responseType = String.class;
-        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrl())))
+        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrlKr())))
                 .andRespond(withStatus(HttpStatus.TOO_MANY_REQUESTS));
 
         // When: fetchData 호출
         assertThatThrownBy(() -> {
-            apiCrawler.fetchData(path, responseType);
+            restApiClient.get(path, Map.of("namespace", "static-kr"), responseType);
         }).isInstanceOf(TooManyRequestsApiException.class);
 
         server.verify(); // 서버가 예상대로 호출되었는지 확인
@@ -95,12 +99,12 @@ class ApiCrawlerImplTest {
         // Given: 서버가 UNAUTHORIZED 상태 코드로 응답
         String path = "/";
         Class<String> responseType = String.class;
-        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrl())))
+        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrlKr())))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
         // When: fetchData 호출
         assertThatThrownBy(() -> {
-            apiCrawler.fetchData(path, responseType);
+            restApiClient.get(path, Map.of("namespace", "static-kr"), responseType);
         }).isInstanceOf(UnauthorizedApiException.class);
 
         // Then: @Recover 메서드가 호출되므로 결과는 null이어야 한다
@@ -115,12 +119,12 @@ class ApiCrawlerImplTest {
         // Given: 서버가 INTERNAL_SERVER_ERROR 상태 코드로 응답
         String path = "/";
         Class<String> responseType = String.class;
-        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrl())))
+        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrlKr())))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // When: fetchData 호출
         assertThatThrownBy(() -> {
-            apiCrawler.fetchData(path, responseType);
+            restApiClient.get(path, Map.of("namespace", "static-kr"), responseType);
         }).isInstanceOf(InternalServerErrorApiException.class);
 
         server.verify();
@@ -131,12 +135,12 @@ class ApiCrawlerImplTest {
     void fetchData_WhenUnexpectedError_ShouldInvokeRecover() {
         String path = "/";
         Class<String> responseType = String.class;
-        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrl())))
+        server.expect(ExpectedCount.manyTimes(), requestTo(startsWith(properties.getBaseUrlKr())))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST)); // 테스트 목적으로 사용
 
         // When: fetchData 호출
         assertThatThrownBy(() -> {
-            apiCrawler.fetchData(path, responseType);
+            restApiClient.get(path, Map.of("namespace", "static-kr"), responseType);
         }).isInstanceOf(BlizzardApiException.class);
 
         server.verify();
@@ -148,9 +152,10 @@ class ApiCrawlerImplTest {
     static class TestConfig {
 
         private final RestClientConfigProperties properties;
+
         @Bean
         RestClient apiClient(RestClient.Builder builder) {
-            return builder.baseUrl(properties.getBaseUrl()).build();
+            return builder.baseUrl(properties.getBaseUrlKr()).build();
         }
     }
 }

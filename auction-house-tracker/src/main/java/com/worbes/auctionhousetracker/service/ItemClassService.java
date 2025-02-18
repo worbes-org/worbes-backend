@@ -1,14 +1,16 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
-import com.worbes.auctionhousetracker.oauth2.ApiCrawler;
+import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -16,7 +18,8 @@ import java.util.List;
 public class ItemClassService {
     public static final long ITEM_CLASS_SIZE = 18;
     private final ItemClassRepository itemClassRepository;
-    private final ApiCrawler apiCrawler;
+    private final RestApiClient restApiClient;
+    private final RestClientConfigProperties properties;
 
     public Long count() {
         return itemClassRepository.count();
@@ -39,7 +42,9 @@ public class ItemClassService {
     }
 
     public List<ItemClass> fetchItemClassesIndex() {
-        return apiCrawler.fetchData("/item-class/index", ItemClassesIndexResponse.class)
+        String path = properties.getBaseUrlKr() + properties.getItemClassIndexUrl();
+        Map<String, String> params = Map.of("namespace", "static-us");
+        return restApiClient.get(path, params, ItemClassesIndexResponse.class)
                 .getItemClasses()
                 .stream()
                 .map(ItemClass::new)

@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
-import com.worbes.auctionhousetracker.oauth2.ApiCrawler;
+import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.worbes.auctionhousetracker.utils.TestUtils.createDummyItemClassesIndexResponse;
@@ -31,7 +32,7 @@ class ItemClassServiceTest {
     private ItemClassRepository itemClassRepository;
 
     @Mock
-    private ApiCrawler apiCrawler;
+    private RestApiClient restApiClient;
 
     @InjectMocks
     private ItemClassService itemClassService;
@@ -103,13 +104,13 @@ class ItemClassServiceTest {
     void fetchItemClassesIndex_ShouldFetchItemClassesFromApi() {
         // Given
         ItemClassesIndexResponse response = createDummyItemClassesIndexResponse();
-        given(apiCrawler.fetchData(anyString(), eq(ItemClassesIndexResponse.class))).willReturn(response);
+        given(restApiClient.get(anyString(), Map.of("namespace", "static-kr"), eq(ItemClassesIndexResponse.class))).willReturn(response);
 
         // When
         List<ItemClass> result = itemClassService.fetchItemClassesIndex();
 
         // Then
         assertThat(result).hasSize(response.getItemClasses().size());
-        verify(apiCrawler, times(1)).fetchData(anyString(), eq(ItemClassesIndexResponse.class));
+        verify(restApiClient, times(1)).get(anyString(), Map.of("namespace", "static-kr"), eq(ItemClassesIndexResponse.class));
     }
 }

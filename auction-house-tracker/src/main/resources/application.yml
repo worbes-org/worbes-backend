@@ -7,22 +7,7 @@ spring:
       test:
         - blizzard
 ---
-spring:
-  config:
-    activate:
-      on-profile: blizzard
 
-blizzard:
-  api:
-    base-url: https://kr.api.blizzard.com/data/wow
-    encoding: UTF-8
-  oauth2:
-    token-url: https://oauth.battle.net/token
-    token-key: worbes:oauth2:token
-    id: ${BLIZZARD_CLIENT_ID}
-    secret: ${BLIZZARD_CLIENT_SECRET}
-
----
 spring:
   config:
     activate:
@@ -34,7 +19,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create # create, update, validate
+      ddl-auto: update # create, update, validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -72,3 +57,23 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: blizzard
+
+blizzard:
+  oauth2:
+    token-url: https://oauth.battle.net/token
+    id: ${BLIZZARD_CLIENT_ID}
+    secret: ${BLIZZARD_CLIENT_SECRET}
+  api:
+    encoding: UTF-8
+    base-url-kr: https://kr.api.blizzard.com/data/wow
+    base-url-us: https://us.api.blizzard.com/data/wow
+    item-class-index-url: /item-class/index
+    item-class-url: /item-class/%s
+    item-subclass-url: /item-class/%s/item-subclass/%s
+---

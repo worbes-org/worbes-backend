@@ -8,6 +8,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class RestClientConfigProperties {
-    private String baseUrl;
     private String encoding;
+    //base url;
+    private String baseUrlKr;
+    private String baseUrlUs;
+
+    //path
+    private String itemClassIndexUrl;
+    private String itemClassUrl;
+    private String itemSubclassUrl;
 }

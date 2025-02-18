@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.config.properties.OAuth2ConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;
-import com.worbes.auctionhousetracker.repository.AccessTokenRepository;
+import com.worbes.auctionhousetracker.oauth2.AccessTokenRepository;
+import com.worbes.auctionhousetracker.oauth2.AccessTokenService;
+import com.worbes.auctionhousetracker.oauth2.AccessTokenServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -59,7 +61,7 @@ class AccessTokenServiceImplTest {
     @DisplayName("토큰이 이미 존재하면 그대로 반환")
     void getToken_WhenTokenExists_ShouldReturnToken() {
         // Given
-        given(tokenRepository.get(properties.getTokenKey())).willReturn("valid-token");
+        given(tokenRepository.get("VALID-KEY")).willReturn("valid-token");
 
         // When
         String token = tokenService.get();
@@ -73,9 +75,9 @@ class AccessTokenServiceImplTest {
     @DisplayName("토큰이 없으면 새로 발급 요청")
     void getToken_WhenTokenNotExists_ShouldFetchNewToken() throws JsonProcessingException {
         // Given
-        given(tokenRepository.get(properties.getTokenKey())).willReturn(null);
+        given(tokenRepository.get("VALID-KEY")).willReturn(null);
 
-        TokenResponse mockResponse = new TokenResponse("new-access-token", "bearer" ,3600L);
+        TokenResponse mockResponse = new TokenResponse("new-access-token", "bearer", 3600L);
         String jsonResponse = objectMapper.writeValueAsString(mockResponse);
 
         server.expect(requestTo(properties.getTokenUrl()))
@@ -87,14 +89,14 @@ class AccessTokenServiceImplTest {
 
         // Then
         assertThat(token).isEqualTo("new-access-token");
-        verify(tokenRepository).save(eq(properties.getTokenKey()), eq("new-access-token"), eq(3600L), eq(TimeUnit.SECONDS));
+        verify(tokenRepository).save(eq("VALID-KEY"), eq("new-access-token"), eq(3600L), eq(TimeUnit.SECONDS));
     }
 
     @Test
     @DisplayName("블리자드 API 요청 실패 시 예외 발생")
     void refresh_WhenBlizzardApiFails_ShouldThrowException() {
         // Given
-        given(tokenRepository.get(properties.getTokenKey())).willReturn(null);
+        given(tokenRepository.get("VALID-KEY")).willReturn(null);
 
         server.expect(requestTo(properties.getTokenUrl()))
                 .andExpect(method(HttpMethod.POST))
@@ -111,6 +113,7 @@ class AccessTokenServiceImplTest {
     static class TestConfig {
 
         private final OAuth2ConfigProperties properties;
+
         @Bean
         RestClient oauth2Client(RestClient.Builder builder) {
             return builder.baseUrl(properties.getTokenUrl()).build();
