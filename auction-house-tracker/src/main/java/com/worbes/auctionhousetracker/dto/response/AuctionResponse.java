@@ -15,7 +15,7 @@ public class AuctionResponse {
     public static class AuctionDto {
         private long id;
 
-        private Map<String, Long> item;
+        private long itemId;
 
         private long quantity;
 
@@ -24,5 +24,10 @@ public class AuctionResponse {
 
         @JsonProperty("time_left")
         private String timeLeft;
+
+        @JsonProperty("item")
+        private void mapItemId(Map<String, Long> item) {
+            id = item.get("id");
+        }
     }
 }

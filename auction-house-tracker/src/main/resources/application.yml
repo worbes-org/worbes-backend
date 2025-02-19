@@ -71,9 +71,11 @@ blizzard:
     secret: ${BLIZZARD_CLIENT_SECRET}
   api:
     encoding: UTF-8
+    base-url: https://%s.api.blizzard.com
     base-url-kr: https://kr.api.blizzard.com/data/wow
     base-url-us: https://us.api.blizzard.com/data/wow
     item-class-index-url: /item-class/index
     item-class-url: /item-class/%s
     item-subclass-url: /item-class/%s/item-subclass/%s
+    commodities-url: /data/wow/auctions/commodities
 ---

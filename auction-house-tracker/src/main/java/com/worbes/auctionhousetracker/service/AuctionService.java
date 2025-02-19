@@ -8,7 +8,7 @@ import java.util.List;
 public interface AuctionService {
 
 
-    List<Auction> fetchCommodities(Region region);
+    List<Auction> fetchAuctions(Region region);
 
     List<Auction> fetchAuctions(Region region, Integer realmId);
 

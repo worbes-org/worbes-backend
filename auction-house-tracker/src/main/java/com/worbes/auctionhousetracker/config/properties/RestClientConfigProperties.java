@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RestClientConfigProperties {
     private String encoding;
     //base url;
+    private String baseUrl;
     private String baseUrlKr;
     private String baseUrlUs;
 
@@ -17,4 +18,5 @@ public class RestClientConfigProperties {
     private String itemClassIndexUrl;
     private String itemClassUrl;
     private String itemSubclassUrl;
+    private String commoditiesUrl;
 }
