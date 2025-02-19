@@ -42,10 +42,10 @@ public class TestUtils {
      *
      * @return AuctionDto 객체
      */
-    public static AuctionResponse.AuctionDto createRandomAuctionDto() {
+    public static AuctionResponse.AuctionDto createRandomAuctionDto(long count) {
         AuctionResponse.AuctionDto auctionDto = new AuctionResponse.AuctionDto();
-        auctionDto.setId(RANDOM.nextLong(1000) + 1); // 1~1000 랜덤 ID
-        auctionDto.setItemId(RANDOM.nextLong(10000) + 1000); // 1000~11000 랜덤 Item ID
+        auctionDto.setId(count); // 1~1000 랜덤 ID
+        auctionDto.setItemId(count + 1000); // 1000~11000 랜덤 Item ID
         auctionDto.setQuantity(RANDOM.nextLong(100) + 1); // 1~100 랜덤 수량
         auctionDto.setUnitPrice(RANDOM.nextLong(50000) + 1000); // 1000~51000 랜덤 단가
         auctionDto.setTimeLeft(getRandomTimeLeft().toString());
@@ -58,10 +58,10 @@ public class TestUtils {
      * @param count 생성할 AuctionDto 개수
      * @return 더미 AuctionDto 리스트
      */
-    public static List<AuctionResponse.AuctionDto> createRandomAuctionDtos(int count) {
+    public static List<AuctionResponse.AuctionDto> createRandomAuctionDtos(long count) {
         List<AuctionResponse.AuctionDto> auctionList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            auctionList.add(createRandomAuctionDto());
+        for (int i = 1; i <= count; i++) {
+            auctionList.add(createRandomAuctionDto(i));
         }
         return auctionList;
     }
