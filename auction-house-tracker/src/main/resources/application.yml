@@ -3,67 +3,44 @@ spring:
     active: local
     group:
       local:
+        - db
+        - redis
         - blizzard
-      test:
-        - blizzard
----
-
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:mysql://localhost:33060/worbes
-    username: tester
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update # create, update, validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        use_sql_comments: true
-        format_sql: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.springframework.cache: trace
-
 ---
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: db
   datasource:
-    url: jdbc:mysql://localhost:33060/worbes
-    username: tester
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: create # create, update, validate
     properties:
+      use_sql_comments: true
+      format_sql: true
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        use_sql_comments: true
-        format_sql: true
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-
+        jdbc:
+          batch_size: 1000
+        order_updates: true
+        generate_statistics: true #배치 적용 됐는지 확인할 수 있는 통계 제공 옵션
+---
+spring:
+  config:
+    activate:
+      on-profile: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
 ---
 spring:
   config:
     activate:
       on-profile: blizzard
-
 blizzard:
   oauth2:
     token-url: https://oauth.battle.net/token
