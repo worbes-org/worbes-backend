@@ -3,21 +3,28 @@ package com.worbes.auctionhousetracker.entity;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.entity.enums.TimeLeft;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@AllArgsConstructor
 public class Auction {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auction_seq")
+    @SequenceGenerator(name = "auction_seq", sequenceName = "auction_seq", allocationSize = 1000)
     private Long id;
+
+    private Long auctionId;
 
     private Long itemId;
 
@@ -31,8 +38,15 @@ public class Auction {
     @Enumerated(EnumType.STRING)
     private Region region;
 
+    @CreatedDate  // 🔥 최초 생성 시간 (자동 저장)
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate  // 🔥 마지막 업데이트 시간 (자동 갱신)
+    private LocalDateTime updatedAt;
+
     public Auction(AuctionResponse.AuctionDto dto, Region region) {
-        this.id = dto.getId();
+        this.auctionId = dto.getId();
         this.itemId = dto.getItemId();
         this.quantity = dto.getQuantity();
         this.unitPrice = dto.getUnitPrice();
