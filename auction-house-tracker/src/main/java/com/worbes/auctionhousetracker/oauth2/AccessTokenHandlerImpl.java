@@ -1,10 +1,9 @@
 package com.worbes.auctionhousetracker.oauth2;
 
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;
-import com.worbes.auctionhousetracker.repository.AccessTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestClient;
 
@@ -12,15 +11,15 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Service
-public class AccessTokenServiceImpl implements AccessTokenService {
+@Component
+public class AccessTokenHandlerImpl implements AccessTokenHandler {
 
 
     private static final String TOKEN_KEY = "worbes:oauth2:token";
     private final RestClient restClient;
     private final AccessTokenRepository tokenRepository;
 
-    public AccessTokenServiceImpl(
+    public AccessTokenHandlerImpl(
             @Qualifier("oauth2Client") RestClient restClient,
             AccessTokenRepository tokenRepository
     ) {

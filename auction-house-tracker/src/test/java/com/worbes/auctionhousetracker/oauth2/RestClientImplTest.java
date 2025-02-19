@@ -53,7 +53,7 @@ class RestClientImplTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    AccessTokenService tokenService;
+    AccessTokenHandler tokenService;
 
     private String requestUri, expectedUri;
     private Map<String, String> requestParams;

@@ -1,12 +1,9 @@
-package com.worbes.auctionhousetracker.service;
+package com.worbes.auctionhousetracker.oauth2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.config.properties.OAuth2ConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;
-import com.worbes.auctionhousetracker.oauth2.AccessTokenService;
-import com.worbes.auctionhousetracker.oauth2.AccessTokenServiceImpl;
-import com.worbes.auctionhousetracker.repository.AccessTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +35,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @Slf4j
 @ActiveProfiles("test")
-@RestClientTest(AccessTokenServiceImpl.class)
+@RestClientTest(AccessTokenHandlerImpl.class)
 @EnableConfigurationProperties(OAuth2ConfigProperties.class)
-class AccessTokenServiceImplTest {
+class AccessTokenHandlerImplTest {
 
     @Autowired
     OAuth2ConfigProperties properties;
@@ -52,7 +49,7 @@ class AccessTokenServiceImplTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    AccessTokenService tokenService;
+    AccessTokenHandler tokenService;
 
     @MockBean
     AccessTokenRepository tokenRepository;

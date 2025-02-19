@@ -29,9 +29,9 @@ public class RestClientImpl implements RestApiClient {
     private static final int MAX_ATTEMPTS = 2;
     private static final int BACK_OFF_DELAY = 1500;
     private final RestClient restClient;
-    private final AccessTokenService tokenService;
+    private final AccessTokenHandler tokenService;
 
-    public RestClientImpl(@Qualifier("apiClient") RestClient restClient, AccessTokenService tokenService) {
+    public RestClientImpl(@Qualifier("apiClient") RestClient restClient, AccessTokenHandler tokenService) {
         this.restClient = restClient;
         this.tokenService = tokenService;
     }

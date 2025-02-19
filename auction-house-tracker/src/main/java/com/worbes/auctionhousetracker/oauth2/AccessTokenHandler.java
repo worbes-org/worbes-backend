@@ -1,6 +1,6 @@
 package com.worbes.auctionhousetracker.oauth2;
 
-public interface AccessTokenService {
+public interface AccessTokenHandler {
 
     /**
      * 캐시에서 OAuth2 토큰을 조회하고 반환합니다.
