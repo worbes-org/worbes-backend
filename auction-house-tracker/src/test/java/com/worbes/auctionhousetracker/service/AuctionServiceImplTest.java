@@ -55,7 +55,7 @@ class AuctionServiceImplTest {
         Map<String, String> expectedParams = Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue()));
         String expectedBaseUrl = String.format(BASE_URL, region.getValue());
         verify(restApiClient).get(
-                eq(String.format(expectedBaseUrl.concat(COMMODITIES_URL), region.getValue())),
+                eq(String.format(expectedBaseUrl.concat(COMMODITIES_PATH), region.getValue())),
                 eq(expectedParams),
                 eq(AuctionResponse.class)
         );

@@ -4,15 +4,15 @@ package com.worbes.auctionhousetracker.exception;
 import lombok.Getter;
 
 @Getter
-public class BlizzardApiException extends RuntimeException {
+public class RestApiClientException extends RuntimeException {
     private final int statusCode;
 
-    public BlizzardApiException(String message) {
+    public RestApiClientException(String message) {
         super(message);
         this.statusCode = 0;
     }
 
-    public BlizzardApiException(String message, int statusCode) {
+    public RestApiClientException(String message, int statusCode) {
         super(message);
         this.statusCode = statusCode;
     }

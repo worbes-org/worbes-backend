@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties.*;
+import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,11 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     public List<Auction> fetchAuctions(Region region) {
-        String base = String.format(BASE_URL, region.getValue());
-        Map<String, String> params = Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue()));
-        return restApiClient.get(base.concat(COMMODITIES_URL), params, AuctionResponse.class)
+        return restApiClient.get(
+                        createUrl(region, COMMODITIES_PATH),
+                        Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue())),
+                        AuctionResponse.class
+                )
                 .getAuctions()
                 .stream()
                 .map(dto -> new Auction(dto, region))
