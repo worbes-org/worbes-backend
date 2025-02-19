@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties.*;
+
 @Service
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
@@ -18,10 +20,9 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     public List<Auction> fetchAuctions(Region region) {
-        String base = String.format("https://%s.api.blizzard.com", region.getValue());
-        String path = "/data/wow/auctions/commodities";
-        Map<String, String> params = Map.of("namespace", String.format("dynamic-%s", region.getValue()));
-        return restApiClient.get(base.concat(path), params, AuctionResponse.class)
+        String base = String.format(BASE_URL, region.getValue());
+        Map<String, String> params = Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue()));
+        return restApiClient.get(base.concat(COMMODITIES_URL), params, AuctionResponse.class)
                 .getAuctions()
                 .stream()
                 .map(Auction::new)

@@ -8,12 +8,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class RestClientConfigProperties {
-    private String encoding;
+    public static final String BASE_URL = "https://%s.api.blizzard.com";
+    public static final String COMMODITIES_URL = "/data/wow/auctions/commodities";
+    public static final String NAMESPACE_KEY = "namespace";
+    public static final String NAMESPACE_DYNAMIC = "dynamic-%s";
+    public static final String NAMESPACE_STATIC = "dynamic-%s";
     //base url;
     private String baseUrl;
     private String baseUrlKr;
     private String baseUrlUs;
-
     //path
     private String itemClassIndexUrl;
     private String itemClassUrl;

@@ -70,7 +70,6 @@ blizzard:
     id: ${BLIZZARD_CLIENT_ID}
     secret: ${BLIZZARD_CLIENT_SECRET}
   api:
-    encoding: UTF-8
     base-url: https://%s.api.blizzard.com
     base-url-kr: https://kr.api.blizzard.com/data/wow
     base-url-us: https://us.api.blizzard.com/data/wow
