@@ -66,6 +66,7 @@ public class TestUtils {
         return auctionList;
     }
 
+
     /**
      * 랜덤한 시간 남은 상태를 반환하는 함수
      *

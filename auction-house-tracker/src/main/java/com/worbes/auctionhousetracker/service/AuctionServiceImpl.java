@@ -4,6 +4,7 @@ import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.oauth2.RestApiClient;
+import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import static com.worbes.auctionhousetracker.config.properties.RestClientConfigP
 public class AuctionServiceImpl implements AuctionService {
 
     private final RestApiClient restApiClient;
+    private final AuctionRepository repository;
 
     @Override
     public List<Auction> fetchAuctions(Region region) {
@@ -25,12 +27,17 @@ public class AuctionServiceImpl implements AuctionService {
         return restApiClient.get(base.concat(COMMODITIES_URL), params, AuctionResponse.class)
                 .getAuctions()
                 .stream()
-                .map(Auction::new)
+                .map(dto -> new Auction(dto, region))
                 .toList();
     }
 
     @Override
     public List<Auction> fetchAuctions(Region region, Integer realmId) {
         return null;
+    }
+
+    @Override
+    public void saveAuctions(List<Auction> auctions) {
+        repository.saveAll(auctions);
     }
 }

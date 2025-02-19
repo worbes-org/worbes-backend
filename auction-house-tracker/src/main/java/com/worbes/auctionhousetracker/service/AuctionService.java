@@ -12,6 +12,8 @@ public interface AuctionService {
 
     List<Auction> fetchAuctions(Region region, Integer realmId);
 
+    void saveAuctions(List<Auction> mockAuctions);
+
     //옥션 저장
 
     //옥션 수정
