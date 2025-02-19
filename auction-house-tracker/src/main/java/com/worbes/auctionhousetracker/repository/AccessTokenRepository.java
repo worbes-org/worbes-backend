@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.oauth2;
+package com.worbes.auctionhousetracker.repository;
 
 import java.util.concurrent.TimeUnit;
 
