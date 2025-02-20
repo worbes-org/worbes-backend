@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Map;
 
-import static com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties.*;
 import static com.worbes.auctionhousetracker.utils.TestUtils.createRandomAuctionDtos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,10 +51,10 @@ class AuctionServiceImplTest {
         List<Auction> result = auctionService.fetchAuctions(region);
 
         // Then
-        Map<String, String> expectedParams = Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue()));
-        String expectedBaseUrl = String.format(BASE_URL, region.getValue());
+        Map<String, String> expectedParams = Map.of("namespace", String.format("dynamic-%s", region.getValue()));
+        String expectedBaseUrl = String.format("https://%s.api.blizzard.com", region.getValue());
         verify(restApiClient).get(
-                eq(String.format(expectedBaseUrl.concat(COMMODITIES_PATH), region.getValue())),
+                eq(String.format(expectedBaseUrl.concat("/data/wow/auctions/commodities"), region.getValue())),
                 eq(expectedParams),
                 eq(AuctionResponse.class)
         );

@@ -42,16 +42,8 @@ spring:
     activate:
       on-profile: blizzard
 blizzard:
-  oauth2:
+  api:
     token-url: https://oauth.battle.net/token
     id: ${BLIZZARD_CLIENT_ID}
     secret: ${BLIZZARD_CLIENT_SECRET}
-  api:
-    base-url: https://%s.api.blizzard.com
-    base-url-kr: https://kr.api.blizzard.com/data/wow
-    base-url-us: https://us.api.blizzard.com/data/wow
-    item-class-index-url: /item-class/index
-    item-class-url: /item-class/%s
-    item-subclass-url: /item-class/%s/item-subclass/%s
-    commodities-url: /data/wow/auctions/commodities
 ---

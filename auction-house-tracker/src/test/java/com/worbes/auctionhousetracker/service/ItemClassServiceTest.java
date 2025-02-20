@@ -2,6 +2,7 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
+import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
 import static com.worbes.auctionhousetracker.utils.TestUtils.createDummyItemClassesIndexResponse;
 import static com.worbes.auctionhousetracker.utils.TestUtils.createDummyLanguage;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -103,14 +104,20 @@ class ItemClassServiceTest {
     @DisplayName("fetchItemClassesIndex() 메서드는 API에서 아이템 클래스를 가져온다")
     void fetchItemClassesIndex_ShouldFetchItemClassesFromApi() {
         // Given
+        Region region = Region.KR;
         ItemClassesIndexResponse response = createDummyItemClassesIndexResponse();
-        given(restApiClient.get(anyString(), Map.of("namespace", "static-kr"), eq(ItemClassesIndexResponse.class))).willReturn(response);
+        given(restApiClient.get(anyString(), anyMap(), eq(ItemClassesIndexResponse.class))).willReturn(response);
 
         // When
         List<ItemClass> result = itemClassService.fetchItemClassesIndex();
 
         // Then
         assertThat(result).hasSize(response.getItemClasses().size());
-        verify(restApiClient, times(1)).get(anyString(), Map.of("namespace", "static-kr"), eq(ItemClassesIndexResponse.class));
+        verify(restApiClient, times(1))
+                .get(
+                        eq(createUrl(region, "/data/wow/item-class/index")),
+                        eq(Map.of("namespace", String.format("static-%s", region.getValue()))),
+                        eq(ItemClassesIndexResponse.class)
+                );
     }
 }

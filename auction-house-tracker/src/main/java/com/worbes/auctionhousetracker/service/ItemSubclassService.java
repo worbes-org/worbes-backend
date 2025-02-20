@@ -1,10 +1,11 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties;
+import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.ItemSubclass;
+import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemSubclassRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class ItemSubclassService {
     public static final long ITEM_SUBCLASS_SIZE = 152;
     private final ItemSubclassRepository itemSubclassRepository;
     private final RestApiClient restApiClient;
-    private final RestClientConfigProperties properties;
+    private final BlizzardApiConfigProperties properties;
 
     public Long count() {
         return itemSubclassRepository.count();
@@ -40,10 +43,11 @@ public class ItemSubclassService {
     }
 
     public List<Long> fetchItemSubclassIds(Long itemClassId) {
-        String base = properties.getBaseUrlUs();
-        String path = String.format(properties.getItemClassUrl(), itemClassId);
-        Map<String, String> params = Map.of("namespace", "static-us");
-        return restApiClient.get(base + path, params, ItemClassResponse.class)
+        Region region = Region.KR;
+        String path = String.format("/data/wow/item-class/%s", itemClassId);
+        String url = createUrl(region, path);
+        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        return restApiClient.get(url, params, ItemClassResponse.class)
                 .getSubclassResponses()
                 .stream()
                 .map(ItemClassResponse.Subclass::getId)
@@ -51,9 +55,10 @@ public class ItemSubclassService {
     }
 
     public ItemSubclass fetchItemSubclass(ItemClass itemClass, Long subclassId) {
-        String base = properties.getBaseUrlUs();
-        Map<String, String> params = Map.of("namespace", "static-us");
-        String path = String.format(properties.getItemSubclassUrl(), itemClass.getId(), subclassId);
-        return new ItemSubclass(itemClass, restApiClient.get(base + path, params, ItemSubclassResponse.class));
+        Region region = Region.KR;
+        String path = String.format("/data/wow/item-class/%s/item-subclass/%s", itemClass.getId(), subclassId);
+        String url = createUrl(region, path);
+        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        return new ItemSubclass(itemClass, restApiClient.get(url, params, ItemSubclassResponse.class));
     }
 }

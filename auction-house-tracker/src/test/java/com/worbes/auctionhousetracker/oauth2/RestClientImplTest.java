@@ -1,29 +1,22 @@
 package com.worbes.auctionhousetracker.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties;
 import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
 import com.worbes.auctionhousetracker.exception.RestApiClientException;
 import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
 import com.worbes.auctionhousetracker.exception.UnauthorizedException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
-import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
@@ -35,13 +28,8 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 @Slf4j
-@ActiveProfiles("test")
 @RestClientTest(RestApiClient.class)
-@EnableConfigurationProperties(RestClientConfigProperties.class)
 class RestClientImplTest {
-
-    @Autowired
-    RestClientConfigProperties properties;
 
     @Autowired
     MockRestServiceServer server;
@@ -145,18 +133,5 @@ class RestClientImplTest {
         }).isInstanceOf(RestApiClientException.class);
 
         server.verify();
-    }
-
-    @TestConfiguration
-    @RequiredArgsConstructor
-    @EnableConfigurationProperties(RestClientConfigProperties.class)
-    static class TestConfig {
-
-        private final RestClientConfigProperties properties;
-
-        @Bean
-        RestClient apiClient(RestClient.Builder builder) {
-            return builder.baseUrl(properties.getBaseUrlKr()).build();
-        }
     }
 }

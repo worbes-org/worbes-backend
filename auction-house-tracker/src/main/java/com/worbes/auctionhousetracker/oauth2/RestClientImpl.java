@@ -5,10 +5,7 @@ import com.worbes.auctionhousetracker.exception.RestApiClientException;
 import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
 import com.worbes.auctionhousetracker.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -31,8 +28,11 @@ public class RestClientImpl implements RestApiClient {
     private final RestClient restClient;
     private final AccessTokenHandler tokenService;
 
-    public RestClientImpl(@Qualifier("apiClient") RestClient restClient, AccessTokenHandler tokenService) {
-        this.restClient = restClient;
+    public RestClientImpl(RestClient.Builder builder, AccessTokenHandler tokenService) {
+        this.restClient = builder
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
         this.tokenService = tokenService;
     }
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static com.worbes.auctionhousetracker.config.properties.RestClientConfigProperties.*;
 import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
 
 @Service
@@ -24,8 +23,8 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public List<Auction> fetchAuctions(Region region) {
         return restApiClient.get(
-                        createUrl(region, COMMODITIES_PATH),
-                        Map.of(NAMESPACE_KEY, String.format(NAMESPACE_DYNAMIC, region.getValue())),
+                        createUrl(region, "/data/wow/auctions/commodities"),
+                        Map.of("namespace", String.format("dynamic-%s", region.getValue())),
                         AuctionResponse.class
                 )
                 .getAuctions()

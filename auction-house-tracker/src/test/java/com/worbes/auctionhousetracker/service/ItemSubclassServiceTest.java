@@ -1,8 +1,10 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.ItemSubclass;
+import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemSubclassRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Map;
 
+import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -78,6 +81,44 @@ class ItemSubclassServiceTest {
         verify(itemSubclassRepository, times(1)).save(mocked1); // Verify that save() was called once
     }
 
+    @Test
+    @DisplayName("fetchItemSubclassIds()는 서브클래스 ID 목록을 반환한다")
+    void fetchItemSubclassIds_ShouldReturnSubclassIds() {
+        // Given
+        ItemClass itemClass = mock(ItemClass.class);
+        ItemClassResponse itemClassResponse = mock(ItemClassResponse.class);
+        List<ItemClassResponse.Subclass> subclasses = List.of(
+                createSubclass(1L),
+                createSubclass(2L)
+        );
+
+        given(itemClass.getId()).willReturn(1L);
+        given(itemClassResponse.getSubclassResponses()).willReturn(subclasses);
+        given(restApiClient.get(anyString(), anyMap(), eq(ItemClassResponse.class)))
+                .willReturn(itemClassResponse);
+
+        // When
+        List<Long> result = itemSubclassService.fetchItemSubclassIds(itemClass.getId());
+
+        // Then
+        assertThat(result).containsExactly(1L, 2L);
+        Region region = Region.KR;
+        String path = String.format("/data/wow/item-class/%s", itemClass.getId());
+        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        verify(restApiClient, times(1))
+                .get(
+                        eq(createUrl(region, path)),
+                        eq(params),
+                        eq(ItemClassResponse.class)
+                );
+    }
+
+    private ItemClassResponse.Subclass createSubclass(Long id) {
+        ItemClassResponse.Subclass subclass = mock(ItemClassResponse.Subclass.class);
+        given(subclass.getId()).willReturn(id);
+        return subclass;
+    }
+
     // Test for fetchItemSubclass() method
     @Test
     @DisplayName("fetchItemSubclass()는 ItemSubclass를 반환한다")
@@ -87,7 +128,7 @@ class ItemSubclassServiceTest {
         Long subclassId = 2L;
         ItemSubclassResponse itemSubclassResponse = mock(ItemSubclassResponse.class);
         given(itemClass.getId()).willReturn(1L);
-        given(restApiClient.get(anyString(), Map.of("namespace", "static-kr"), eq(ItemSubclassResponse.class)))
+        given(restApiClient.get(anyString(), anyMap(), eq(ItemSubclassResponse.class)))
                 .willReturn(itemSubclassResponse);
 
         // When
@@ -95,6 +136,14 @@ class ItemSubclassServiceTest {
 
         // Then
         assertThat(result).isNotNull(); // Verify that a non-null ItemSubclass is returned
-        verify(restApiClient, times(1)).get(anyString(), Map.of("namespace", "static-kr"), eq(ItemSubclassResponse.class)); // Verify fetchData was called once
+        Region region = Region.KR;
+        String path = String.format("/data/wow/item-class/%s/item-subclass/%s", itemClass.getId(), subclassId);
+        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        verify(restApiClient, times(1))
+                .get(
+                        eq(createUrl(region, path)),
+                        eq(params),
+                        eq(ItemSubclassResponse.class)
+                ); // Verify fetchData was called once
     }
 }
