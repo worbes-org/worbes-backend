@@ -1,9 +1,11 @@
-package com.worbes.auctionhousetracker.oauth2;
+package com.worbes.auctionhousetracker.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;
+import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
+import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,9 +1,10 @@
-package com.worbes.auctionhousetracker.oauth2;
+package com.worbes.auctionhousetracker.infrastructure.rest;
 
 import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
 import com.worbes.auctionhousetracker.exception.RestApiClientException;
 import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
 import com.worbes.auctionhousetracker.exception.UnauthorizedException;
+import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;

@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.oauth2;
+package com.worbes.auctionhousetracker.infrastructure.oauth;
 
 import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.TokenResponse;

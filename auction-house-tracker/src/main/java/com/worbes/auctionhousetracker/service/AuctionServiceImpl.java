@@ -5,7 +5,7 @@ import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.oauth2.RestApiClient;
+import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

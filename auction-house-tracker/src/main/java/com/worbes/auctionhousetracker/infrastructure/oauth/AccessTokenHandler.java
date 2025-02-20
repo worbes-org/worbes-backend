@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.oauth2;
+package com.worbes.auctionhousetracker.infrastructure.oauth;
 
 public interface AccessTokenHandler {
 

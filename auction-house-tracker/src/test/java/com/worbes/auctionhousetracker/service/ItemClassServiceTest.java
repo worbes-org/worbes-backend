@@ -6,7 +6,7 @@ import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.oauth2.RestApiClient;
+import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

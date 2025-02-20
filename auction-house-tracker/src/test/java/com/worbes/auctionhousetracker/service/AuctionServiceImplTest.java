@@ -5,7 +5,7 @@ import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.oauth2.RestApiClient;
+import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
