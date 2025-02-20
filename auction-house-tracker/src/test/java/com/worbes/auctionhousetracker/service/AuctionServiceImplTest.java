@@ -1,5 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
@@ -16,9 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.worbes.auctionhousetracker.utils.TestUtils.createRandomAuctionDtos;
+import static com.worbes.auctionhousetracker.TestUtils.createRandomAuctionDtos;
+import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -51,11 +53,9 @@ class AuctionServiceImplTest {
         List<Auction> result = auctionService.fetchAuctions(region);
 
         // Then
-        Map<String, String> expectedParams = Map.of("namespace", String.format("dynamic-%s", region.getValue()));
-        String expectedBaseUrl = String.format("https://%s.api.blizzard.com", region.getValue());
         verify(restApiClient).get(
-                eq(String.format(expectedBaseUrl.concat("/data/wow/auctions/commodities"), region.getValue())),
-                eq(expectedParams),
+                eq(BlizzardApiUrlBuilder.builder(region).commodities().build()),
+                eq(BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build()),
                 eq(AuctionResponse.class)
         );
         assertNotNull(result);

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.worbes.auctionhousetracker.utils.TestUtils.createRandomAuctionDtos;
+import static com.worbes.auctionhousetracker.TestUtils.createRandomAuctionDtos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j

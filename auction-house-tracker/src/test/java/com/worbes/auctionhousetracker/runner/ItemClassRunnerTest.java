@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.worbes.auctionhousetracker.utils.TestUtils.createDummyLanguage;
+import static com.worbes.auctionhousetracker.TestUtils.createDummyLanguage;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;

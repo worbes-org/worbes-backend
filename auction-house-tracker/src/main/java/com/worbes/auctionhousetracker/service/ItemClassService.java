@@ -1,6 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.enums.Region;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
+import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.STATIC;
 
 @Service
 @Slf4j
@@ -22,7 +23,6 @@ public class ItemClassService {
     public static final long ITEM_CLASS_SIZE = 18;
     private final ItemClassRepository itemClassRepository;
     private final RestApiClient restApiClient;
-    private final BlizzardApiConfigProperties properties;
 
     public Long count() {
         return itemClassRepository.count();
@@ -45,9 +45,9 @@ public class ItemClassService {
     }
 
     public List<ItemClass> fetchItemClassesIndex() {
-        Region region = Region.KR;
-        String path = createUrl(region, "/data/wow/item-class/index");
-        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        Region region = Region.US;
+        String path = BlizzardApiUrlBuilder.builder(region).itemClassIndex().build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(STATIC).build();
         return restApiClient.get(path, params, ItemClassesIndexResponse.class)
                 .getItemClasses()
                 .stream()

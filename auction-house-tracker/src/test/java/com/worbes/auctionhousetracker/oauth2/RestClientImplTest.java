@@ -1,6 +1,10 @@
 package com.worbes.auctionhousetracker.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
+import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
+import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
 import com.worbes.auctionhousetracker.exception.RestApiClientException;
 import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
@@ -17,7 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,14 +49,18 @@ class RestClientImplTest {
     @MockBean
     AccessTokenHandler tokenService;
 
-    private String requestUri, expectedUri;
+    private String requestUri;
+    private URI expectedUri;
     private Map<String, String> requestParams;
 
     @BeforeEach
     void setUp() {
-        this.requestUri = "https://kr.api.blizzard.com/data/wow/item-class/index";
-        this.expectedUri = "https://kr.api.blizzard.com/data/wow/item-class/index?namespace=static-kr";
-        this.requestParams = Map.of("namespace", "static-kr");
+        Region region = Region.US;
+        this.requestUri = BlizzardApiUrlBuilder.builder(region).itemClassIndex().build();
+        this.requestParams = BlizzardApiParamsBuilder.builder(region).namespace(NamespaceType.STATIC).build();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(requestUri);
+        requestParams.forEach(builder::queryParam);
+        this.expectedUri = builder.build().toUri();
     }
 
 

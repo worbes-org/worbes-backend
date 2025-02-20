@@ -1,5 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
@@ -9,9 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
+import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +24,8 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public List<Auction> fetchAuctions(Region region) {
         return restApiClient.get(
-                        createUrl(region, "/data/wow/auctions/commodities"),
-                        Map.of("namespace", String.format("dynamic-%s", region.getValue())),
+                        BlizzardApiUrlBuilder.builder(region).commodities().build(),
+                        BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
                         AuctionResponse.class
                 )
                 .getAuctions()

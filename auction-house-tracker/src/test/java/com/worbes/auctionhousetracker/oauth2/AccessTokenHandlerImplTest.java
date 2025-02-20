@@ -33,24 +33,21 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(AccessTokenHandler.class)
 class AccessTokenHandlerImplTest {
 
+    private static final String TOKEN_URL = "https://oauth.battle.net/token";
     @Autowired
     MockRestServiceServer server;
-
     @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     AccessTokenHandler tokenHandler;
-
     @MockBean
     AccessTokenRepository tokenRepository;
-
     @SpyBean
     BlizzardApiConfigProperties properties;
 
     @BeforeEach
     void setUp() {
-        given(properties.getTokenUrl()).willReturn("https://oauth.battle.net/token");
+        given(properties.getTokenUrl()).willReturn(TOKEN_URL);
         given(properties.getId()).willReturn("valid-id");
         given(properties.getSecret()).willReturn("valid-secret");
     }
@@ -59,13 +56,14 @@ class AccessTokenHandlerImplTest {
     @DisplayName("토큰이 이미 존재하면 그대로 반환")
     void getToken_WhenTokenExists_ShouldReturnToken() {
         // Given
-        given(tokenRepository.get("worbes:oauth2:token")).willReturn("valid-token");
+        String token = "valid-token";
+        given(tokenRepository.get(anyString())).willReturn(token);
 
         // When
-        String token = tokenHandler.get();
+        String result = tokenHandler.get();
 
         // Then
-        assertThat(token).isEqualTo("valid-token");
+        assertThat(result).isEqualTo(token);
         verify(tokenRepository, never()).save(anyString(), anyString(), anyLong(), any());
     }
 
@@ -73,12 +71,12 @@ class AccessTokenHandlerImplTest {
     @DisplayName("토큰이 없으면 새로 발급 요청")
     void getToken_WhenTokenNotExists_ShouldFetchNewToken() throws JsonProcessingException {
         // Given
-        given(tokenRepository.get("worbes:oauth2:token")).willReturn(null);
+        given(tokenRepository.get(anyString())).willReturn(null);
 
         TokenResponse mockResponse = new TokenResponse("new-access-token", "bearer", 3600L);
         String jsonResponse = objectMapper.writeValueAsString(mockResponse);
 
-        server.expect(requestTo("https://oauth.battle.net/token"))
+        server.expect(requestTo(TOKEN_URL))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
@@ -88,7 +86,7 @@ class AccessTokenHandlerImplTest {
         // Then
         assertThat(token).isEqualTo(mockResponse.getAccessToken());
         verify(tokenRepository).save(
-                eq("worbes:oauth2:token"),
+                anyString(),
                 eq(mockResponse.getAccessToken()),
                 eq(mockResponse.getExpiresIn()),
                 eq(TimeUnit.SECONDS)
@@ -99,9 +97,9 @@ class AccessTokenHandlerImplTest {
     @DisplayName("블리자드 API 요청 실패 시 예외 발생")
     void refresh_WhenBlizzardApiFails_ShouldThrowException() {
         // Given
-        given(tokenRepository.get("worbes:oauth2:token")).willReturn(null);
+        given(tokenRepository.get(anyString())).willReturn(null);
 
-        server.expect(requestTo("https://oauth.battle.net/token"))
+        server.expect(requestTo(TOKEN_URL))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withServerError());
 

@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.worbes.auctionhousetracker.TestUtils.createDummyLanguage;
 import static com.worbes.auctionhousetracker.service.ItemClassService.ITEM_CLASS_SIZE;
-import static com.worbes.auctionhousetracker.utils.TestUtils.createDummyLanguage;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -59,7 +59,7 @@ class ItemSubclassRunnerTest {
         given(itemSubclassService.count()).willReturn(0L);
 
         List<ItemClass> itemClasses = new ArrayList<>();
-        for(long i = 0; i < ITEM_CLASS_SIZE; i++) {
+        for (long i = 0; i < ITEM_CLASS_SIZE; i++) {
             itemClasses.add(new ItemClass(i, createDummyLanguage()));
             given(itemSubclassService.fetchItemSubclassIds(i)).willReturn(List.of(1L, 2L, 3L));
         }

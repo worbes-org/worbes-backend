@@ -1,9 +1,12 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
 import com.worbes.auctionhousetracker.entity.ItemSubclass;
+import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.oauth2.RestApiClient;
 import com.worbes.auctionhousetracker.repository.ItemSubclassRepository;
@@ -15,9 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -102,13 +103,11 @@ class ItemSubclassServiceTest {
 
         // Then
         assertThat(result).containsExactly(1L, 2L);
-        Region region = Region.KR;
-        String path = String.format("/data/wow/item-class/%s", itemClass.getId());
-        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        Region region = Region.US;
         verify(restApiClient, times(1))
                 .get(
-                        eq(createUrl(region, path)),
-                        eq(params),
+                        eq(BlizzardApiUrlBuilder.builder(region).itemClass(itemClass.getId()).build()),
+                        eq(BlizzardApiParamsBuilder.builder(region).namespace(NamespaceType.STATIC).build()),
                         eq(ItemClassResponse.class)
                 );
     }
@@ -124,6 +123,7 @@ class ItemSubclassServiceTest {
     @DisplayName("fetchItemSubclass()는 ItemSubclass를 반환한다")
     void fetchItemSubclass_ShouldReturnItemSubclass() {
         // Given
+        Region region = Region.US;
         ItemClass itemClass = mock(ItemClass.class);
         Long subclassId = 2L;
         ItemSubclassResponse itemSubclassResponse = mock(ItemSubclassResponse.class);
@@ -136,13 +136,10 @@ class ItemSubclassServiceTest {
 
         // Then
         assertThat(result).isNotNull(); // Verify that a non-null ItemSubclass is returned
-        Region region = Region.KR;
-        String path = String.format("/data/wow/item-class/%s/item-subclass/%s", itemClass.getId(), subclassId);
-        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
         verify(restApiClient, times(1))
                 .get(
-                        eq(createUrl(region, path)),
-                        eq(params),
+                        eq(BlizzardApiUrlBuilder.builder(region).itemSubclass(itemClass.getId(), subclassId).build()),
+                        eq(BlizzardApiParamsBuilder.builder(region).namespace(NamespaceType.STATIC).build()),
                         eq(ItemSubclassResponse.class)
                 ); // Verify fetchData was called once
     }

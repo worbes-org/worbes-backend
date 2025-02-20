@@ -1,5 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
 import com.worbes.auctionhousetracker.dto.response.ItemClassResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static com.worbes.auctionhousetracker.utils.BlizzardApiUtils.createUrl;
+import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.STATIC;
 
 @Service
 @Slf4j
@@ -43,10 +45,9 @@ public class ItemSubclassService {
     }
 
     public List<Long> fetchItemSubclassIds(Long itemClassId) {
-        Region region = Region.KR;
-        String path = String.format("/data/wow/item-class/%s", itemClassId);
-        String url = createUrl(region, path);
-        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        Region region = Region.US;
+        String url = BlizzardApiUrlBuilder.builder(region).itemClass(itemClassId).build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(STATIC).build();
         return restApiClient.get(url, params, ItemClassResponse.class)
                 .getSubclassResponses()
                 .stream()
@@ -55,10 +56,9 @@ public class ItemSubclassService {
     }
 
     public ItemSubclass fetchItemSubclass(ItemClass itemClass, Long subclassId) {
-        Region region = Region.KR;
-        String path = String.format("/data/wow/item-class/%s/item-subclass/%s", itemClass.getId(), subclassId);
-        String url = createUrl(region, path);
-        Map<String, String> params = Map.of("namespace", String.format("static-%s", region.getValue()));
+        Region region = Region.US;
+        String url = BlizzardApiUrlBuilder.builder(region).itemSubclass(itemClass.getId(), subclassId).build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(STATIC).build();
         return new ItemSubclass(itemClass, restApiClient.get(url, params, ItemSubclassResponse.class));
     }
 }

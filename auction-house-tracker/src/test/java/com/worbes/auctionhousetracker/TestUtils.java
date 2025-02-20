@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.utils;
+package com.worbes.auctionhousetracker;
 
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
