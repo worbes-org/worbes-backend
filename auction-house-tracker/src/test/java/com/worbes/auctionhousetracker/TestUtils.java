@@ -3,7 +3,6 @@ package com.worbes.auctionhousetracker;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
-import com.worbes.auctionhousetracker.entity.enums.TimeLeft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ public class TestUtils {
         auctionDto.setItemId(count + 1000); // 1000~11000 랜덤 Item ID
         auctionDto.setQuantity(RANDOM.nextLong(100) + 1); // 1~100 랜덤 수량
         auctionDto.setUnitPrice(RANDOM.nextLong(50000) + 1000); // 1000~51000 랜덤 단가
-        auctionDto.setTimeLeft(getRandomTimeLeft().toString());
         return auctionDto;
     }
 
@@ -64,17 +62,6 @@ public class TestUtils {
             auctionList.add(createRandomAuctionDto(i));
         }
         return auctionList;
-    }
-
-
-    /**
-     * 랜덤한 시간 남은 상태를 반환하는 함수
-     *
-     * @return 랜덤 TimeLeft 값
-     */
-    private static TimeLeft getRandomTimeLeft() {
-        TimeLeft[] values = TimeLeft.values();
-        return values[RANDOM.nextInt(values.length)];
     }
 
 }

@@ -1,6 +1,7 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -8,26 +9,25 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuctionResponse {
     private List<AuctionDto> auctions;
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AuctionDto {
         private long id;
-
         private long itemId;
-
         private long quantity;
 
         @JsonProperty("unit_price")
         private long unitPrice;
-
-        @JsonProperty("time_left")
-        private String timeLeft;
-
+ 
         @JsonProperty("item")
-        private void mapItemId(Map<String, Long> item) {
-            id = item.get("id");
+        private void unpackNestedItem(Map<String, Object> item) {
+            if (item != null) {
+                this.itemId = ((Number) item.get("id")).longValue();
+            }
         }
     }
 }

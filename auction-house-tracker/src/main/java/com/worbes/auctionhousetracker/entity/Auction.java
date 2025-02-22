@@ -2,7 +2,6 @@ package com.worbes.auctionhousetracker.entity;
 
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.entity.enums.TimeLeft;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,6 +23,7 @@ public class Auction {
     @SequenceGenerator(name = "auction_seq", sequenceName = "auction_seq", allocationSize = 1000)
     private Long id;
 
+    @Column(unique = true)
     private Long auctionId;
 
     private Long itemId;
@@ -33,10 +33,11 @@ public class Auction {
     private Long unitPrice;
 
     @Enumerated(EnumType.STRING)
-    private TimeLeft timeLeft;
-
-    @Enumerated(EnumType.STRING)
     private Region region;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
 
     @CreatedDate  // 🔥 최초 생성 시간 (자동 저장)
     @Column(updatable = false)
@@ -50,7 +51,10 @@ public class Auction {
         this.itemId = dto.getItemId();
         this.quantity = dto.getQuantity();
         this.unitPrice = dto.getUnitPrice();
-        this.timeLeft = TimeLeft.valueOf(dto.getTimeLeft());
         this.region = region;
+    }
+
+    public void end() {
+        this.active = false;
     }
 }
