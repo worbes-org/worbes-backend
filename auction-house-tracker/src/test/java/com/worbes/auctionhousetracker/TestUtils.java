@@ -2,7 +2,9 @@ package com.worbes.auctionhousetracker;
 
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
+import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.enums.Region;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,4 +66,46 @@ public class TestUtils {
         return auctionList;
     }
 
+    /**
+     * 더미 Auction 엔티티를 생성하는 함수
+     *
+     * @param auctionId 경매 ID
+     * @param itemId    아이템 ID
+     * @param region    지역
+     * @param active    활성화 상태
+     * @return Auction 엔티티
+     */
+    public static Auction createDummyAuction(Long auctionId, Long itemId, Region region, Long realmId, boolean active) {
+        AuctionResponse.AuctionDto dto = new AuctionResponse.AuctionDto();
+        dto.setId(auctionId);
+        dto.setItemId(itemId);
+        dto.setQuantity(1);
+        dto.setUnitPrice(1000);
+
+        Auction auction = new Auction(dto, region, realmId);
+        if (!active) {
+            auction.end();
+        }
+        return auction;
+    }
+
+    /**
+     * 랜덤한 Auction 엔티티 리스트를 생성하는 함수
+     *
+     * @param count  생성할 Auction 개수
+     * @param region 지역
+     * @param active 활성화 상태
+     * @return Auction 엔티티 리스트
+     */
+    public static List<Auction> createDummyAuctions(int count, Region region, Long realmId, boolean active) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> createDummyAuction(
+                        (long) i + 1,
+                        (long) i + 1000,
+                        region,
+                        realmId,
+                        active
+                ))
+                .collect(Collectors.toList());
+    }
 }
