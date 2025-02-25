@@ -7,10 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,16 +31,10 @@ public class Auction {
     @Enumerated(EnumType.STRING)
     private Region region;
 
-    @Column(nullable = false)
+    private Long realmId;
+
     private boolean active = true;
 
-
-    @CreatedDate  // 🔥 최초 생성 시간 (자동 저장)
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate  // 🔥 마지막 업데이트 시간 (자동 갱신)
-    private LocalDateTime updatedAt;
 
     public Auction(AuctionResponse.AuctionDto dto, Region region) {
         this.auctionId = dto.getId();
@@ -52,6 +42,16 @@ public class Auction {
         this.quantity = dto.getQuantity();
         this.unitPrice = dto.getUnitPrice();
         this.region = region;
+        this.realmId = null;
+    }
+
+    public Auction(AuctionResponse.AuctionDto dto, Region region, Long realmId) {
+        this.auctionId = dto.getId();
+        this.itemId = dto.getItemId();
+        this.quantity = dto.getQuantity();
+        this.unitPrice = dto.getUnitPrice();
+        this.region = region;
+        this.realmId = realmId;
     }
 
     public void end() {
