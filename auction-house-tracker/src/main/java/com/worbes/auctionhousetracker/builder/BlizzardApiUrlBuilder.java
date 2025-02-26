@@ -45,6 +45,11 @@ public class BlizzardApiUrlBuilder {
         return this;
     }
 
+    public BlizzardApiUrlBuilder media(Long id) {
+        this.path = String.format("/data/wow/media/item/%s", id);
+        return this;
+    }
+
     public String build() {
         checkPathIsSet(); // path 검증
         return String.format(BASE_URL, region.getValue()).concat(path);
