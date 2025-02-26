@@ -1,17 +1,16 @@
 package com.worbes.auctionhousetracker.entity;
 
+import com.worbes.auctionhousetracker.dto.response.ItemResponse;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import com.worbes.auctionhousetracker.entity.enums.Quality;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
+@ToString
 public class Item {
 
     @Id
@@ -27,8 +26,34 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private Quality quality;
 
-    private Long itemLevel;
+    private Integer itemLevel;
 
     @Column(columnDefinition = "jsonb")
-    private String preview;
+    private String previewItem;
+
+    // private 생성자 (빌더가 사용)
+    @Builder(access = AccessLevel.PRIVATE)
+    private Item(Long id, Language name, Long itemClassId, Long itemSubclassId,
+                 Quality quality, Integer itemLevel, String previewItem) {
+        this.id = id;
+        this.name = name;
+        this.itemClassId = itemClassId;
+        this.itemSubclassId = itemSubclassId;
+        this.quality = quality;
+        this.itemLevel = itemLevel;
+        this.previewItem = previewItem;
+    }
+
+    // 정적 팩토리 메서드
+    public static Item from(ItemResponse response) {
+        return Item.builder()
+                .id(response.getId())
+                .name(response.getName())
+                .itemClassId(response.getItemClassId())
+                .itemSubclassId(response.getItemSubclassId())
+                .quality(response.getQuality())
+                .itemLevel(response.getLevel())
+                .previewItem(response.getPreviewItem())
+                .build();
+    }
 }
