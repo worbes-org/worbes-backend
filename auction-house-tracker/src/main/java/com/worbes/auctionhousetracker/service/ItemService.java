@@ -4,5 +4,6 @@ import com.worbes.auctionhousetracker.entity.Item;
 
 public interface ItemService {
 
-    Item fetchItem(Long id);
+    Item collectItemWithMedia(Long id);
+
 }

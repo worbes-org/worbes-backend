@@ -31,10 +31,12 @@ public class Item {
     @Column(columnDefinition = "jsonb")
     private String previewItem;
 
+    private String iconUrl;
+
     // private 생성자 (빌더가 사용)
     @Builder(access = AccessLevel.PRIVATE)
     private Item(Long id, Language name, Long itemClassId, Long itemSubclassId,
-                 Quality quality, Integer itemLevel, String previewItem) {
+                 Quality quality, Integer itemLevel, String previewItem, String iconUrl) {
         this.id = id;
         this.name = name;
         this.itemClassId = itemClassId;
@@ -42,10 +44,11 @@ public class Item {
         this.quality = quality;
         this.itemLevel = itemLevel;
         this.previewItem = previewItem;
+        this.iconUrl = iconUrl;
     }
 
     // 정적 팩토리 메서드
-    public static Item from(ItemResponse response) {
+    public static Item from(ItemResponse response, String iconUrl) {
         return Item.builder()
                 .id(response.getId())
                 .name(response.getName())
@@ -54,6 +57,7 @@ public class Item {
                 .quality(response.getQuality())
                 .itemLevel(response.getLevel())
                 .previewItem(response.getPreviewItem())
+                .iconUrl(iconUrl)
                 .build();
     }
 }

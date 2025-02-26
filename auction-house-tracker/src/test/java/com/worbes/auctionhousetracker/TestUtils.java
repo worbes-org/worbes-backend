@@ -1,19 +1,26 @@
 package com.worbes.auctionhousetracker;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import com.worbes.auctionhousetracker.entity.enums.Region;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestUtils {
     private static final Random RANDOM = new Random();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static Language createDummyLanguage() {
         return new Language(
@@ -107,5 +114,27 @@ public class TestUtils {
                         active
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public static <T> T loadJsonResource(String path, Class<T> valueType) {
+        try (InputStream is = TestUtils.class.getResourceAsStream(path)) {
+            if (is == null) {
+                throw new IllegalArgumentException("Resource not found: " + path);
+            }
+            return objectMapper.readValue(is, valueType);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load json resource: " + path, e);
+        }
+    }
+
+    public static <T> T loadJsonResource(String path, Class<T> valueType, Class<?> testClass) {
+        try (InputStream is = testClass.getResourceAsStream(path)) {
+            if (is == null) {
+                throw new IllegalArgumentException("Resource not found: " + path);
+            }
+            return objectMapper.readValue(is, valueType);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load json resource: " + path, e);
+        }
     }
 }
