@@ -1,7 +1,8 @@
 package com.worbes.auctionhousetracker.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.enums.Quality;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,10 +17,18 @@ public class Item {
     @Id
     private Long id;
 
-    private String name;
+    @Embedded
+    private Language name;
 
-    public Item(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    private Long itemClassId;
+
+    private Long itemSubclassId;
+
+    @Enumerated(EnumType.STRING)
+    private Quality quality;
+
+    private Long itemLevel;
+
+    @Column(columnDefinition = "jsonb")
+    private String preview;
 }

@@ -1,6 +1,6 @@
 package com.worbes.auctionhousetracker.entity.enums;
 
-public enum QualityType {
+public enum Quality {
     POOR,
     COMMON,
     UNCOMMON,

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.worbes.auctionhousetracker.entity.embeded.Language;
 import com.worbes.auctionhousetracker.entity.enums.BindingType;
 import com.worbes.auctionhousetracker.entity.enums.InventoryType;
-import com.worbes.auctionhousetracker.entity.enums.QualityType;
+import com.worbes.auctionhousetracker.entity.enums.Quality;
 import lombok.Data;
 
 import java.util.Map;
@@ -19,7 +19,7 @@ public class ItemResponse {
     private static class PreviewItem {
 
         private Long id;
-        private QualityType qualityType;
+        private Quality quality;
         private Language name;
         private String mediaHref;
         private Long itemClassId;
@@ -40,7 +40,7 @@ public class ItemResponse {
 
         @JsonProperty("quality")
         private void mapQualityType(Map<String, Object> type) {
-            qualityType = QualityType.valueOf((String) type.get("type"));
+            quality = Quality.valueOf((String) type.get("type"));
         }
 
         @JsonProperty("media")
