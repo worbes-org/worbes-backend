@@ -55,6 +55,16 @@ public class BlizzardApiUrlBuilder {
         return this;
     }
 
+    public BlizzardApiUrlBuilder realmIndex() {
+        this.path = "/data/wow/realm/index";
+        return this;
+    }
+
+    public BlizzardApiUrlBuilder realm(String slug) {
+        this.path = String.format("/data/wow/realm/%s", slug);
+        return this;
+    }
+
     public String build() {
         checkPathIsSet(); // path 검증
         return String.format(BASE_URL, region.getValue()).concat(path);

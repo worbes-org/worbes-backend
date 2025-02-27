@@ -1,0 +1,37 @@
+package com.worbes.auctionhousetracker.service;
+
+import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
+import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
+import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
+import com.worbes.auctionhousetracker.entity.Realm;
+import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class RealmServiceImpl implements RealmService {
+
+    private final RestApiClient restApiClient;
+
+    @Override
+    public RealmIndexResponse fetchRealmIndex(Region region) {
+        String path = BlizzardApiUrlBuilder.builder(region).realmIndex().build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build();
+        return restApiClient.get(path, params, RealmIndexResponse.class);
+    }
+
+    @Override
+    public Realm fetchRealm(Region region, String slug) {
+        String path = BlizzardApiUrlBuilder.builder(region).realm(slug).build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build();
+        return null;
+    }
+}
