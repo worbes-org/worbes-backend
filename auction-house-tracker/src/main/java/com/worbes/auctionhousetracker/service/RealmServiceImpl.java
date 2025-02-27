@@ -3,6 +3,7 @@ package com.worbes.auctionhousetracker.service;
 import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
 import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
+import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
@@ -21,6 +22,21 @@ public class RealmServiceImpl implements RealmService {
 
     private final RestApiClient restApiClient;
 
+    public static Long extractIdFromUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("URL must not be null or empty");
+        }
+
+        String[] parts = url.split("\\?")[0].split("/");
+        String lastPart = parts[parts.length - 1];
+
+        try {
+            return Long.parseLong(lastPart);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid ID format in URL: " + url);
+        }
+    }
+
     @Override
     public RealmIndexResponse fetchRealmIndex(Region region) {
         String path = BlizzardApiUrlBuilder.builder(region).realmIndex().build();
@@ -32,6 +48,11 @@ public class RealmServiceImpl implements RealmService {
     public Realm fetchRealm(Region region, String slug) {
         String path = BlizzardApiUrlBuilder.builder(region).realm(slug).build();
         Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build();
-        return null;
+        RealmResponse realmResponse = restApiClient.get(path, params, RealmResponse.class);
+        return Realm.builder()
+                .id(realmResponse.getId())
+                .name(realmResponse.getName())
+                .connectedRealmId(extractIdFromUrl(realmResponse.getConnectedRealmHref()))
+                .build();
     }
 }
