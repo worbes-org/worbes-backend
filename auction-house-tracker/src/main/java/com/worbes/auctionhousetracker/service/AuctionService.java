@@ -51,7 +51,7 @@ public interface AuctionService {
      * @param region 대상 지역
      * @return 경매 데이터 목록
      */
-    List<Auction> fetchAuctions(Region region);
+    List<Auction> fetchCommodities(Region region);
 
     /**
      * 특정 지역과 realm의 경매장 데이터를 Blizzard API에서 가져옵니다.
@@ -62,7 +62,7 @@ public interface AuctionService {
      * @param realmId realm ID (null인 경우 commodities 경매장 데이터 조회)
      * @return 경매 데이터 목록
      */
-    List<Auction> fetchAuctions(Region region, Integer realmId);
+    List<Auction> fetchAuctions(Region region, Long realmId);
 
     void saveAuctions(List<Auction> mockAuctions);
 }

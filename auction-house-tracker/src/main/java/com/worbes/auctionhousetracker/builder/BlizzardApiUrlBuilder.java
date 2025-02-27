@@ -20,6 +20,11 @@ public class BlizzardApiUrlBuilder {
         return new BlizzardApiUrlBuilder(region);
     }
 
+    public BlizzardApiUrlBuilder auctions(Long realmId) {
+        this.path = String.format("/data/wow/connected-realm/%s/auction", realmId);
+        return this;
+    }
+
     public BlizzardApiUrlBuilder commodities() {
         this.path = "/data/wow/auctions/commodities";
         return this;

@@ -35,7 +35,6 @@ public class Auction {
 
     private boolean active = true;
 
-
     public Auction(AuctionResponse.AuctionDto dto, Region region) {
         this.auctionId = dto.getId();
         this.itemId = dto.getItemId();

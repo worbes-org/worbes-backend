@@ -52,7 +52,7 @@ class AuctionServiceImplTest {
         given(restApiClient.get(anyString(), anyMap(), eq(AuctionResponse.class))).willReturn(mockedResponse);
 
         // When
-        List<Auction> result = auctionService.fetchAuctions(region);
+        List<Auction> result = auctionService.fetchCommodities(region);
 
         // Then
         verify(restApiClient).get(

@@ -35,7 +35,7 @@ public class AuctionServiceImpl implements AuctionService {
         if (newAuctions == null) {
             throw new IllegalArgumentException("New auctions list must not be null");
         }
-        log.debug("Updating auctions for region: {}, realmId: {}", region, realmId);
+        log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, RealmId: {})", region, realmId);
 
         // 1. 현재 활성화된 경매 목록 조회
         List<Auction> activeAuctions;
@@ -56,9 +56,10 @@ public class AuctionServiceImpl implements AuctionService {
                 .collect(Collectors.toSet());
 
         // 4. 종료된 경매 처리 (새로운 목록에 없는 기존 경매)
-        activeAuctions.stream()
+        List<Auction> endedAuctions = activeAuctions.stream()
                 .filter(auction -> !newAuctionIds.contains(auction.getAuctionId()))
-                .forEach(Auction::end);
+                .peek(Auction::end) // 종료 처리
+                .toList();
 
         // 5. 새로운 경매만 저장 (기존에 없던 것들만)
         List<Auction> auctionsToSave = newAuctions.stream()
@@ -66,7 +67,10 @@ public class AuctionServiceImpl implements AuctionService {
                 .toList();
 
         repository.saveAll(auctionsToSave);
-        log.debug("Updated {} active auctions, saved {} new auctions", activeAuctions.size(), auctionsToSave.size());
+        log.info("✅ 경매 데이터 업데이트 완료: 새로 추가된 경매 {}개, 종료된 경매 {}개",
+                auctionsToSave.size(),
+                endedAuctions.size()
+        );
     }
 
     @Override
@@ -76,7 +80,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> fetchAuctions(Region region) {
+    public List<Auction> fetchCommodities(Region region) {
         return restApiClient.get(
                         BlizzardApiUrlBuilder.builder(region).commodities().build(),
                         BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
@@ -89,8 +93,16 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> fetchAuctions(Region region, Integer realmId) {
-        return null;
+    public List<Auction> fetchAuctions(Region region, Long realmId) {
+        return restApiClient.get(
+                        BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
+                        BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
+                        AuctionResponse.class
+                )
+                .getAuctions()
+                .stream()
+                .map(dto -> new Auction(dto, region, realmId))
+                .toList();
     }
 
     @Override
