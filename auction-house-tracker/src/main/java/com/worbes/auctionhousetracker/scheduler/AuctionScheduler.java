@@ -6,9 +6,12 @@ import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.service.AuctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -17,9 +20,15 @@ import java.util.List;
 public class AuctionScheduler {
 
     private final AuctionService auctionService;
+    private final ThreadPoolTaskScheduler taskScheduler;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000) // 1시간 마다 실행
-    public void collectCommoditiesKR() {
+    @EventListener(ApplicationReadyEvent.class) // 애플리케이션 준비 완료 후 실행
+    public void startScheduledTask() {
+        log.info("⏳ 스케줄러 시작...");
+        taskScheduler.scheduleAtFixedRate(this::collectAuctionData, Duration.ofHours(1));
+    }
+
+    public void collectAuctionData() {
         log.info("⏳ Fetching auction data...");
         try {
             Region region = Region.KR; // 지역 설정 (필요하면 여러 개 지원 가능)
