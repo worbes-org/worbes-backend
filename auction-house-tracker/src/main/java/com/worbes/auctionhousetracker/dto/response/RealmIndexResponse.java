@@ -14,7 +14,7 @@ public class RealmIndexResponse {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class RealmIndexElement {
+    public static class RealmIndexElement {
         private Long id;
         private Language name;
         private String slug;

@@ -1,5 +1,8 @@
 package com.worbes.auctionhousetracker.entity.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Region {
     US("us"),
     KR("kr");
@@ -10,7 +13,4 @@ public enum Region {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

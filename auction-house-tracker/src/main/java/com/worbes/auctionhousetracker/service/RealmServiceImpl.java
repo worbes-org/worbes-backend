@@ -7,6 +7,7 @@ import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
+import com.worbes.auctionhousetracker.repository.RealmRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 @RequiredArgsConstructor
 public class RealmServiceImpl implements RealmService {
 
+    private final RealmRepository realmRepository;
     private final RestApiClient restApiClient;
 
     public static Long extractIdFromUrl(String url) {
@@ -51,8 +53,19 @@ public class RealmServiceImpl implements RealmService {
         RealmResponse realmResponse = restApiClient.get(path, params, RealmResponse.class);
         return Realm.builder()
                 .id(realmResponse.getId())
+                .region(region)
                 .name(realmResponse.getName())
                 .connectedRealmId(extractIdFromUrl(realmResponse.getConnectedRealmHref()))
                 .build();
+    }
+
+    @Override
+    public void saveAll(Iterable<Realm> realms) {
+        realmRepository.saveAll(realms);
+    }
+
+    @Override
+    public long count() {
+        return realmRepository.count();
     }
 }

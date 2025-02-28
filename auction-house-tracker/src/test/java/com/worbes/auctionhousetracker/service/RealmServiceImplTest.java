@@ -8,6 +8,7 @@ import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.exception.RestApiClientException;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
+import com.worbes.auctionhousetracker.repository.RealmRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class RealmServiceImplTest {
+
+    @Mock
+    RealmRepository realmRepository;
 
     @Mock
     RestApiClient restApiClient;

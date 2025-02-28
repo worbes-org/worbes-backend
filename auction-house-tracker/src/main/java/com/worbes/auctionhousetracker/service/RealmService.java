@@ -9,4 +9,8 @@ public interface RealmService {
     RealmIndexResponse fetchRealmIndex(Region region);
 
     Realm fetchRealm(Region region, String slug);
+
+    void saveAll(Iterable<Realm> realms);
+
+    long count();
 }
