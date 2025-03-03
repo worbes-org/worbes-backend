@@ -4,6 +4,7 @@ import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface RealmService {
@@ -42,4 +43,9 @@ public interface RealmService {
      * 특정 지역의 모든 서버 데이터를 초기화합니다.
      */
     CompletableFuture<Void> fetchAndSaveRealms(Region region);
+
+    /**
+     * 특정 Region에 해당하는 모든 connected realm의 ID 목록을 반환합니다.
+     */
+    List<Long> getConnectedRealmIdsByRegion(Region region);
 }

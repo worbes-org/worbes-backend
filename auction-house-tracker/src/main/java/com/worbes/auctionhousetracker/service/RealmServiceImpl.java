@@ -117,4 +117,9 @@ public class RealmServiceImpl implements RealmService {
                 .thenAccept(this::saveAll)
                 .thenRun(() -> log.info("✅ [{}] - 모든 서버 데이터 저장 완료", region.name()));
     }
+
+    @Override
+    public List<Long> getConnectedRealmIdsByRegion(Region region) {
+        return realmRepository.findDistinctConnectedRealmIdsByRegion(region);
+    }
 }
