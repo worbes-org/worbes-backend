@@ -8,35 +8,43 @@ import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.RealmRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class RealmServiceImpl implements RealmService {
 
     private final RealmRepository realmRepository;
     private final RestApiClient restApiClient;
+    private final ThreadPoolTaskExecutor taskExecutor;
 
-    public static Long extractIdFromUrl(String url) {
-        if (url == null || url.isEmpty()) {
-            throw new IllegalArgumentException("URL must not be null or empty");
-        }
+    public RealmServiceImpl(RealmRepository realmRepository,
+                            RestApiClient restApiClient,
+                            @Qualifier("taskExecutor") ThreadPoolTaskExecutor taskExecutor) {
+        this.realmRepository = realmRepository;
+        this.restApiClient = restApiClient;
+        this.taskExecutor = taskExecutor;
+    }
 
-        String[] parts = url.split("\\?")[0].split("/");
-        String lastPart = parts[parts.length - 1];
+    @Override
+    public long count() {
+        return realmRepository.count();
+    }
 
-        try {
-            return Long.parseLong(lastPart);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid ID format in URL: " + url);
-        }
+    @Override
+    public void saveAll(Iterable<Realm> realms) {
+        realmRepository.saveAll(realms);
     }
 
     @Override
@@ -60,12 +68,53 @@ public class RealmServiceImpl implements RealmService {
     }
 
     @Override
-    public void saveAll(Iterable<Realm> realms) {
-        realmRepository.saveAll(realms);
+    public CompletableFuture<Realm> fetchRealmAsync(Region region, String slug) {
+        return CompletableFuture.supplyAsync(() -> fetchRealm(region, slug), taskExecutor);
+    }
+
+    private Long extractIdFromUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("URL must not be null or empty");
+        }
+        try {
+            URL parsedUrl = new URL(url);
+            String path = parsedUrl.getPath();
+            // 경로에 슬래시로 끝나는 경우 제거
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            String[] pathSegments = path.split("/");
+            String lastSegment = pathSegments[pathSegments.length - 1];
+            return Long.parseLong(lastSegment);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL format: " + url, e);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid ID format in URL: " + url, e);
+        }
     }
 
     @Override
-    public long count() {
-        return realmRepository.count();
+    public boolean isRealmInitialized() {
+        long count = realmRepository.count();
+        log.info("현재 저장된 서버 수: {}", count);
+        return count > 0;
+    }
+
+    @Override
+    public CompletableFuture<Void> fetchAndSaveRealms(Region region) {
+        log.info("Initializing realms for region: {}", region);
+        // Realm 인덱스 조회
+        RealmIndexResponse realmIndexResponse = fetchRealmIndex(region);
+
+        // 각 Realm 정보 비동기로 조회
+        List<CompletableFuture<Realm>> realmFutures = realmIndexResponse.getRealms().stream()
+                .map(realm -> fetchRealmAsync(region, realm.getSlug()))
+                .toList();
+
+        // 모든 비동기 작업 완료 대기 후 저장
+        return CompletableFuture.allOf(realmFutures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> realmFutures.stream().map(CompletableFuture::join).toList())
+                .thenAccept(this::saveAll)
+                .thenRun(() -> log.info("✅ [{}] - 모든 서버 데이터 저장 완료", region.name()));
     }
 }
