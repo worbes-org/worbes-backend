@@ -28,55 +28,69 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     @Transactional
+    public void updateAuctions(List<Auction> newAuctions, Region region) {
+        updateAuctions(newAuctions, region, null);
+    }
+
+    @Override
+    @Transactional
     public void updateAuctions(List<Auction> newAuctions, Region region, Long realmId) {
+        validateInputs(newAuctions, region);
+
+        log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, RealmId: {})", region, realmId);
+
+        List<Auction> activeAuctions = findActiveAuctions(region, realmId);
+        Set<Long> existingAuctionIds = extractAuctionIds(activeAuctions);
+        Set<Long> newAuctionIds = extractAuctionIds(newAuctions);
+
+        List<Auction> endedAuctions = markEndedAuctions(activeAuctions, newAuctionIds);
+        List<Auction> auctionsToSave = filterNewAuctions(newAuctions, existingAuctionIds);
+
+        repository.saveAll(auctionsToSave);
+
+        log.info("✅ 경매 데이터 업데이트 완료: 새로 추가된 경매 {}개, 종료된 경매 {}개",
+                auctionsToSave.size(), endedAuctions.size());
+    }
+
+    // 입력 값 검증 메서드
+    private void validateInputs(List<Auction> newAuctions, Region region) {
         if (region == null) {
             throw new IllegalArgumentException("Region must not be null");
         }
         if (newAuctions == null) {
             throw new IllegalArgumentException("New auctions list must not be null");
         }
-        log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, RealmId: {})", region, realmId);
-
-        // 1. 현재 활성화된 경매 목록 조회
-        List<Auction> activeAuctions;
-        if (realmId == null) {
-            activeAuctions = repository.findByActiveTrueAndRegion(region);
-        } else {
-            activeAuctions = repository.findByActiveTrueAndRegionAndRealmId(region, realmId);
-        }
-
-        // 2. 기존 경매 ID 목록 생성
-        Set<Long> existingAuctionIds = activeAuctions.stream()
-                .map(Auction::getAuctionId)
-                .collect(Collectors.toSet());
-
-        // 3. 새로운 경매 ID 목록 생성
-        Set<Long> newAuctionIds = newAuctions.stream()
-                .map(Auction::getAuctionId)
-                .collect(Collectors.toSet());
-
-        // 4. 종료된 경매 처리 (새로운 목록에 없는 기존 경매)
-        List<Auction> endedAuctions = activeAuctions.stream()
-                .filter(auction -> !newAuctionIds.contains(auction.getAuctionId()))
-                .peek(Auction::end) // 종료 처리
-                .toList();
-
-        // 5. 새로운 경매만 저장 (기존에 없던 것들만)
-        List<Auction> auctionsToSave = newAuctions.stream()
-                .filter(auction -> !existingAuctionIds.contains(auction.getAuctionId()))
-                .toList();
-
-        repository.saveAll(auctionsToSave);
-        log.info("✅ 경매 데이터 업데이트 완료: 새로 추가된 경매 {}개, 종료된 경매 {}개",
-                auctionsToSave.size(),
-                endedAuctions.size()
-        );
     }
 
-    @Override
-    @Transactional
-    public void updateAuctions(List<Auction> newAuctions, Region region) {
-        updateAuctions(newAuctions, region, null);
+    // 활성 경매 조회
+    private List<Auction> findActiveAuctions(Region region, Long realmId) {
+        if (realmId == null) {
+            return repository.findByActiveTrueAndRegion(region);
+        } else {
+            return repository.findByActiveTrueAndRegionAndRealmId(region, realmId);
+        }
+    }
+
+    // Auction ID 추출
+    private Set<Long> extractAuctionIds(List<Auction> auctions) {
+        return auctions.stream()
+                .map(Auction::getAuctionId)
+                .collect(Collectors.toSet());
+    }
+
+    // 종료된 경매 처리: 새로운 경매 목록에 없는 기존 경매 상태 변경
+    private List<Auction> markEndedAuctions(List<Auction> activeAuctions, Set<Long> newAuctionIds) {
+        return activeAuctions.stream()
+                .filter(auction -> !newAuctionIds.contains(auction.getAuctionId()))
+                .peek(Auction::end)
+                .toList();
+    }
+
+    // 신규 경매 필터링: 기존 경매 목록에 없는 것만 추출
+    private List<Auction> filterNewAuctions(List<Auction> newAuctions, Set<Long> existingAuctionIds) {
+        return newAuctions.stream()
+                .filter(auction -> !existingAuctionIds.contains(auction.getAuctionId()))
+                .toList();
     }
 
     @Override
