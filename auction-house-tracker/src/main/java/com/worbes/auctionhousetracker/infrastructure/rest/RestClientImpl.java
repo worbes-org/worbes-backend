@@ -77,7 +77,7 @@ public class RestClientImpl implements RestApiClient {
             throw new RestApiClientException(errorMessage, statusCode.value());
         } catch (IOException e) {
             log.error("🔥 API 응답 처리 중 예외 발생: {}", e.getMessage());
-            throw new RestApiClientException(e.getMessage());
+            throw new RestApiClientException(e.getMessage(), e.getCause());
         }
     }
 
