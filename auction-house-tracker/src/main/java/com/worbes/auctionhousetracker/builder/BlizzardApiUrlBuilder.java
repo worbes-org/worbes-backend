@@ -21,7 +21,7 @@ public class BlizzardApiUrlBuilder {
     }
 
     public BlizzardApiUrlBuilder auctions(Long realmId) {
-        this.path = String.format("/data/wow/connected-realm/%s/auction", realmId);
+        this.path = String.format("/data/wow/connected-realm/%s/auctions", realmId);
         return this;
     }
 
