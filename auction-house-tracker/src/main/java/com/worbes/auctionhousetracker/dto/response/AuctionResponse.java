@@ -19,10 +19,11 @@ public class AuctionResponse {
         private long id;
         private long itemId;
         private long quantity;
+        private long buyout;
 
         @JsonProperty("unit_price")
         private long unitPrice;
- 
+
         @JsonProperty("item")
         private void unpackNestedItem(Map<String, Object> item) {
             if (item != null) {

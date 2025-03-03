@@ -37,10 +37,9 @@ public class AuctionScheduler {
             auctionService.updateAuctions(auctionService.fetchCommodities(region), region);
 
             //region - connected realm 경매 업데이트
-            realmService.getConnectedRealmIdsByRegion(region)
-                    .forEach(id ->
-                            auctionService.updateAuctions(auctionService.fetchAuctions(region, id), region, id)
-                    );
+            realmService.getConnectedRealmIdsByRegion(region).forEach(
+                    id -> auctionService.updateAuctions(auctionService.fetchAuctions(region, id), region, id)
+            );
 
             log.info("✅ Auction data updated successfully.");
         } catch (Exception e) {

@@ -28,6 +28,8 @@ public class Auction {
 
     private Long unitPrice;
 
+    private Long buyout;
+
     @Enumerated(EnumType.STRING)
     private Region region;
 
@@ -49,6 +51,7 @@ public class Auction {
         this.itemId = dto.getItemId();
         this.quantity = dto.getQuantity();
         this.unitPrice = dto.getUnitPrice();
+        this.buyout = dto.getBuyout();
         this.region = region;
         this.realmId = realmId;
     }
