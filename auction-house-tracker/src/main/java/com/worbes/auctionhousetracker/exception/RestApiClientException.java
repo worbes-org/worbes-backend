@@ -16,4 +16,9 @@ public class RestApiClientException extends RuntimeException {
         super(message);
         this.statusCode = statusCode;
     }
+
+    public RestApiClientException(String message, Throwable cause) {
+        super(message, cause);
+        this.statusCode = 0;
+    }
 }
