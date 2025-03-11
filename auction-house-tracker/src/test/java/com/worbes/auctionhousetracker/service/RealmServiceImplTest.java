@@ -6,7 +6,7 @@ import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.exception.RestApiClientException;
+import com.worbes.auctionhousetracker.exception.UnauthorizedException;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.RealmRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,12 +150,11 @@ class RealmServiceImplTest {
     void fetchRealmIndexWhenApiFails() {
         // given: API 호출 시 예외 발생하도록 설정
         given(restApiClient.get(eq(realmIndexPath), eq(realmIndexParams), eq(RealmIndexResponse.class)))
-                .willThrow(new RestApiClientException("API 오류"));
+                .willThrow(new UnauthorizedException());
 
         // when & then: 메서드 호출 시 예외가 발생하는지 검증
         assertThatThrownBy(() -> realmService.fetchRealmIndex(region))
-                .isInstanceOf(RestApiClientException.class)
-                .hasMessage("API 오류");
+                .isInstanceOf(UnauthorizedException.class);
     }
 
     @Test
@@ -204,12 +203,11 @@ class RealmServiceImplTest {
     void fetchRealmWhenApiFails() {
         // given: API 호출 시 예외 발생하도록 설정
         given(restApiClient.get(eq(realmPath), eq(realmParams), eq(RealmResponse.class)))
-                .willThrow(new RestApiClientException("API 오류"));
+                .willThrow(new UnauthorizedException());
 
         // when & then: 메서드 호출 시 예외가 발생하는지 검증
         assertThatThrownBy(() -> realmService.fetchRealm(region, realmSlug))
-                .isInstanceOf(RestApiClientException.class)
-                .hasMessage("API 오류");
+                .isInstanceOf(UnauthorizedException.class);
     }
 
     @Test
