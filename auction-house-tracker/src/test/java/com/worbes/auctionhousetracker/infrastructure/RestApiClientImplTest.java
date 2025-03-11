@@ -37,7 +37,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @Slf4j
 @RestClientTest(RestApiClient.class)
-class RestClientImplTest {
+class RestApiClientImplTest {
 
     @Autowired
     MockRestServiceServer server;

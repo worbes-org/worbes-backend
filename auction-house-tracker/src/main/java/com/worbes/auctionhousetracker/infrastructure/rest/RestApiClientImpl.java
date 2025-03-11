@@ -22,30 +22,31 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class RestClientImpl implements RestApiClient {
+public class RestApiClientImpl implements RestApiClient {
 
-    private static final int MAX_ATTEMPTS = 1;
-    private static final int BACK_OFF_DELAY = 1500;
     private final RestClient restClient;
-    private final AccessTokenHandler tokenService;
+    private final AccessTokenHandler accessTokenHandler;
 
-    public RestClientImpl(RestClient.Builder builder, AccessTokenHandler tokenService) {
+    public RestApiClientImpl(RestClient.Builder builder, AccessTokenHandler accessTokenHandler) {
         this.restClient = builder
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        this.tokenService = tokenService;
+        this.accessTokenHandler = accessTokenHandler;
     }
 
     @Override
-    @Retryable(recover = "recover", maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = BACK_OFF_DELAY))
+    @Retryable(
+            recover = "recover",
+            backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
+    )
     public <T> T get(String url, Map<String, String> params, Class<T> responseType) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         params.forEach(builder::queryParam);
         URI uri = builder.build().toUri();
         return restClient.get()
                 .uri(uri)
-                .header("Authorization", String.format("Bearer %s", tokenService.get()))
+                .header("Authorization", String.format("Bearer %s", accessTokenHandler.get()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleApiError)
                 .body(responseType);
@@ -63,7 +64,7 @@ public class RestClientImpl implements RestApiClient {
 
             if (statusCode == HttpStatus.UNAUTHORIZED) {
                 log.warn("인증 오류 발생, 토큰 갱신 시작.");
-                tokenService.refresh();
+                accessTokenHandler.refresh();
                 throw new UnauthorizedException(errorMessage);
             } else if (statusCode == HttpStatus.TOO_MANY_REQUESTS) {
                 log.warn("요청 횟수 초과, 재시도 필요.");
