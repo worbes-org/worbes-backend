@@ -1,6 +1,5 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.TestUtils;
 import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
 import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
@@ -20,13 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import static com.worbes.auctionhousetracker.TestUtils.createDummyAuction;
-import static com.worbes.auctionhousetracker.TestUtils.createRandomAuctionDtos;
+import static com.worbes.auctionhousetracker.TestUtils.loadJsonResource;
 import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AuctionServiceImplTest {
@@ -45,12 +44,11 @@ class AuctionServiceImplTest {
     @DisplayName("각 리전별로 올바른 URL과 파라미터로 경매장 데이터를 가져오는지 검증")
     void fetchAuctions_ShouldBuildCorrectUrlAndParamsForEachRegion(Region region) {
         // Given
-        AuctionResponse mockedResponse = mock(AuctionResponse.class);
-        given(mockedResponse.getAuctions()).willReturn(createRandomAuctionDtos(10));
-        given(restApiClient.get(anyString(), anyMap(), eq(AuctionResponse.class))).willReturn(mockedResponse);
+        AuctionResponse auctionResponse = loadJsonResource("/json/auction-response.json", AuctionResponse.class);
+        given(restApiClient.get(anyString(), anyMap(), eq(AuctionResponse.class))).willReturn(auctionResponse);
 
         // When
-        List<Auction> result = auctionService.fetchCommodities(region);
+        AuctionResponse result = auctionService.fetchCommodities(region);
 
         // Then
         verify(restApiClient).get(
@@ -59,22 +57,19 @@ class AuctionServiceImplTest {
                 eq(AuctionResponse.class)
         );
         assertNotNull(result);
-        assertEquals(mockedResponse.getAuctions().size(), result.size());
+        assertEquals(auctionResponse.getAuctions().size(), result.getAuctions().size());
     }
 
     @Test
     void saveAuctions_ShouldSaveFetchedAuctionsToDatabase() {
         // Given
-        List<Auction> auctions = createRandomAuctionDtos(100000)
-                .stream()
-                .map(dto -> new Auction(dto, Region.KR))
-                .toList();
+        List<Auction> auctions = List.of(Auction.builder().build(), Auction.builder().build(), Auction.builder().build());
 
         // When
         auctionService.saveAuctions(auctions);
 
         // Then
-        verify(auctionRepository, times(1)).saveAll(auctions); // ✅ DB에 저장됐는지 검증
+        verify(auctionRepository, times(1)).saveAll(auctions);
     }
 
     @Test
@@ -82,19 +77,28 @@ class AuctionServiceImplTest {
     void updateAuctions_ShouldDeactivateAuctionsNotInNewList() {
         // Given
         Region region = Region.KR;
-        Auction dummyAuction1 = createDummyAuction(1L, 10L, region, null, true);
-        Auction dummyAuction2 = createDummyAuction(2L, 11L, region, null, true);
+        Auction dummyAuction1 = Auction.builder()
+                .auctionId(1L)
+                .region(region)
+                .build();
+        Auction dummyAuction2 = Auction.builder()
+                .auctionId(2L)
+                .region(region)
+                .build();
         given(auctionRepository.findByActiveTrueAndRegion(region))
                 .willReturn(List.of(dummyAuction1, dummyAuction2));
 
         // When
         List<Auction> newAuctions = List.of(
-                createDummyAuction(1L, 10L, region, null, true)  // auction1만 포함
+                Auction.builder()
+                        .auctionId(1L)
+                        .region(region)
+                        .build()
         );
         auctionService.updateAuctions(newAuctions, region);
 
         // Then
-        assertFalse(dummyAuction2.isActive());  // auction2가 비활성화되었는지 확인
+        assertFalse(dummyAuction2.isActive());
     }
 
     @Test
@@ -102,14 +106,23 @@ class AuctionServiceImplTest {
     void updateAuctions_ShouldSaveOnlyNewAuctions() {
         // Given
         Region region = Region.KR;
-        Auction existingAuction = createDummyAuction(1L, 10L, region, null, true);
+        Auction existingAuction = Auction.builder()
+                .auctionId(1L)
+                .region(region)
+                .build();
         given(auctionRepository.findByActiveTrueAndRegion(region))
                 .willReturn(List.of(existingAuction));
 
         // When
         List<Auction> newAuctions = List.of(
-                createDummyAuction(1L, 10L, region, null, true),  // 기존 경매
-                createDummyAuction(2L, 11L, region, null, true)   // 새로운 경매
+                Auction.builder()
+                        .auctionId(1L)
+                        .region(region)
+                        .build(),
+                Auction.builder()
+                        .auctionId(2L)
+                        .region(region)
+                        .build()
         );
         auctionService.updateAuctions(newAuctions, region);
 
@@ -129,8 +142,14 @@ class AuctionServiceImplTest {
                 .willReturn(List.of());
 
         List<Auction> newAuctions = List.of(
-                createDummyAuction(1L, 10L, region, null, true),
-                createDummyAuction(2L, 11L, region, null, true)
+                Auction.builder()
+                        .auctionId(1L)
+                        .region(region)
+                        .build(),
+                Auction.builder()
+                        .auctionId(2L)
+                        .region(region)
+                        .build()
         );
 
         // When
@@ -147,8 +166,14 @@ class AuctionServiceImplTest {
     void updateAuctions_WhenNoNewAuctions_ShouldDeactivateAllExistingAuctions() {
         // Given
         Region region = Region.KR;
-        Auction auction1 = TestUtils.createDummyAuction(1L, 10L, region, null, true);
-        Auction auction2 = TestUtils.createDummyAuction(2L, 11L, region, null, true);
+        Auction auction1 = Auction.builder()
+                .auctionId(1L)
+                .region(region)
+                .build();
+        Auction auction2 = Auction.builder()
+                .auctionId(2L)
+                .region(region)
+                .build();
         given(auctionRepository.findByActiveTrueAndRegion(region))
                 .willReturn(List.of(auction1, auction2));
 
@@ -169,13 +194,21 @@ class AuctionServiceImplTest {
         // Given
         Region region = Region.KR;
         Long realmId = 1L;
-        Auction existingAuction = createDummyAuction(1L, 10L, region, realmId, true);
+        Auction existingAuction = Auction.builder()
+                .auctionId(1L)
+                .region(region)
+                .realmId(realmId)
+                .build();
         given(auctionRepository.findByActiveTrueAndRegionAndRealmId(region, realmId))
                 .willReturn(List.of(existingAuction));
 
         // When
         List<Auction> newAuctions = List.of(
-                createDummyAuction(2L, 11L, region, realmId, true)
+                Auction.builder()
+                        .auctionId(2L)
+                        .region(region)
+                        .realmId(realmId)
+                        .build()
         );
         auctionService.updateAuctions(newAuctions, region, realmId);
 
@@ -193,5 +226,4 @@ class AuctionServiceImplTest {
                         auctionService.updateAuctions(List.of(), null))
         );
     }
-
 }

@@ -17,16 +17,22 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
+    show-sql: true # JPA/Hibernate가 실행하는 SQL 쿼리를 콘솔에 출력
     hibernate:
-      ddl-auto: update # create, update, validate
+      ddl-auto: create # create, update, validate
     properties:
-      use_sql_comments: true
-      format_sql: true
       hibernate:
+        order_updates: true
+        format_sql: true # 쿼리를 보기 좋게 정렬
         jdbc:
           batch_size: 1000
-        order_updates: true
+#        use_sql_comments: true # (선택) SQL에 주석 표시
 #        generate_statistics: true #배치 적용 됐는지 확인할 수 있는 통계 제공 옵션
+
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 ---
 spring:
   config:

@@ -5,6 +5,7 @@ import com.worbes.auctionhousetracker.entity.embeded.Language;
 import com.worbes.auctionhousetracker.entity.enums.Quality;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnTransformer;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +30,7 @@ public class Item {
     private Integer itemLevel;
 
     @Column(columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     private String previewItem;
 
     private String iconUrl;

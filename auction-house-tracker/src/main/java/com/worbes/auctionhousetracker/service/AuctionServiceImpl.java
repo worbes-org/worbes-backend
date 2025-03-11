@@ -94,29 +94,20 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> fetchCommodities(Region region) {
+    public AuctionResponse fetchCommodities(Region region) {
         return restApiClient.get(
-                        BlizzardApiUrlBuilder.builder(region).commodities().build(),
-                        BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                        AuctionResponse.class
-                )
-                .getAuctions()
-                .stream()
-                .map(dto -> new Auction(dto, region))
-                .toList();
+                BlizzardApiUrlBuilder.builder(region).commodities().build(),
+                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
+                AuctionResponse.class
+        );
     }
 
     @Override
-    public List<Auction> fetchAuctions(Region region, Long realmId) {
+    public AuctionResponse fetchAuctions(Region region, Long realmId) {
         return restApiClient.get(
-                        BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
-                        BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                        AuctionResponse.class
-                )
-                .getAuctions()
-                .stream()
-                .map(dto -> new Auction(dto, region, realmId))
-                .toList();
+                BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
+                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
+                AuctionResponse.class);
     }
 
     @Override

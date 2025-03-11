@@ -1,8 +1,12 @@
 package com.worbes.auctionhousetracker.scheduler;
 
 
+import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
+import com.worbes.auctionhousetracker.entity.Auction;
+import com.worbes.auctionhousetracker.entity.Item;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.service.AuctionService;
+import com.worbes.auctionhousetracker.service.ItemService;
 import com.worbes.auctionhousetracker.service.RealmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +16,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -20,6 +25,7 @@ public class AuctionScheduler {
 
     private final AuctionService auctionService;
     private final RealmService realmService;
+    private final ItemService itemService;
     private final ThreadPoolTaskScheduler taskScheduler;
 
     @EventListener(ApplicationReadyEvent.class) // 애플리케이션 준비 완료 후 실행
@@ -34,12 +40,19 @@ public class AuctionScheduler {
             Region region = Region.KR;
 
             //region 전체 공통 경매 업데이트
-            auctionService.updateAuctions(auctionService.fetchCommodities(region), region);
-
-            //region - connected realm 경매 업데이트
-            realmService.getConnectedRealmIdsByRegion(region).forEach(
-                    id -> auctionService.updateAuctions(auctionService.fetchAuctions(region, id), region, id)
-            );
+            AuctionResponse auctionResponse = auctionService.fetchCommodities(region);
+            List<Auction> commodities = auctionResponse.getAuctions().stream()
+                    .map(dto -> {
+                        Item item = itemService.getItem(dto.getItemId());
+                        return Auction.builder()
+                                .auctionId(dto.getId())
+                                .item(item)
+                                .quantity(dto.getQuantity())
+                                .region(region)
+                                .unitPrice(dto.getUnitPrice())
+                                .build();
+                    }).toList();
+            auctionService.updateAuctions(commodities, region, null);
 
             log.info("✅ Auction data updated successfully.");
         } catch (Exception e) {

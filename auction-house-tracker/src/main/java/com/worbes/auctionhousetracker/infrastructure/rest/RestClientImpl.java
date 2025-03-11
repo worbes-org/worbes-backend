@@ -24,7 +24,7 @@ import java.util.Map;
 @Component
 public class RestClientImpl implements RestApiClient {
 
-    private static final int MAX_ATTEMPTS = 2;
+    private static final int MAX_ATTEMPTS = 1;
     private static final int BACK_OFF_DELAY = 1500;
     private final RestClient restClient;
     private final AccessTokenHandler tokenService;
@@ -85,7 +85,7 @@ public class RestClientImpl implements RestApiClient {
     @Recover
     public <T> T recover(RestApiClientException e, String path, Map<String, String> queryParams, Class<T> responseType) {
         log.error("🔥 예상치 못한 오류 발생 (최대 재시도 초과) | 요청 경로: {} | 메시지: {}", path, e.getMessage());
-        throw e;
+        return null;
     }
 
     @Recover
