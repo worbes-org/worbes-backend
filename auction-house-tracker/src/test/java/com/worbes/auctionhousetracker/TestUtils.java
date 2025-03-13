@@ -26,13 +26,13 @@ public class TestUtils {
     }
 
     public static ItemClassesIndexResponse createDummyItemClassesIndexResponse() {
-        List<ItemClassesIndexResponse.ItemClass> itemClasses = generateDummyItemClasses();
-        return new ItemClassesIndexResponse(itemClasses);
+        List<ItemClassesIndexResponse.ItemClassDto> itemClassDtos = generateDummyItemClasses();
+        return new ItemClassesIndexResponse(itemClassDtos);
     }
 
-    private static List<ItemClassesIndexResponse.ItemClass> generateDummyItemClasses() {
+    private static List<ItemClassesIndexResponse.ItemClassDto> generateDummyItemClasses() {
         return IntStream.range(0, 10) // You can adjust the range for more or fewer dummy items
-                .mapToObj(i -> new ItemClassesIndexResponse.ItemClass(
+                .mapToObj(i -> new ItemClassesIndexResponse.ItemClassDto(
                         (long) i,
                         createDummyLanguage() // Generate a dummy Language object for each ItemClass
                 ))

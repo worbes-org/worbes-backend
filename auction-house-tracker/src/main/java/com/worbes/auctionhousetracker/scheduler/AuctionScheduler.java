@@ -15,7 +15,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -30,8 +29,8 @@ public class AuctionScheduler {
 
     @EventListener(ApplicationReadyEvent.class) // 애플리케이션 준비 완료 후 실행
     public void startScheduledTask() {
-        log.info("⏳ 스케줄러 시작...");
-        taskScheduler.scheduleAtFixedRate(this::collectAuctionData, Duration.ofHours(1));
+//        log.info("⏳ 스케줄러 시작...");
+//        taskScheduler.scheduleAtFixedRate(this::collectAuctionData, Duration.ofHours(1));
     }
 
     public void collectAuctionData() {

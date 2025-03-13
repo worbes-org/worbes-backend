@@ -1,46 +1,27 @@
 package com.worbes.auctionhousetracker.entity;
 
-import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.Objects;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Table(name = "item_class",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"item_class_id", "locale"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class ItemClass {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Embedded
-    private Language names;
 
-    public ItemClass(Long id, Language names) {
-        this.id = id;
-        this.names = names;
-    }
+    @Column(name = "item_class_id", nullable = false)
+    private Long itemClassId;
 
-    public ItemClass(ItemClassesIndexResponse.ItemClass response) {
-        this.id = response.getId();
-        this.names = response.getName();
-    }
+    @Column(nullable = false, length = 50)
+    private String name; // 아이템 클래스 이름 (예: 무기, 방어구)
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        ItemClass itemClass = (ItemClass) object;
-        return Objects.equals(id, itemClass.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    @Column(nullable = false, length = 10)
+    private String locale;
 }
