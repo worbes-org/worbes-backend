@@ -7,7 +7,7 @@ import com.worbes.auctionhousetracker.dto.response.MediaResponse;
 import com.worbes.auctionhousetracker.entity.Item;
 import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.exception.RestApiClientException;
+import com.worbes.auctionhousetracker.exception.UnauthorizedException;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletionException;
 
@@ -78,17 +77,16 @@ class ItemServiceImplTest {
         Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(NamespaceType.STATIC).build();
 
         given(restApiClient.get(eq(itemPath), eq(params), eq(ItemResponse.class)))
-                .willThrow(new RestApiClientException("API 오류"));
+                .willThrow(new UnauthorizedException());
 
         // when & then
         assertThatThrownBy(() -> itemService.collectItemWithMedia(itemId))
-                .isInstanceOf(RestApiClientException.class)
-                .hasMessage("API 오류");
+                .isInstanceOf(UnauthorizedException.class);
     }
 
     @Test
     @DisplayName("아이템 정보 수집 - 미디어 API 실패")
-    void collectItemWhenMediaApiFails() throws IOException {
+    void collectItemWhenMediaApiFails() {
         // given
         ItemResponse itemResponse = loadJsonResource("/json/item-response.json", ItemResponse.class);
 
@@ -99,7 +97,7 @@ class ItemServiceImplTest {
         given(restApiClient.get(eq(itemPath), eq(params), eq(ItemResponse.class)))
                 .willReturn(itemResponse);
         given(restApiClient.get(eq(mediaPath), eq(params), eq(MediaResponse.class)))
-                .willThrow(new RestApiClientException("미디어 API 오류"));
+                .willThrow(new UnauthorizedException());
 
         // when & then
         assertThatThrownBy(() -> itemService.collectItemWithMedia(itemResponse.getId()))

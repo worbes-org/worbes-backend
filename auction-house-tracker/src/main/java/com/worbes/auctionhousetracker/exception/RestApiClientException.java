@@ -5,20 +5,16 @@ import lombok.Getter;
 
 @Getter
 public class RestApiClientException extends RuntimeException {
-    private final int statusCode;
 
-    public RestApiClientException(String message) {
-        super(message);
-        this.statusCode = 0;
-    }
+    private final Integer statusCode;
 
-    public RestApiClientException(String message, int statusCode) {
+    public RestApiClientException(String message, Integer statusCode) {
         super(message);
         this.statusCode = statusCode;
     }
 
-    public RestApiClientException(String message, Throwable cause) {
+    public RestApiClientException(String message, Integer statusCode, Throwable cause) {
         super(message, cause);
-        this.statusCode = 0;
+        this.statusCode = statusCode;
     }
 }

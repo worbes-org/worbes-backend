@@ -5,10 +5,6 @@ import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
 import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
-import com.worbes.auctionhousetracker.exception.RestApiClientException;
-import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
-import com.worbes.auctionhousetracker.exception.UnauthorizedException;
 import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +24,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -92,11 +88,10 @@ class RestApiClientImplTest {
                 .andRespond(withStatus(HttpStatus.TOO_MANY_REQUESTS));
 
         // When: fetchData 호출
-        assertThatThrownBy(() -> {
-            restApiClient.get(requestUri, requestParams, String.class);
-        }).isInstanceOf(TooManyRequestsException.class);
+        String result = restApiClient.get(requestUri, requestParams, String.class);
 
-        server.verify(); // 서버가 예상대로 호출되었는지 확인
+        server.verify();
+        assertNull(result);
     }
 
     @DisplayName("서버가 인증 오류를 반환할 때 recover 메서드 호출")
@@ -107,14 +102,12 @@ class RestApiClientImplTest {
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
         // When: fetchData 호출
-        assertThatThrownBy(() -> {
-            restApiClient.get(requestUri, requestParams, String.class);
-        }).isInstanceOf(UnauthorizedException.class);
+        String result = restApiClient.get(requestUri, requestParams, String.class);
 
-        // Then: @Recover 메서드가 호출되므로 결과는 null이어야 한다
         server.verify();
+        assertNull(result);
         // AccessTokenService의 refresh 메소드가 호출되어야 함
-        verify(tokenService, times(2)).refresh();
+        verify(tokenService, times(3)).refresh();
     }
 
     @DisplayName("서버가 INTERNAL_SERVER_ERROR을 반환할 때 recover 메서드 호출")
@@ -124,13 +117,10 @@ class RestApiClientImplTest {
         server.expect(ExpectedCount.manyTimes(), requestTo(expectedUri))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
-
-        // When: fetchData 호출
-        assertThatThrownBy(() -> {
-            restApiClient.get(requestUri, requestParams, String.class);
-        }).isInstanceOf(InternalServerErrorException.class);
+        String result = restApiClient.get(requestUri, requestParams, String.class);
 
         server.verify();
+        assertNull(result);
     }
 
     @DisplayName("예상치 못한 오류 발생 시 recover 메서드 호출")
@@ -139,11 +129,9 @@ class RestApiClientImplTest {
         server.expect(ExpectedCount.manyTimes(), requestTo(expectedUri))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST)); // 테스트 목적으로 사용
 
-        // When: fetchData 호출
-        assertThatThrownBy(() -> {
-            restApiClient.get(requestUri, requestParams, String.class);
-        }).isInstanceOf(RestApiClientException.class);
+        String result = restApiClient.get(requestUri, requestParams, String.class);
 
         server.verify();
+        assertNull(result);
     }
 }
