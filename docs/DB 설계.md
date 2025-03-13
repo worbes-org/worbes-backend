@@ -49,88 +49,60 @@
 
 ## 서버 (realm)
 
-| 컬럼명                  | 타입      | 제약 조건                | 설명                                      |
-|----------------------|---------|----------------------|-----------------------------------------|
-| `id`                 | 정수      | 정수형 PK, 자동 증가        | 테이블 기본 키                                |
-| `connected_realm_id` | 정수      | NOT NULL             | 연결된 Realm 식별 (WoW에서 Connected Realm 용도) |
-| `region`             | 문자열(10) | NOT NULL             | ‘KR’, ‘US’ 등. (Enum)                    |
-| `slug`               | 문자열(50) | UNIQUE(region, slug) | WoW API 식별자                             |
-
-## 서버 다국어 (realm_translation)
-
-| 컬럼명        | 타입      | 제약 조건                    | 설명                  |
-|------------|---------|--------------------------|---------------------|
-| `id`       | 정수      | PK                       | 테이블 기본 키            |
-| `realm_id` | 정수      | FK, NOT NULL             | realm.id 참조         |
-| `name`     | 문자열(50) | NOT NULL                 | 예: '아즈샤라', ‘하이잘'…   |
-| `locale`   | 문자열(10) | NOT NULL                 | 예: 'ko_KR', 'en_US’ |
-|            |         | UNIQUE(realm_id, locale) | 동일 서버+언어 중복 방지      |
+| 컬럼명                  | 타입      | 제약 조건                    | 설명                                  |
+|----------------------|---------|--------------------------|-------------------------------------|
+| `id`                 | 정수      | 정수형 PK, 자동 증가            | 테이블 기본 키                            |
+| `realm_id`           | 정수      | NOT NULL                 | Blizzard API의 id                    |
+| `connected_realm_id` | 정수      | NOT NULL                 | 연합 대표 서버의 아이디. 예: 줄진 연합 소속 서버 하이잘   |
+| `region`             | 문자열(10) | NOT NULL                 | ‘KR’, ‘US’ 등. (Enum)                |
+| `name`               | 문자열(50) | NOT NULL                 | 예: '아즈샤라', ‘하이잘'…                   |
+| `slug`               | 문자열(50) | NOT NULL                 | WoW API 식별자                         |
+| `locale`             | 문자열(10) | NOT NULL                 | 예: 'ko_KR', 'en_US’                 |
+|                      |         | UNIQUE(realm_id, locale) | 같은 `realm_id`에 대해 중복된 locale 입력 방지. |
 
 ## 아이템 클래스(item_class)
 
-| 컬럼명  | 타입 | 제약 조건  | 설명       |
-|------|----|--------|----------|
-| `id` | 정수 | 정수형 PK | 테이블 기본 키 |
-
-## 아이템 클래스 다국어(item_class_translation)
-
-| 컬럼명             | 타입      | 제약 조건                         | 설명                  |
-|-----------------|---------|-------------------------------|---------------------|
-| `id`            | 정수      | PK                            | 테이블 기본 키            |
-| `item_class_id` | 정수      | FK, NOT NULL                  | item_class.id 참조    |
-| `name`          | 문자열(50) | NOT NULL                      | 예: '무기', ‘방어구'…     |
-| `locale`        | 문자열(10) | NOT NULL                      | 예: 'ko_KR', 'en_US’ |
-|                 |         | UNIQUE(item_class_id, locale) | 동일 아이템 클래스+언어 중복 방지 |
+| 컬럼명             | 타입      | 제약 조건                         | 설명                                     |
+|-----------------|---------|-------------------------------|----------------------------------------|
+| `id`            | 정수      | 정수형 PK, , 자동 증가               | 테이블 기본 키                               |
+| `item_class_id` | 정수      | NOT NULL                      | Blizzard API의 id                       |
+| `name`          | 문자열(50) | NOT NULL                      | 예: '무기', ‘방어구'…                        |
+| `locale`        | 문자열(10) | NOT NULL                      | 예: 'ko_KR', 'en_US’                    |
+|                 |         | UNIQUE(item_class_id, locale) | 같은 `item_class_id`에서 중복된 번역이 들어가지 않도록. |
 
 ## 아이템 서브클래스(item_subclass)
 
-| 컬럼명               | 타입 | 제약 조건                                    | 설명                                         |
-|-------------------|----|------------------------------------------|--------------------------------------------|
-| `id`              | 정수 | 정수형 PK, 자동 증가                            | 내부 PK (서로게이트 키)                            |
-| `item_class_id`   | 정수 | FK, NOT NULL                             | item_class.id 참조                           |
-| `subclass_api_id` | 정수 | NOT NULL                                 | Blizzard API의 item_subclass_id             |
-|                   |    | UNIQUE (item_class_id, subclass_api_id), | 하나의 item_class 내에서 subclass_api_id가 유일해야 함 |
-
-## 아이템 서브클래스 다국어(item_subclass_translation)
-
-| 컬럼명                | 타입      | 제약 조건                                | 설명                                |
-|--------------------|---------|--------------------------------------|-----------------------------------|
-| `id`               | 정수      | PK                                   | 테이블 기본 키                          |
-| `item_class_pk_id` | 정수      | FK, NOT NULL                         | item_subclass.id 참조               |
-| `name`             | 문자열(50) | NOT NULL, 중복 가능                      | 예: ‘도끼’, ‘둔기’                     |
-| `verbose`          | 문자열(50) | NULLABLE                             | 예: ‘한손 도끼류’, ‘양손 도끼류’             |
-| `locale`           | 문자열(10) | NOT NULL                             | 예: 'ko_KR', 'en_US’               |
-|                    |         | UNIQUE (item_subclass_pk_id, locale) | 하나의 서브클래스 + 특정 언어 조합이 중복되지 않도록 함. |
+| 컬럼명             | 타입      | 제약 조건                                       | 설명                                               |
+|-----------------|---------|---------------------------------------------|--------------------------------------------------|
+| `id`            | 정수      | 정수형 PK, 자동 증가                               | 테이블 기본 키                                         |
+| `subclass_id`   | 정수      | NOT NULL                                    | Blizzard API의 id                                 |
+| `item_class_id` | 정수      | FK, NOT NULL                                | item_class.id 참조                                 |
+| `name`          | 문자열(50) | NOT NULL, 중복 가능                             | 예: ‘도끼’, ‘둔기’                                    |
+| `verbose`       | 문자열(50) | NULLABLE                                    | 예: ‘한손 도끼류’, ‘양손 도끼류’                            |
+| `locale`        | 문자열(10) | NOT NULL                                    | 예: 'ko_KR', 'en_US’                              |
+|                 |         | UNIQUE (item_class_id, subclass_id, locale) | 같은 item_class 내에서 동일 subclass_id + locale 중복 방지. |
 
 ## 아이템(Item)
 
-| 컬럼명                | 타입      | 제약 조건                             | 설명                         |
-|--------------------|---------|-----------------------------------|----------------------------|
-| `id`               | 정수      | PK, 자동 증가                         | 내부 PK (서로게이트 키)            |
-| `blizzard_item_id` | 정수      | UNIQUE, NOT NULL                  | 블리자드 API의 아이템 ID           |
-| `item_class_id`    | 정수      | FK → `item_class.id`, NOT NULL    | 공통 분류                      |
-| `item_subclass_id` | 정수      | FK → `item_subclass.id`, NOT NULL | 세부 분류                      |
-| `quality`          | 문자열(20) | NOT NULL                          | 'COMMON', 'EPIC' 등         |
-| `level`            | 정수      | NOT NULL                          | 아이템 레벨                     |
-| `required_level`   | 정수      | NOT NULL                          | 착용 최소 레벨                   |
-| `inventory_type`   | 문자열(20) | NOT NULL                          | 'HEAD', 'CHEST', 'WAIST' 등 |
-
-## 아이템 다국어(item_translation)
-
-| 컬럼명            | 타입      | 제약 조건                    | 설명                                               |
-|----------------|---------|--------------------------|--------------------------------------------------|
-| `id`           | 정수      | PK                       | 테이블 기본 키                                         |
-| `item_id`      | 정수      | FK, NOT NULL             | item.id 참조                                       |
-| `name`         | 문자열(50) | NOT NULL                 | 예: ‘유혹방울’, ‘점등원의 절단기’                            |
-| `preview_item` | JSONB   | NOT NULL                 | 아이템 요약 정보                                        |
-| `locale`       | 문자열(10) | NOT NULL                 | 예: 'ko_KR', 'en_US’                              |
-|                |         | UNIQUE (item_id, locale) | 동일 아이템, 동일 언어(locale)에 대해 **중복 번역**이 들어가지 않도록 제약 |
+| 컬럼명                | 타입      | 제약 조건                             | 설명                                               |
+|--------------------|---------|-----------------------------------|--------------------------------------------------|
+| `id`               | 정수      | PK, 자동 증가                         | 테이블 기본 키                                         |
+| `item_id`          | 정수      | NOT NULL                          | 블리자드 API의 아이템 ID                                 |
+| `item_class_id`    | 정수      | FK → `item_class.id`, NOT NULL    | 공통 분류                                            |
+| `item_subclass_id` | 정수      | FK → `item_subclass.id`, NOT NULL | 세부 분류                                            |
+| `quality`          | 문자열(20) | NOT NULL                          | 'COMMON', 'EPIC' 등                               |
+| `level`            | 정수      | NOT NULL                          | 아이템 레벨                                           |
+| `inventory_type`   | 문자열(20) | NOT NULL                          | 'HEAD', 'CHEST', 'WAIST' 등                       |
+| `name`             | 문자열(50) | NOT NULL                          | 아이템 이름 예: ‘유혹방울’, ‘점등원의 절단기’                     |
+| `preview_item`     | JSONB   | NOT NULL                          | 아이템 요약 정보                                        |
+| `locale`           | 문자열(10) | NOT NULL                          | 예: 'ko_KR', 'en_US’                              |
+|                    |         | UNIQUE (item_id, locale)          | 동일 아이템, 동일 언어(locale)에 대해 **중복 번역**이 들어가지 않도록 제약 |
 
 ## 경매(Auction)
 
 | 컬럼명          | 타입      | 제약 조건                                       | 설명                          |
 |--------------|---------|---------------------------------------------|-----------------------------|
-| `id`         | 정수      | PK                                          | 내부 PK (서로게이트 키)             |
+| `id`         | 정수      | PK, 자동 증가                                   | 테이블 기본 키                    |
 | `auction_id` | 정수      | UNIQUE, NOT NULL                            | 블리자드 API의 옥션 ID             |
 | `region`     | 문자열(10) | NOT NULL                                    | ‘KR’, ‘US’ 등                |
 | `realm_id`   | 정수      | FK → `realm.id`, NULL 가능                    | Commodities면 NULL로 두거나 별도 값 |
