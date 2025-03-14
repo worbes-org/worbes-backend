@@ -1,16 +1,12 @@
 package com.worbes.auctionhousetracker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestUtils {
@@ -23,20 +19,6 @@ public class TestUtils {
                 "French", "Italian", "Russian",
                 "Korean", "Chinese", "Chinese"
         );
-    }
-
-    public static ItemClassesIndexResponse createDummyItemClassesIndexResponse() {
-        List<ItemClassesIndexResponse.ItemClassDto> itemClassDtos = generateDummyItemClasses();
-        return new ItemClassesIndexResponse(itemClassDtos);
-    }
-
-    private static List<ItemClassesIndexResponse.ItemClassDto> generateDummyItemClasses() {
-        return IntStream.range(0, 10) // You can adjust the range for more or fewer dummy items
-                .mapToObj(i -> new ItemClassesIndexResponse.ItemClassDto(
-                        (long) i,
-                        createDummyLanguage() // Generate a dummy Language object for each ItemClass
-                ))
-                .collect(Collectors.toList());
     }
 
     public static <T> T loadJsonResource(String path, Class<T> valueType) {

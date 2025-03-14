@@ -1,11 +1,16 @@
 package com.worbes.auctionhousetracker.entity;
 
-import jakarta.persistence.*;
+import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.Map;
 
 @Entity
-@Table(name = "item_class",
-        uniqueConstraints = @UniqueConstraint(columnNames = "item_class_id"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,15 +18,16 @@ import lombok.*;
 public class ItemClass {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_class_id", nullable = false)
-    private Long itemClassId;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> name;
 
-    @Column(nullable = false, length = 50)
-    private String name; // 아이템 클래스 이름 (예: 무기, 방어구)
-
-    @Column(nullable = false, length = 10)
-    private String locale;
+    public static ItemClass create(ItemClassesIndexResponse.ItemClassDto itemClassDto) {
+        return ItemClass.builder()
+                .id(itemClassDto.getId())
+                .name(itemClassDto.getName())
+                .build();
+    }
 }

@@ -2,14 +2,14 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
-import com.worbes.auctionhousetracker.entity.enums.LocaleType;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,76 +18,37 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ItemClassService {
 
-    private static final Set<Long> REQUIRED_ITEM_CLASSES = Set.of(
-            0L,  // 소비용품 (Consumable)
-            1L,  // 가방류 (Container)
-            2L,  // 무기 (Weapon)
-            3L,  // 보석 (Gem)
-            4L,  // 방어구 (Armor)
-            5L,  // 재료 (Reagent)
-            8L,  // 아이템 강화 (Item Enhancement)
-            9L,  // 제조법 (Recipe)
-            12L, // 퀘스트 아이템 (Quest)
-            15L, // 기타 (Miscellaneous)
-            16L, // 문양 (Glyph)
-            17L, // 전투 애완동물 (Battle Pets)
-            18L, // WoW 토큰 (WoW Token)
-            19L  // 전문 기술 장비 (Profession)
-    );
-
     private final ItemClassRepository itemClassRepository;
 
-    public void convertAndSaveItemClasses(ItemClassesIndexResponse response) {
-        List<ItemClass> itemClasses = response.getItemClassDtos().stream()
-                .filter(dto -> isRequiredItemClass(dto.getId()))
-                .map(this::convertToItemClasses)
-                .flatMap(List::stream)
-                .toList();
+    @Getter
+    private final Set<Long> requiredItemClasses = Set.of(
+            0L, 1L, 2L, 3L, 4L, 5L, 8L, 9L, 12L, 15L, 16L, 17L, 18L, 19L
+    );
 
+    @Transactional
+    public void save(ItemClassesIndexResponse response) {
+        List<ItemClass> itemClasses = response.getItemClassDtos().stream()
+                .filter(dto -> requiredItemClasses.contains(dto.getId()))
+                .map(ItemClass::create)
+                .toList();
         itemClassRepository.saveAll(itemClasses);
     }
 
-    private List<ItemClass> convertToItemClasses(ItemClassesIndexResponse.ItemClassDto dto) {
-        List<ItemClass> itemClasses = new ArrayList<>();
+    public boolean isRequiredItemClassesExist() {
+        // DB에서 존재하는 itemClassId 조회
+        List<Long> existingIds = itemClassRepository.findExistingItemClassIds(requiredItemClasses);
 
-        for (LocaleType locale : LocaleType.values()) {
-            String name = extractLocalizedName(dto.getName(), locale);
-            ItemClass itemClass = ItemClass.builder()
-                    .itemClassId(dto.getId())
-                    .locale(locale.getCode())
-                    .name(name)
-                    .build();
-            itemClasses.add(itemClass);
+        // 존재하는 ID를 HashSet으로 변환
+        Set<Long> foundIds = new HashSet<>(existingIds);
+
+        // 존재하지 않는 ID 찾기
+        Set<Long> missingIds = new HashSet<>(requiredItemClasses);
+        missingIds.removeAll(foundIds);
+
+        if (!missingIds.isEmpty()) {
+            log.info("ItemClasses are missing: {}", missingIds);
+            return false;
         }
-
-        return itemClasses;
-    }
-
-    private String extractLocalizedName(Translation name, LocaleType locale) {
-        return switch (locale) {
-            case EN_US -> name.getEn_US();
-            case KO_KR -> name.getKo_KR();
-            case FR_FR -> name.getFr_FR();
-            case DE_DE -> name.getDe_DE();
-            case ZH_CN -> name.getZh_CN();
-            case ZH_TW -> name.getZh_TW();
-            case ES_ES -> name.getEs_ES();
-            case ES_MX -> name.getEs_MX();
-            case IT_IT -> name.getIt_IT();
-            case RU_RU -> name.getRu_RU();
-            case PT_BR -> name.getPt_BR();
-        };
-    }
-
-    public boolean isItemClassStored(Long itemClassId, String locale) {
-        return itemClassRepository.existsByItemClassIdAndLocale(itemClassId, locale);
-    }
-
-    public boolean isRequiredItemClass(Long itemClassId) {
-        return REQUIRED_ITEM_CLASSES.contains(itemClassId);
-    }
-
-    public Set<Long> getRequiredItemClasses() {
-        return REQUIRED_ITEM_CLASSES;
+        return true;
     }
 }
