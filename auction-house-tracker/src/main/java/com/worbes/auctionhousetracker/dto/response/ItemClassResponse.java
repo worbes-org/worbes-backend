@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public class ItemClassResponse {
     @JsonProperty("class_id")
     private Long id;
 
-    private Language name;
+    private Translation name;
 
     @JsonProperty("item_subclasses")
     private List<Subclass> subclassResponses;
@@ -21,6 +21,6 @@ public class ItemClassResponse {
     public static class Subclass {
 
         private Long id;
-        private Language name;
+        private Translation name;
     }
 }

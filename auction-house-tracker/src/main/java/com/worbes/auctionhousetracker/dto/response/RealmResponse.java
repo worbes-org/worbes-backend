@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
 public class RealmResponse {
 
     private Long id;
-    private Language name;
+    private Translation name;
     private String connectedRealmHref;
 
     @JsonProperty("connected_realm")

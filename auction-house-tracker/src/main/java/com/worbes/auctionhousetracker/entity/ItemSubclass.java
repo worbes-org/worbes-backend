@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker.entity;
 
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
 import com.worbes.auctionhousetracker.entity.embeded.ItemSubclassId;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class ItemSubclass {
     private ItemClass itemClass;
 
     @Embedded
-    private Language displayName;
+    private Translation displayName;
 
     @Embedded
     @AttributeOverrides({
@@ -40,9 +40,9 @@ public class ItemSubclass {
             @AttributeOverride(name = "zh_TW", column = @Column(name = "verbose_zh_TW")),
             @AttributeOverride(name = "zh_CN", column = @Column(name = "verbose_zh_CN"))
     })
-    private Language verboseName;
+    private Translation verboseName;
 
-    public ItemSubclass(ItemSubclassId id, ItemClass itemClass, Language displayName, Language verboseName) {
+    public ItemSubclass(ItemSubclassId id, ItemClass itemClass, Translation displayName, Translation verboseName) {
         this.id = id;
         this.itemClass = itemClass;
         this.displayName = displayName;

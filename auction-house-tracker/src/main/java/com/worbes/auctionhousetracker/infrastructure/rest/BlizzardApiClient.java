@@ -1,0 +1,20 @@
+package com.worbes.auctionhousetracker.infrastructure.rest;
+
+import com.worbes.auctionhousetracker.dto.response.*;
+import com.worbes.auctionhousetracker.entity.enums.Region;
+
+public interface BlizzardApiClient {
+    AuctionResponse fetchCommodities(Region region);
+
+    AuctionResponse fetchAuctions(Region region, Long realmId);
+
+    ItemClassesIndexResponse fetchItemClassesIndex();
+
+    ItemResponse fetchItem(Long itemId);
+
+    MediaResponse fetchItemMedia(Long itemId);
+
+    RealmIndexResponse fetchRealmIndex(Region region);
+
+    RealmResponse fetchRealm(Region region, String slug);
+}

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import com.worbes.auctionhousetracker.entity.enums.Quality;
 import lombok.Data;
 
@@ -16,7 +16,7 @@ public class ItemResponse {
 
     private Long id;
 
-    private Language name;
+    private Translation name;
 
     private Quality quality;
 
