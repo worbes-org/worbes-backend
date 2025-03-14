@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Language {
+public class Translation {
     private String en_US;
     private String es_MX;
     private String pt_BR;

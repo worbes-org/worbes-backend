@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +16,8 @@ import java.util.stream.IntStream;
 public class TestUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static Language createDummyLanguage() {
-        return new Language(
+    public static Translation createDummyLanguage() {
+        return new Translation(
                 "English", "Spanish", "Portuguese",
                 "German", "English", "Spanish",
                 "French", "Italian", "Russian",

@@ -5,7 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "item_class",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"item_class_id", "locale"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = "item_class_id"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.ItemClassesIndexResponse;
 import com.worbes.auctionhousetracker.entity.ItemClass;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import com.worbes.auctionhousetracker.entity.enums.LocaleType;
 import com.worbes.auctionhousetracker.repository.ItemClassRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class ItemClassService {
         return itemClasses;
     }
 
-    private String extractLocalizedName(Language name, LocaleType locale) {
+    private String extractLocalizedName(Translation name, LocaleType locale) {
         return switch (locale) {
             case EN_US -> name.getEn_US();
             case KO_KR -> name.getKo_KR();

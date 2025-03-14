@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.Data;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class RealmIndexResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class RealmIndexElement {
         private Long id;
-        private Language name;
+        private Translation name;
         private String slug;
     }
 }

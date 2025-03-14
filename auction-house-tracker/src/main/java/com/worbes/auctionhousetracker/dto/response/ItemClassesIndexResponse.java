@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import lombok.*;
 
 import java.util.List;
@@ -18,9 +18,9 @@ public class ItemClassesIndexResponse {
     @Setter
     public static class ItemClassDto {
         private Long id;
-        private Language name;
+        private Translation name;
 
-        public ItemClassDto(Long id, Language name) {
+        public ItemClassDto(Long id, Translation name) {
             this.id = id;
             this.name = name;
         }

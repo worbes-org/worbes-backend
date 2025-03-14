@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.entity;
 
 import com.worbes.auctionhousetracker.dto.response.ItemResponse;
-import com.worbes.auctionhousetracker.entity.embeded.Language;
+import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import com.worbes.auctionhousetracker.entity.enums.Quality;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +18,7 @@ public class Item {
     private Long id;
 
     @Embedded
-    private Language name;
+    private Translation name;
 
     private Long itemClassId;
 
@@ -37,7 +37,7 @@ public class Item {
 
     // private 생성자 (빌더가 사용)
     @Builder(access = AccessLevel.PRIVATE)
-    private Item(Long id, Language name, Long itemClassId, Long itemSubclassId,
+    private Item(Long id, Translation name, Long itemClassId, Long itemSubclassId,
                  Quality quality, Integer itemLevel, String previewItem, String iconUrl) {
         this.id = id;
         this.name = name;
