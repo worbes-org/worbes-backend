@@ -44,6 +44,22 @@ public class BlizzardApiClientImpl implements BlizzardApiClient {
     }
 
     @Override
+    public ItemClassResponse fetchItemClass(Long itemClassId) {
+        Region region = Region.US;
+        String url = BlizzardApiUrlBuilder.builder(region).itemClass(itemClassId).build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(STATIC).build();
+        return restApiClient.get(url, params, ItemClassResponse.class);
+    }
+
+    @Override
+    public ItemSubclassResponse fetchItemSubclass(Long itemClassId, Long subclassId) {
+        Region region = Region.US;
+        String url = BlizzardApiUrlBuilder.builder(region).itemSubclass(itemClassId, subclassId).build();
+        Map<String, String> params = BlizzardApiParamsBuilder.builder(region).namespace(STATIC).build();
+        return restApiClient.get(url, params, ItemSubclassResponse.class);
+    }
+
+    @Override
     public ItemResponse fetchItem(Long itemId) {
         Region region = Region.US;
         String path = BlizzardApiUrlBuilder.builder(region).item(itemId).build();

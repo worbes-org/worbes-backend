@@ -11,6 +11,8 @@ import java.util.Set;
 public interface ItemClassRepository extends JpaRepository<ItemClass, Long> {
 
     @Query("SELECT ic.id FROM ItemClass ic WHERE ic.id IN :itemClassIds")
-    List<Long> findExistingItemClassIds(@Param("itemClassIds") Set<Long> itemClassIds);
+    Set<Long> findExistingItemClassIds(@Param("itemClassIds") Set<Long> itemClassIds);
 
+    @Query("SELECT ic FROM ItemClass ic WHERE ic.id IN :itemClassIds")
+    List<ItemClass> findItemClassesByIds(@Param("itemClassIds") Set<Long> itemClassIds);
 }

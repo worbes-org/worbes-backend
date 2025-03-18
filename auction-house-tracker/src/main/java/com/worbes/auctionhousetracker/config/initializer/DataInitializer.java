@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.runner;
+package com.worbes.auctionhousetracker.config.initializer;
 
 public interface DataInitializer {
 

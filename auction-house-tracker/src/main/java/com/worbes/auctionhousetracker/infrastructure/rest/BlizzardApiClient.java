@@ -10,6 +10,10 @@ public interface BlizzardApiClient {
 
     ItemClassesIndexResponse fetchItemClassesIndex();
 
+    ItemClassResponse fetchItemClass(Long itemClassId);
+
+    ItemSubclassResponse fetchItemSubclass(Long itemClassId, Long subclassId);
+
     ItemResponse fetchItem(Long itemId);
 
     MediaResponse fetchItemMedia(Long itemId);

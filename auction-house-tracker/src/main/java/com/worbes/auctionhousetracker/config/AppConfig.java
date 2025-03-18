@@ -1,6 +1,9 @@
 package com.worbes.auctionhousetracker.config;
 
 import com.worbes.auctionhousetracker.config.properties.BlizzardApiConfigProperties;
+import com.worbes.auctionhousetracker.config.properties.RequiredItemClassesProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -9,19 +12,17 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 @EnableJpaAuditing
+@Slf4j
+@EnableConfigurationProperties({
+        BlizzardApiConfigProperties.class,
+        RequiredItemClassesProperties.class})
 public class AppConfig {
 
     @Bean
-    BlizzardApiConfigProperties blizzardApiConfigProperties() {
-        return new BlizzardApiConfigProperties();
-    }
-
-    @Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
+    public ThreadPoolTaskExecutor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);
         executor.setThreadNamePrefix("AsyncExecutor-");
-        executor.initialize();
         return executor;
     }
 

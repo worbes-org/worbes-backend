@@ -1,9 +1,6 @@
 package com.worbes.auctionhousetracker.infrastructure.rest;
 
-import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
-import com.worbes.auctionhousetracker.exception.NotFoundException;
-import com.worbes.auctionhousetracker.exception.RestApiClientException;
-import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
+import com.worbes.auctionhousetracker.exception.*;
 import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -62,10 +59,23 @@ public class RestApiClientImpl implements RestApiClient {
             String requestUrl = req.getURI().toString();
             log.error("API 요청 실패 | URL: {} | 상태 코드: {} | 상태 메세지: {}", requestUrl, statusCode.value(), statusText);
 
-            if (statusCode.equals(UNAUTHORIZED)) accessTokenHandler.refresh();
-            if (statusCode.equals(NOT_FOUND)) throw new NotFoundException();
-            if (statusCode.equals(INTERNAL_SERVER_ERROR)) throw new InternalServerErrorException();
-            if (statusCode.equals(TOO_MANY_REQUESTS)) throw new TooManyRequestsException();
+            if (statusCode.equals(UNAUTHORIZED)) {
+                log.warn("⚠️ 401 Unauthorized 발생 - 토큰 갱신 시도");
+                accessTokenHandler.refresh();
+                throw new UnauthorizedException();
+            }
+            if (statusCode.equals(NOT_FOUND)) {
+                log.error("🚨 404 Not Found - 해당 데이터 없음");
+                throw new NotFoundException();
+            }
+            if (statusCode.equals(INTERNAL_SERVER_ERROR)) {
+                log.error("🔥 500 Internal Server Error - 서버 문제 발생");
+                throw new InternalServerErrorException();
+            }
+            if (statusCode.equals(TOO_MANY_REQUESTS)) {
+                log.warn("⏳ 429 Too Many Requests - 요청 제한 초과");
+                throw new TooManyRequestsException();
+            }
 
             throw new RestApiClientException("API 오류 발생", statusCode.value());
         } catch (IOException e) {

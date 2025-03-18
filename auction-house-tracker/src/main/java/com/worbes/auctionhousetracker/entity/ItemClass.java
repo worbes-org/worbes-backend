@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -29,5 +30,24 @@ public class ItemClass {
                 .id(itemClassDto.getId())
                 .name(itemClassDto.getName())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemClass itemClass = (ItemClass) o;
+        return Objects.equals(id, itemClass.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemClass{" +
+                "id=" + id +
+                '}';
     }
 }

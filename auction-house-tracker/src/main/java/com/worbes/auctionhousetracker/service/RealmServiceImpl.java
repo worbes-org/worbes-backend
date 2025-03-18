@@ -27,14 +27,14 @@ public class RealmServiceImpl implements RealmService {
 
     private final RealmRepository realmRepository;
     private final RestApiClient restApiClient;
-    private final ThreadPoolTaskExecutor taskExecutor;
+    private final ThreadPoolTaskExecutor asyncExecutor;
 
     public RealmServiceImpl(RealmRepository realmRepository,
                             RestApiClient restApiClient,
-                            @Qualifier("taskExecutor") ThreadPoolTaskExecutor taskExecutor) {
+                            @Qualifier("asyncExecutor") ThreadPoolTaskExecutor asyncExecutor) {
         this.realmRepository = realmRepository;
         this.restApiClient = restApiClient;
-        this.taskExecutor = taskExecutor;
+        this.asyncExecutor = asyncExecutor;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RealmServiceImpl implements RealmService {
 
     @Override
     public CompletableFuture<Realm> fetchRealmAsync(Region region, String slug) {
-        return CompletableFuture.supplyAsync(() -> fetchRealm(region, slug), taskExecutor);
+        return CompletableFuture.supplyAsync(() -> fetchRealm(region, slug), asyncExecutor);
     }
 
     private Long extractIdFromUrl(String url) {
