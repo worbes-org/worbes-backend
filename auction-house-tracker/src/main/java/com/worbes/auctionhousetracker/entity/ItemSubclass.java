@@ -1,59 +1,62 @@
 package com.worbes.auctionhousetracker.entity;
 
 import com.worbes.auctionhousetracker.dto.response.ItemSubclassResponse;
-import com.worbes.auctionhousetracker.entity.embeded.ItemSubclassId;
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Table(name = "item_subclass",
+        uniqueConstraints = @UniqueConstraint(name = "uq_item_class_subclass", columnNames = {"item_class_id", "subclass_id"})
+)
 public class ItemSubclass {
 
-    @EmbeddedId
-    private ItemSubclassId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // 기본 키 (자동 증가)
 
-    @ManyToOne
-    @MapsId("itemClassId")
-    private ItemClass itemClass;
+    @Column(name = "subclass_id", nullable = false)
+    private Long subclassId;  // Blizzard API에서 제공하는 ID
 
-    @Embedded
-    private Translation displayName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_class_id", nullable = false)
+    private ItemClass itemClass;  // FK (ItemClass와 연관 관계)
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "en_US", column = @Column(name = "verbose_en_US")),
-            @AttributeOverride(name = "es_MX", column = @Column(name = "verbose_es_MX")),
-            @AttributeOverride(name = "pt_BR", column = @Column(name = "verbose_pt_BR")),
-            @AttributeOverride(name = "de_DE", column = @Column(name = "verbose_de_DE")),
-            @AttributeOverride(name = "en_GB", column = @Column(name = "verbose_en_GB")),
-            @AttributeOverride(name = "es_ES", column = @Column(name = "verbose_es_ES")),
-            @AttributeOverride(name = "fr_FR", column = @Column(name = "verbose_fr_FR")),
-            @AttributeOverride(name = "it_IT", column = @Column(name = "verbose_it_IT")),
-            @AttributeOverride(name = "ru_RU", column = @Column(name = "verbose_ru_RU")),
-            @AttributeOverride(name = "ko_KR", column = @Column(name = "verbose_ko_KR")),
-            @AttributeOverride(name = "zh_TW", column = @Column(name = "verbose_zh_TW")),
-            @AttributeOverride(name = "zh_CN", column = @Column(name = "verbose_zh_CN"))
-    })
-    private Translation verboseName;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> displayName;  // 다국어 지원
 
-    public ItemSubclass(ItemSubclassId id, ItemClass itemClass, Translation displayName, Translation verboseName) {
-        this.id = id;
-        this.itemClass = itemClass;
-        this.displayName = displayName;
-        this.verboseName = verboseName;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> verboseName;  // 추가 설명 (NULL 허용)
+
+    public static ItemSubclass create(ItemSubclassResponse response, ItemClass itemClass) {
+        return ItemSubclass.builder()
+                .subclassId(response.getId())
+                .itemClass(itemClass)
+                .displayName(response.getDisplayName())
+                .verboseName(response.getVerboseName())
+                .build();
     }
 
-    public ItemSubclass(ItemClass itemClass, ItemSubclassResponse response) {
-        this.id = new ItemSubclassId(itemClass.getId(), response.getId());
-        this.itemClass = itemClass;
-        this.displayName = response.getDisplayName();
-        this.verboseName = response.getVerboseName();
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemSubclass that = (ItemSubclass) o;
+        return Objects.equals(subclassId, that.subclassId) && Objects.equals(itemClass, that.itemClass);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(subclassId, itemClass);
     }
 }
 

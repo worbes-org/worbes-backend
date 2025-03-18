@@ -1,4 +1,4 @@
-package com.worbes.auctionhousetracker.runner;
+package com.worbes.auctionhousetracker.config.initializer;
 
 import com.worbes.auctionhousetracker.service.RealmService;
 import lombok.RequiredArgsConstructor;
