@@ -1,51 +1,19 @@
 package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
-import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface RealmService {
 
     /**
-     * 서버 인덱스 정보를 조회합니다.
+     * API에서 받은 Realm 목록과 DB에 저장된 Realm 목록을 비교하여,
+     * 해당 Region에서 DB에 존재하지 않는 Realm slug 리스트를 반환한다.
+     *
+     * @param response Blizzard API에서 가져온 Realm 목록 응답 객체
+     * @param region   필터링할 WoW 지역 (예: KR, US 등)
+     * @return DB에 저장되지 않은 Realm slug 목록
      */
-    RealmIndexResponse fetchRealmIndex(Region region);
-
-    /**
-     * 특정 서버의 상세 정보를 조회합니다.
-     */
-    Realm fetchRealm(Region region, String slug);
-
-    /**
-     * 특정 서버의 상세 정보를 비동기로 조회합니다.
-     */
-    CompletableFuture<Realm> fetchRealmAsync(Region region, String slug);
-
-    /**
-     * 여러 서버 정보를 저장합니다.
-     */
-    void saveAll(Iterable<Realm> realms);
-
-    /**
-     * 저장된 서버의 총 개수를 반환합니다.
-     */
-    long count();
-
-    /**
-     * 서버 데이터가 이미 초기화되었는지 확인합니다.
-     */
-    boolean isRealmInitialized();
-
-    /**
-     * 특정 지역의 모든 서버 데이터를 초기화합니다.
-     */
-    CompletableFuture<Void> fetchAndSaveRealms(Region region);
-
-    /**
-     * 특정 Region에 해당하는 모든 connected realm의 ID 목록을 반환합니다.
-     */
-    List<Long> getConnectedRealmIdsByRegion(Region region);
+    List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region);
 }
