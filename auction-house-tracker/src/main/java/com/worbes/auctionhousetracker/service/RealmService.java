@@ -1,6 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
+import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface RealmService {
      * @return DB에 저장되지 않은 Realm slug 목록
      */
     List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region);
+
+    void save(Region region, List<RealmResponse> responses);
 }

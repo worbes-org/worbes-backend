@@ -14,6 +14,9 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Table(
+        uniqueConstraints = @UniqueConstraint(name = "uk_region_slug", columnNames = {"region", "slug"})
+)
 public class Realm {
 
     @Id
@@ -30,6 +33,6 @@ public class Realm {
     @Column(columnDefinition = "jsonb", nullable = false)
     private Map<String, String> name;
 
-    @Column(length = 50, nullable = false, unique = true)
+    @Column(length = 50, nullable = false)
     private String slug;
 }

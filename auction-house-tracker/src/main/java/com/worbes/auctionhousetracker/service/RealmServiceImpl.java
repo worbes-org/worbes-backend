@@ -1,6 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
+import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.repository.RealmRepository;
@@ -23,29 +24,43 @@ public class RealmServiceImpl implements RealmService {
 
     @Override
     public List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region) {
-        List<Realm> realms = realmRepository.findByRegion(region);
-
-        // DB에 저장된 Realm이 없으면, API에서 받은 모든 Realm Slug 반환
-        if (realms.isEmpty()) {
-            return response.getRealms()
-                    .stream()
-                    .map(RealmIndexResponse.RealmDto::getSlug) // ✅ Slug 반환
-                    .toList();
-        }
-
-        // 기존 Realm Slug들을 Set으로 변환 (O(1) 조회)
-        Set<String> existingRealmSlugs = realms.stream()
-                .map(Realm::getSlug) // ✅ Slug 기반으로 비교
-                .collect(Collectors.toSet());
-
-        // DB에 없는 Realm Slug만 필터링하여 반환
-        return response.getRealms()
+        log.info("[{}] Missing Realm Slug 조회 시작", region.getValue());
+        Set<String> existingRealmSlugs = realmRepository.findByRegion(region)
                 .stream()
-                .map(RealmIndexResponse.RealmDto::getSlug) // ✅ Slug 반환
+                .map(Realm::getSlug)
+                .collect(Collectors.toSet());
+        List<String> missingSlugs = response.getRealms()
+                .stream()
+                .map(RealmIndexResponse.RealmDto::getSlug)
                 .filter(slug -> !existingRealmSlugs.contains(slug))
                 .toList();
+        log.info("[{}] DB에 없는 Realm 개수: {}", region.getValue(), missingSlugs.size());
+        return missingSlugs;
     }
 
+    @Override
+    public void save(Region region, List<RealmResponse> responses) {
+        if (responses.isEmpty()) {
+            log.info("responses is empty");
+            return;
+        }
+
+        log.info("[{}] {}개의 Realm 저장 시작", region.getValue(), responses.size());
+        List<Realm> realms = responses.stream().map(response -> {
+                    Long connectedRealmId = extractIdFromUrl(response.getConnectedRealmHref());
+                    return Realm.builder()
+                            .id(response.getId())
+                            .region(region)
+                            .name(response.getName())
+                            .connectedRealmId(connectedRealmId)
+                            .slug(response.getSlug())
+                            .build();
+                }
+        ).toList();
+
+        realmRepository.saveAll(realms);
+        log.info("[{}] {}개의 Realm 저장 완료", region.getValue(), realms.size());
+    }
 
     private Long extractIdFromUrl(String url) {
         if (url == null || url.isEmpty()) {
