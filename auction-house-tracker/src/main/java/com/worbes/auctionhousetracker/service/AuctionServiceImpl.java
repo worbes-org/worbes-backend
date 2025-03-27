@@ -1,11 +1,7 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
-import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
-import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +12,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
 
-    private final RestApiClient restApiClient;
     private final AuctionRepository repository;
 
     @Override
@@ -91,27 +84,5 @@ public class AuctionServiceImpl implements AuctionService {
         return newAuctions.stream()
                 .filter(auction -> !existingAuctionIds.contains(auction.getAuctionId()))
                 .toList();
-    }
-
-    @Override
-    public AuctionResponse fetchCommodities(Region region) {
-        return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).commodities().build(),
-                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                AuctionResponse.class
-        );
-    }
-
-    @Override
-    public AuctionResponse fetchAuctions(Region region, Long realmId) {
-        return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
-                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                AuctionResponse.class);
-    }
-
-    @Override
-    public void saveAuctions(List<Auction> auctions) {
-        repository.saveAll(auctions);
     }
 }

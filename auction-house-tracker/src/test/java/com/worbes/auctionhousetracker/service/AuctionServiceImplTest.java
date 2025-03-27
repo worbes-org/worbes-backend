@@ -1,17 +1,11 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
-import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
-import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,12 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import static com.worbes.auctionhousetracker.TestUtils.loadJsonResource;
-import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,44 +24,29 @@ class AuctionServiceImplTest {
     @Mock
     AuctionRepository auctionRepository;
 
-    @Mock
-    RestApiClient restApiClient;
-
     @InjectMocks
     AuctionServiceImpl auctionService;
 
-    @ParameterizedTest
-    @EnumSource(Region.class)
-    @DisplayName("각 리전별로 올바른 URL과 파라미터로 경매장 데이터를 가져오는지 검증")
-    void fetchAuctions_ShouldBuildCorrectUrlAndParamsForEachRegion(Region region) {
-        // Given
-        AuctionResponse auctionResponse = loadJsonResource("/json/auction-response.json", AuctionResponse.class);
-        given(restApiClient.get(anyString(), anyMap(), eq(AuctionResponse.class))).willReturn(auctionResponse);
-
-        // When
-        AuctionResponse result = auctionService.fetchCommodities(region);
-
-        // Then
-        verify(restApiClient).get(
-                eq(BlizzardApiUrlBuilder.builder(region).commodities().build()),
-                eq(BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build()),
-                eq(AuctionResponse.class)
-        );
-        assertNotNull(result);
-        assertEquals(auctionResponse.getAuctions().size(), result.getAuctions().size());
-    }
-
-    @Test
-    void saveAuctions_ShouldSaveFetchedAuctionsToDatabase() {
-        // Given
-        List<Auction> auctions = List.of(Auction.builder().build(), Auction.builder().build(), Auction.builder().build());
-
-        // When
-        auctionService.saveAuctions(auctions);
-
-        // Then
-        verify(auctionRepository, times(1)).saveAll(auctions);
-    }
+//    @ParameterizedTest
+//    @EnumSource(Region.class)
+//    @DisplayName("각 리전별로 올바른 URL과 파라미터로 경매장 데이터를 가져오는지 검증")
+//    void fetchAuctions_ShouldBuildCorrectUrlAndParamsForEachRegion(Region region) {
+//        // Given
+//        AuctionResponse auctionResponse = loadJsonResource("/json/auction-response.json", AuctionResponse.class);
+//        given(restApiClient.get(anyString(), anyMap(), eq(AuctionResponse.class))).willReturn(auctionResponse);
+//
+//        // When
+//        AuctionResponse result = auctionService.fetchCommodities(region);
+//
+//        // Then
+//        verify(restApiClient).get(
+//                eq(BlizzardApiUrlBuilder.builder(region).commodities().build()),
+//                eq(BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build()),
+//                eq(AuctionResponse.class)
+//        );
+//        assertNotNull(result);
+//        assertEquals(auctionResponse.getAuctions().size(), result.getAuctions().size());
+//    }
 
     @Test
     @DisplayName("새로운 경매 목록에 없는 기존 경매는 비활성화되어야 한다")
