@@ -12,4 +12,6 @@ public interface RealmRepository extends JpaRepository<Realm, Long> {
 
     @Query("SELECT DISTINCT r.connectedRealmId FROM Realm r WHERE r.region = :region")
     List<Long> findDistinctConnectedRealmIdsByRegion(@Param("region") Region region);
+
+    List<Realm> findByRegion(Region region);
 }

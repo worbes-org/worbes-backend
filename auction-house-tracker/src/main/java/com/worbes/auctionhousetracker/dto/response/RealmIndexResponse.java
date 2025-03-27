@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -10,13 +10,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RealmIndexResponse {
 
-    private List<RealmIndexElement> realms;
+    private List<RealmDto> realms;
 
     @Data
+    @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class RealmIndexElement {
+    public static class RealmDto {
         private Long id;
-        private Translation name;
         private String slug;
     }
 }

@@ -1,34 +1,38 @@
 package com.worbes.auctionhousetracker.entity;
 
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
 import com.worbes.auctionhousetracker.entity.enums.Region;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.Map;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Table(
+        uniqueConstraints = @UniqueConstraint(name = "uk_region_slug", columnNames = {"region", "slug"})
+)
 public class Realm {
 
     @Id
     private Long id;
 
-    private Translation name;
-
+    @Column(nullable = false)
     private Long connectedRealmId;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
     private Region region;
 
-    @Builder
-    private Realm(Long id, Translation name, Long connectedRealmId, Region region) {
-        this.id = id;
-        this.name = name;
-        this.connectedRealmId = connectedRealmId;
-        this.region = region;
-    }
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> name;
+
+    @Column(length = 50, nullable = false)
+    private String slug;
 }

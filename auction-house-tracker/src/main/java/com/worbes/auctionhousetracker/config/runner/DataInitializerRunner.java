@@ -18,8 +18,21 @@ public class DataInitializerRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("🚀 데이터 초기화 시작");
-        log.info("이니셜라이저 개수 = {}", initializers.size());
-        initializers.forEach(DataInitializer::initialize);
-        log.info("🎉 모든 데이터 초기화 완료");
+        log.info("▶ 실행할 이니셜라이저 목록: {}",
+                initializers.stream().map(init -> init.getClass().getSimpleName()).toList());
+
+        long startTime = System.currentTimeMillis(); // ⏱️ 전체 실행 시간 측정
+
+        initializers.forEach(initializer -> {
+            long initStartTime = System.currentTimeMillis(); // ⏱️ 개별 초기화 시작 시간
+            log.info("🔄 {} 초기화 시작...", initializer.getClass().getSimpleName());
+            initializer.initialize();
+            long initEndTime = System.currentTimeMillis();
+            log.info("✅ {} 초기화 완료 ({}ms)",
+                    initializer.getClass().getSimpleName(), (initEndTime - initStartTime));
+        });
+
+        long endTime = System.currentTimeMillis();
+        log.info("🎉 모든 데이터 초기화 완료! 총 실행 시간: {}ms", (endTime - startTime));
     }
 }
