@@ -1,6 +1,9 @@
 package com.worbes.auctionhousetracker.service;
 
+import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
 import com.worbes.auctionhousetracker.entity.Auction;
+import com.worbes.auctionhousetracker.entity.Item;
+import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +21,20 @@ import java.util.stream.Collectors;
 public class AuctionServiceImpl implements AuctionService {
 
     private final AuctionRepository repository;
+    private final ItemService itemService;
+    private final RealmService realmService;
 
     @Override
     @Transactional
-    public void updateAuctions(List<Auction> newAuctions, Region region) {
-        updateAuctions(newAuctions, region, null);
+    public void updateAuctions(AuctionResponse auctionResponse, Region region) {
+        updateAuctions(auctionResponse, region, null);
     }
 
     @Override
     @Transactional
-    public void updateAuctions(List<Auction> newAuctions, Region region, Long realmId) {
+    public void updateAuctions(AuctionResponse auctionResponse, Region region, Long realmId) {
+        List<Auction> newAuctions = convertDtoToEntity(auctionResponse, region, realmId);
+
         validateInputs(newAuctions, region);
 
         log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, RealmId: {})", region, realmId);
@@ -43,6 +50,27 @@ public class AuctionServiceImpl implements AuctionService {
 
         log.info("✅ 경매 데이터 업데이트 완료: 새로 추가된 경매 {}개, 종료된 경매 {}개",
                 auctionsToSave.size(), endedAuctions.size());
+    }
+
+    private List<Auction> convertDtoToEntity(AuctionResponse auctionResponse, Region region, Long realmId) {
+        Realm realm = realmService.get(region, realmId);
+        return auctionResponse.getAuctions()
+                .stream()
+                .map(dto -> {
+                            Item item = itemService.get(dto.getItemId());
+                            return Auction.builder()
+                                    .auctionId(dto.getId())
+                                    .item(item)
+                                    .realm(realm)
+                                    .region(region)
+                                    .quantity(dto.getQuantity())
+                                    .unitPrice(dto.getUnitPrice())
+                                    .buyout(dto.getBuyout())
+                                    .build();
+                        }
+                )
+                .filter(auction -> auction.getItem() != null)
+                .toList();
     }
 
     // 입력 값 검증 메서드

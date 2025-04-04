@@ -23,6 +23,11 @@ public class RealmServiceImpl implements RealmService {
     private final RealmRepository realmRepository;
 
     @Override
+    public Realm get(Region region, Long realmId) {
+        return realmRepository.findByIdAndRegion(realmId, region).orElse(null);
+    }
+
+    @Override
     public List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region) {
         log.info("[{}] Missing Realm Slug 조회 시작", region.getValue());
         Set<String> existingRealmSlugs = realmRepository.findByRegion(region)

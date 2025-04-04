@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RealmRepository extends JpaRepository<Realm, Long> {
 
@@ -14,4 +15,6 @@ public interface RealmRepository extends JpaRepository<Realm, Long> {
     List<Long> findDistinctConnectedRealmIdsByRegion(@Param("region") Region region);
 
     List<Realm> findByRegion(Region region);
+
+    Optional<Realm> findByIdAndRegion(Long id, Region region);
 }

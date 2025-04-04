@@ -2,11 +2,14 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
+import com.worbes.auctionhousetracker.entity.Realm;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 
 import java.util.List;
 
 public interface RealmService {
+
+    Realm get(Region region, Long realmId);
 
     /**
      * API에서 받은 Realm 목록과 DB에 저장된 Realm 목록을 비교하여,

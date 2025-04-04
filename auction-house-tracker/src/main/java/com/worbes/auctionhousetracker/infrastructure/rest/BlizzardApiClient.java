@@ -3,6 +3,8 @@ package com.worbes.auctionhousetracker.infrastructure.rest;
 import com.worbes.auctionhousetracker.dto.response.*;
 import com.worbes.auctionhousetracker.entity.enums.Region;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface BlizzardApiClient {
     AuctionResponse fetchCommodities(Region region);
 
@@ -15,6 +17,8 @@ public interface BlizzardApiClient {
     ItemSubclassResponse fetchItemSubclass(Long itemClassId, Long subclassId);
 
     ItemResponse fetchItem(Long itemId);
+
+    CompletableFuture<ItemMediaResponse> fetchItemWithMediaAsync(Long itemId);
 
     MediaResponse fetchItemMedia(Long itemId);
 
