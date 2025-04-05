@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AuctionFetcherIml implements AuctionFetcher {
+public class AuctionFetcherImpl implements AuctionFetcher {
 
     private final RestApiClient restApiClient;
 
