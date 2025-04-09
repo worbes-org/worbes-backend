@@ -4,4 +4,5 @@ include 'domain'
 include 'infra-jpa'
 include 'application-batch'
 include 'application-core'
+include 'infra-rest'
 
