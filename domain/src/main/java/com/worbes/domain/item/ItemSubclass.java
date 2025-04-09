@@ -10,7 +10,7 @@ import java.util.Objects;
 @Builder
 public class ItemSubclass {
 
-    private final Long subclassId;
+    private final Long id;
     private final ItemClass itemClass;
     private final Map<String, String> displayName;
     private final Map<String, String> verboseName;
@@ -20,7 +20,7 @@ public class ItemSubclass {
                                       Map<String, String> displayName,
                                       Map<String, String> verboseName) {
         return ItemSubclass.builder()
-                .subclassId(subclassId)
+                .id(subclassId)
                 .itemClass(itemClass)
                 .displayName(displayName)
                 .verboseName(verboseName)
@@ -31,11 +31,11 @@ public class ItemSubclass {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ItemSubclass that = (ItemSubclass) o;
-        return Objects.equals(subclassId, that.subclassId) && Objects.equals(itemClass, that.itemClass);
+        return Objects.equals(id, that.id) && Objects.equals(itemClass, that.itemClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(subclassId, itemClass);
+        return Objects.hash(id, itemClass);
     }
 }
