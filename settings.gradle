@@ -1,3 +1,4 @@
 rootProject.name = 'worbes'
 include 'auction-house-tracker'
+include 'domain'
 
