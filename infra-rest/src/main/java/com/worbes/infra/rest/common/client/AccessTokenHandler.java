@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.client;
+package com.worbes.infra.rest.common.client;
 
 public interface AccessTokenHandler {
 

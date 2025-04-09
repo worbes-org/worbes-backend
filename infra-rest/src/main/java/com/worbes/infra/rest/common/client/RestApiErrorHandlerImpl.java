@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.client;
+package com.worbes.infra.rest.common.client;
 
 import com.worbes.infra.rest.exception.InternalServerErrorException;
 import com.worbes.infra.rest.exception.RestApiClientException;

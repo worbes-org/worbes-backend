@@ -1,7 +1,7 @@
-package com.worbes.infra.rest.factory;
+package com.worbes.infra.blizzard.client;
 
 import com.worbes.domain.shared.RegionType;
-import com.worbes.infra.rest.enums.NamespaceType;
+import com.worbes.infra.blizzard.enums.NamespaceType;
 
 import java.util.HashMap;
 import java.util.Map;

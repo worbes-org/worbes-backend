@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.client;
+package com.worbes.infra.rest.common.client;
 
 import com.worbes.infra.rest.factory.GetRequestBuilder;
 import com.worbes.infra.rest.factory.PostRequestBuilder;

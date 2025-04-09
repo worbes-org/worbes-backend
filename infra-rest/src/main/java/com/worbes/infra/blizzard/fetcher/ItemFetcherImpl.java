@@ -1,18 +1,19 @@
-package com.worbes.infra.rest.fetcher;
+package com.worbes.infra.blizzard.fetcher;
 
 import com.worbes.domain.shared.RegionType;
-import com.worbes.infra.rest.client.RestApiClient;
-import com.worbes.infra.rest.factory.BlizzardApiParamsBuilder;
-import com.worbes.infra.rest.factory.BlizzardApiUrlBuilder;
+import com.worbes.infra.blizzard.client.BlizzardApiParamsBuilder;
+import com.worbes.infra.blizzard.client.BlizzardApiUrlBuilder;
+import com.worbes.infra.blizzard.response.ItemClassesIndexResponse;
+import com.worbes.infra.rest.common.client.AccessTokenHandler;
+import com.worbes.infra.rest.common.client.RestApiClient;
 import com.worbes.infra.rest.factory.GetRequestBuilder;
-import com.worbes.infra.rest.response.ItemClassesIndexResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.worbes.infra.rest.enums.NamespaceType.STATIC;
+import static com.worbes.infra.blizzard.enums.NamespaceType.STATIC;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class ItemFetcherImpl {
 
     private static final RegionType KR = RegionType.KR;
     private final RestApiClient restApiClient;
+    private final AccessTokenHandler accessTokenHandler;
 
     public ItemClassesIndexResponse fetchItemClassesIndex() {
         String path = BlizzardApiUrlBuilder.builder(KR).itemClassIndex().build();

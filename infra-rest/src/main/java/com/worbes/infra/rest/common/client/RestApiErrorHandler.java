@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.client;
+package com.worbes.infra.rest.common.client;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
