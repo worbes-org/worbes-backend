@@ -1,15 +1,10 @@
 package com.worbes.infra.rest.client;
 
-import com.worbes.infra.rest.exception.InternalServerErrorException;
 import com.worbes.infra.rest.exception.RestApiClientException;
-import com.worbes.infra.rest.exception.TooManyRequestsException;
-import com.worbes.infra.rest.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -17,26 +12,29 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @Component
 public class RestApiClientImpl implements RestApiClient {
 
     private final RestClient restClient;
-    private final AccessTokenClient accessTokenClient;
+    private final RestApiErrorHandler errorHandler;
+    private final AccessTokenHandler accessTokenHandler;
 
-    public RestApiClientImpl(RestClient.Builder builder, AccessTokenClient accessTokenClient) {
+    public RestApiClientImpl(
+            RestClient.Builder builder,
+            AccessTokenHandler accessTokenHandler,
+            RestApiErrorHandler errorHandler
+    ) {
         this.restClient = builder
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        this.accessTokenClient = accessTokenClient;
+        this.accessTokenHandler = accessTokenHandler;
+        this.errorHandler = errorHandler;
     }
 
     @Retryable(
@@ -52,7 +50,7 @@ public class RestApiClientImpl implements RestApiClient {
                 .uri(createUri(url, params))
                 .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, this::handleApiError)
+                .onStatus(HttpStatusCode::isError, errorHandler::handle)
                 .body(responseType);
     }
 
@@ -75,7 +73,7 @@ public class RestApiClientImpl implements RestApiClient {
                 .headers(httpHeaders -> headers.forEach(httpHeaders::add))
                 .body(body)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, this::handleApiError)
+                .onStatus(HttpStatusCode::isError, errorHandler::handle)
                 .body(responseType);
     }
 
@@ -92,40 +90,7 @@ public class RestApiClientImpl implements RestApiClient {
 
     private Map<String, String> createAuthHeaders(boolean withAuth) {
         if (!withAuth) return Map.of();
-        return Map.of("Authorization", String.format("Bearer %s", accessTokenClient.get()));
-    }
-
-    // API 요청 에러 처리 로직을 별도 메소드로 분리
-    private void handleApiError(HttpRequest req, ClientHttpResponse res) {
-        try {
-            HttpStatusCode statusCode = res.getStatusCode();
-            String statusText = res.getStatusText();
-            String requestUrl = req.getURI().toString();
-            log.error("API 요청 실패 | URL: {} | 상태 코드: {} | 상태 메세지: {}", requestUrl, statusCode.value(), statusText);
-
-            if (statusCode.equals(UNAUTHORIZED)) {
-                log.warn("⚠️ 401 Unauthorized 발생 - 토큰 갱신 시도");
-                accessTokenClient.refresh();
-                throw new UnauthorizedException();
-            }
-            if (statusCode.equals(NOT_FOUND)) {
-                log.error("🚨 404 Not Found - 해당 데이터 없음");
-                throw new NoSuchElementException();
-            }
-            if (statusCode.equals(INTERNAL_SERVER_ERROR)) {
-                log.error("🔥 500 Internal Server Error - 서버 문제 발생");
-                throw new InternalServerErrorException();
-            }
-            if (statusCode.equals(TOO_MANY_REQUESTS)) {
-                log.warn("⏳ 429 Too Many Requests - 요청 제한 초과");
-                throw new TooManyRequestsException();
-            }
-
-            throw new RestApiClientException("API 오류 발생", statusCode.value());
-        } catch (IOException e) {
-            log.error("API 응답 처리 중 IOException 발생: {}", e.getMessage());
-            throw new RestApiClientException(e.getMessage(), 0, e);
-        }
+        return Map.of("Authorization", String.format("Bearer %s", accessTokenHandler.get()));
     }
 
     @Recover
