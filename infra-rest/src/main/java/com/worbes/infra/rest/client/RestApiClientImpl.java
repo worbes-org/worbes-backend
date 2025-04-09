@@ -22,41 +22,29 @@ public class RestApiClientImpl implements RestApiClient {
 
     private final RestClient restClient;
     private final RestApiErrorHandler errorHandler;
-    private final AccessTokenHandler accessTokenHandler;
 
-    public RestApiClientImpl(
-            RestClient.Builder builder,
-            AccessTokenHandler accessTokenHandler,
-            RestApiErrorHandler errorHandler
-    ) {
+    public RestApiClientImpl(RestClient.Builder builder, RestApiErrorHandler errorHandler) {
         this.restClient = builder
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        this.accessTokenHandler = accessTokenHandler;
         this.errorHandler = errorHandler;
     }
 
+    @Override
     @Retryable(
             recover = "recover",
             noRetryFor = NoSuchElementException.class,
             backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
     )
-    @Override
-    public <T> T get(String url, Map<String, String> params, Class<T> responseType, boolean withAuth) {
-        Map<String, String> headers = createAuthHeaders(withAuth);
-
+    public <T> T get(RestApiRequest<Void> request, Class<T> response) {
+        URI uri = createUri(request.url(), request.queryParams());
         return restClient.get()
-                .uri(createUri(url, params))
-                .headers(httpHeaders -> headers.forEach(httpHeaders::add))
+                .uri(uri)
+                .headers(httpHeaders -> request.headers().forEach(httpHeaders::add))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, errorHandler::handle)
-                .body(responseType);
-    }
-
-    @Override
-    public <T> T get(String url, Map<String, String> params, Class<T> responseType) {
-        return get(url, params, responseType, false);
+                .body(response);
     }
 
     @Override
@@ -65,32 +53,21 @@ public class RestApiClientImpl implements RestApiClient {
             noRetryFor = NoSuchElementException.class,
             backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
     )
-    public <T, R> R post(String url, Map<String, String> params, T body, Class<R> responseType, boolean withAuth) {
-        Map<String, String> headers = createAuthHeaders(withAuth);
-
+    public <T, R> R post(RestApiRequest<T> request, Class<R> response) {
+        URI uri = createUri(request.url(), request.queryParams());
         return restClient.post()
-                .uri(createUri(url, params))
-                .headers(httpHeaders -> headers.forEach(httpHeaders::add))
-                .body(body)
+                .uri(uri)
+                .headers(httpHeaders -> request.headers().forEach(httpHeaders::add))
+                .body(request.body())
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, errorHandler::handle)
-                .body(responseType);
-    }
-
-    @Override
-    public <T, R> R post(String url, Map<String, String> params, T body, Class<R> responseType) {
-        return post(url, params, body, responseType, false);
+                .body(response);
     }
 
     private URI createUri(String url, Map<String, String> params) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         params.forEach(builder::queryParam);
         return builder.build().toUri();
-    }
-
-    private Map<String, String> createAuthHeaders(boolean withAuth) {
-        if (!withAuth) return Map.of();
-        return Map.of("Authorization", String.format("Bearer %s", accessTokenHandler.get()));
     }
 
     @Recover
