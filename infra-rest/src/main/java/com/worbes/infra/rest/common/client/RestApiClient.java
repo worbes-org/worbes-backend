@@ -1,7 +1,7 @@
 package com.worbes.infra.rest.common.client;
 
-import com.worbes.infra.rest.factory.GetRequestBuilder;
-import com.worbes.infra.rest.factory.PostRequestBuilder;
+import com.worbes.infra.rest.common.factory.GetRequestBuilder;
+import com.worbes.infra.rest.common.factory.PostRequestBuilder;
 
 public interface RestApiClient {
 

@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.exception;
+package com.worbes.infra.rest.common.exception;
 
 import org.springframework.http.HttpStatus;
 

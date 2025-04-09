@@ -1,4 +1,4 @@
-package com.worbes.infra.blizzard.enums;
+package com.worbes.infra.rest.blizzard.enums;
 
 import com.worbes.domain.shared.RegionType;
 

@@ -1,4 +1,4 @@
-package com.worbes.infra.blizzard.response;
+package com.worbes.infra.rest.blizzard.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

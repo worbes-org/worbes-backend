@@ -1,7 +1,7 @@
-package com.worbes.infra.blizzard.client;
+package com.worbes.infra.rest.blizzard.client;
 
-import com.worbes.infra.rest.common.client.AccessTokenHandler;
 import com.worbes.infra.rest.common.client.RestApiClient;
+import com.worbes.infra.rest.common.oauth.AccessTokenHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,4 +23,6 @@ public class BlizzardAccessTokenHandler implements AccessTokenHandler {
     public String refresh() {
         return "";
     }
+
+
 }
