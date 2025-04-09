@@ -24,6 +24,14 @@ public class ItemClassRepositoryImpl implements ItemClassRepository {
     }
 
     @Override
+    public List<ItemClass> findAllBy(Iterable<Long> classIds) {
+        return jpa.findAllById(classIds)
+                .stream()
+                .map(ItemClassMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public void save(ItemClass itemClass) {
         jpa.save(ItemClassMapper.toEntity(itemClass));
     }
