@@ -1,17 +1,20 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.dto.mapper.ItemSaveDto;
-import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
+import com.worbes.auctionhousetracker.dto.mapper.ItemSaveCommand;
 import com.worbes.auctionhousetracker.entity.Item;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ItemService {
 
     Item get(Long itemId);
 
-    Set<Long> findMissingItemIds(AuctionResponse response);
+    Map<Long, Item> getItemsBy(Collection<Long> itemIds);
 
-    void save(List<ItemSaveDto> responses);
+    Set<Long> findMissingItemIds(Collection<Long> itemIds);
+
+    void saveAll(List<ItemSaveCommand> responses);
 }

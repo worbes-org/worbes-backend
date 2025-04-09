@@ -1,22 +1,22 @@
 package com.worbes.auctionhousetracker.builder;
 
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 
 public class BlizzardApiUrlBuilder {
 
     private static final String BASE_URL = "https://%s.api.blizzard.com";
 
-    private final Region region;
+    private final RegionType region;
     private String path;
 
-    private BlizzardApiUrlBuilder(Region region) {
+    private BlizzardApiUrlBuilder(RegionType region) {
         if (region == null) {
             throw new IllegalArgumentException("Region은 필수값입니다.");
         }
         this.region = region;
     }
 
-    public static BlizzardApiUrlBuilder builder(Region region) {
+    public static BlizzardApiUrlBuilder builder(RegionType region) {
         return new BlizzardApiUrlBuilder(region);
     }
 

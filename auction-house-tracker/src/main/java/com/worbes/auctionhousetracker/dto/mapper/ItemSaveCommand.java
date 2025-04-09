@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class ItemSaveDto {
+public class ItemSaveCommand {
     private Long id;
     private Map<String, String> name;
     private QualityType quality;
@@ -15,6 +15,6 @@ public class ItemSaveDto {
     private Long itemClassId;
     private Long itemSubclassId;
     private Integer level;
-    private Map<String, Object> previewItem;
+    private Object previewItem;
     private String iconUrl;
 }

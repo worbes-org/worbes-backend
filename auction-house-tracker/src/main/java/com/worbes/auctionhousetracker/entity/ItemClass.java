@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class ItemClass {
+public class ItemClass extends BaseEntity {
 
     @Id
     private Long id;

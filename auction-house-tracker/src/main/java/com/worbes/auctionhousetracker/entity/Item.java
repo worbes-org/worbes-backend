@@ -1,5 +1,6 @@
 package com.worbes.auctionhousetracker.entity;
 
+import com.worbes.auctionhousetracker.dto.mapper.ItemSaveCommand;
 import com.worbes.auctionhousetracker.entity.enums.InventoryType;
 import com.worbes.auctionhousetracker.entity.enums.QualityType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -15,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Item {
+public class Item extends BaseEntity {
 
     @Id
     private Long id;
@@ -45,8 +46,23 @@ public class Item {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb", nullable = false)
-    private Map<String, Object> previewItem;
+    private Object previewItem;
 
     @Column(nullable = false)
     private String iconUrl;
+
+    public static Item from(ItemSaveCommand dto, ItemClass itemClass, ItemSubclass itemSubclass) {
+        return Item.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .itemClass(itemClass)
+                .itemSubclass(itemSubclass)
+                .iconUrl(dto.getIconUrl())
+                .level(dto.getLevel())
+                .inventoryType(dto.getInventoryType())
+                .previewItem(dto.getPreviewItem())
+                .quality(dto.getQuality())
+                .build();
+    }
+
 }

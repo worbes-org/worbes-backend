@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.builder;
 
 import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,16 +10,16 @@ public class BlizzardApiParamsBuilder {
 
     private static final String NAMESPACE = "namespace";
     private final Map<String, String> params = new HashMap<>();
-    private final Region region;
+    private final RegionType region;
 
-    private BlizzardApiParamsBuilder(Region region) {
+    private BlizzardApiParamsBuilder(RegionType region) {
         if (region == null) {
             throw new IllegalArgumentException("Region은 필수값입니다.");
         }
         this.region = region;
     }
 
-    public static BlizzardApiParamsBuilder builder(Region region) {
+    public static BlizzardApiParamsBuilder builder(RegionType region) {
         return new BlizzardApiParamsBuilder(region);
     }
 

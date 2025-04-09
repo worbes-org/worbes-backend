@@ -3,11 +3,9 @@ package com.worbes.auctionhousetracker.dto.mapper;
 import com.worbes.auctionhousetracker.dto.response.ItemMediaResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface ItemSaveMapper {
-    ItemSaveMapper INSTANCE = Mappers.getMapper(ItemSaveMapper.class);
+@Mapper(componentModel = "spring")
+public interface ItemSaveCommandMapper {
 
     @Mapping(source = "itemResponse.itemClassId", target = "itemClassId")
     @Mapping(source = "itemResponse.itemSubclassId", target = "itemSubclassId")
@@ -18,5 +16,5 @@ public interface ItemSaveMapper {
     @Mapping(source = "itemResponse.inventoryType", target = "inventoryType")
     @Mapping(source = "itemResponse.previewItem", target = "previewItem")
     @Mapping(source = "mediaResponse.iconUrl", target = "iconUrl")
-    ItemSaveDto toItemSaveDto(ItemMediaResponse itemMediaResponse);
+    ItemSaveCommand toCommand(ItemMediaResponse itemMediaResponse);
 }

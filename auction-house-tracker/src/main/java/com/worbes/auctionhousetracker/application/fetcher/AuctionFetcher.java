@@ -1,13 +1,10 @@
 package com.worbes.auctionhousetracker.application.fetcher;
 
-import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
-import com.worbes.auctionhousetracker.entity.Realm;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.dto.response.BlizzardAuctionListResponse;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 
 
 public interface AuctionFetcher {
 
-    AuctionResponse fetchCommodities(Region region);
-
-    AuctionResponse fetchAuctions(Region region, Realm realm);
+    BlizzardAuctionListResponse fetchAuctions(RegionType region, Long realmId);
 }

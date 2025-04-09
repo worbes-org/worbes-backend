@@ -2,7 +2,7 @@ package com.worbes.auctionhousetracker.config.initializer;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.infrastructure.rest.BlizzardApiClient;
 import com.worbes.auctionhousetracker.service.RealmService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class RealmDataInitializer implements DataInitializer {
     public void initialize() {
         log.info("🔄 Realm 데이터 초기화 시작...");
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (Region region : Region.values()) {
+        for (RegionType region : RegionType.values()) {
             CompletableFuture<Void> future = fetchRealmIndexAsync(region)
                     .thenApply(response -> realmService.getMissingRealmSlugs(response, region))
                     .thenCompose(missingSlugs -> fetchAndSaveRealmsAsync(region, missingSlugs));
@@ -48,7 +48,7 @@ public class RealmDataInitializer implements DataInitializer {
         log.info("✅ Realm 데이터 초기화 완료!");
     }
 
-    private CompletableFuture<Void> fetchAndSaveRealmsAsync(Region region, List<String> slugs) {
+    private CompletableFuture<Void> fetchAndSaveRealmsAsync(RegionType region, List<String> slugs) {
         if (slugs.isEmpty()) {
             log.info("[{}] 저장할 Realm 없음", region.getValue());
             return CompletableFuture.completedFuture(null);
@@ -65,11 +65,11 @@ public class RealmDataInitializer implements DataInitializer {
                 .thenRun(() -> log.info("[{}] realm 초기화 완료", region.getValue()));
     }
 
-    private CompletableFuture<RealmIndexResponse> fetchRealmIndexAsync(Region region) {
+    private CompletableFuture<RealmIndexResponse> fetchRealmIndexAsync(RegionType region) {
         return CompletableFuture.supplyAsync(() -> blizzardApiClient.fetchRealmIndex(region), asyncExecutor);
     }
 
-    private CompletableFuture<RealmResponse> fetchRealmAsync(Region region, String realmSlug) {
+    private CompletableFuture<RealmResponse> fetchRealmAsync(RegionType region, String realmSlug) {
         return CompletableFuture.supplyAsync(() -> blizzardApiClient.fetchRealm(region, realmSlug), asyncExecutor);
     }
 }

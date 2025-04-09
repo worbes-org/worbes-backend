@@ -2,7 +2,8 @@ package com.worbes.auctionhousetracker.application.fetcher;
 
 import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
 import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
-import com.worbes.auctionhousetracker.dto.response.BlizzardAuctionListResponse;
+import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
+import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import lombok.RequiredArgsConstructor;
@@ -12,24 +13,25 @@ import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
 
 @Component
 @RequiredArgsConstructor
-public class AuctionFetcherImpl implements AuctionFetcher {
+public class RealmFetcherImpl implements RealmFetcher {
 
     private final RestApiClient restApiClient;
 
     @Override
-    public BlizzardAuctionListResponse fetchAuctions(RegionType region, Long realmId) {
-        if (realmId == null) return fetchCommodities(region);
+    public RealmIndexResponse fetchRealmIndex(RegionType region) {
         return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
+                BlizzardApiUrlBuilder.builder(region).realmIndex().build(),
                 BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                BlizzardAuctionListResponse.class);
+                RealmIndexResponse.class
+        );
     }
 
-    private BlizzardAuctionListResponse fetchCommodities(RegionType region) {
+    @Override
+    public RealmResponse fetchRealm(RegionType region, String slug) {
         return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).commodities().build(),
+                BlizzardApiUrlBuilder.builder(region).realm(slug).build(),
                 BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                BlizzardAuctionListResponse.class
+                RealmResponse.class
         );
     }
 }

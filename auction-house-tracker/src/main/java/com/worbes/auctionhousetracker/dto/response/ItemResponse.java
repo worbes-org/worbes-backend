@@ -27,7 +27,7 @@ public class ItemResponse {
     private Integer level;
 
     @JsonProperty("preview_item")
-    private Map<String, Object> previewItem;
+    private Object previewItem;
 
     @JsonProperty("quality")
     private void unpackNestedQuality(Map<String, Object> quality) {
