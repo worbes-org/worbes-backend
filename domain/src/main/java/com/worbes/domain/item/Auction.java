@@ -1,5 +1,6 @@
 package com.worbes.domain.item;
 
+import com.worbes.domain.realm.Realm;
 import com.worbes.domain.shared.RegionType;
 import lombok.Builder;
 import lombok.Getter;

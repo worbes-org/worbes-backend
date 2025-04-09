@@ -1,4 +1,4 @@
-package com.worbes.domain.item;
+package com.worbes.domain.realm;
 
 import com.worbes.domain.shared.RegionType;
 import lombok.Builder;
