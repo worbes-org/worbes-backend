@@ -2,5 +2,6 @@ rootProject.name = 'worbes'
 include 'auction-house-tracker'
 include 'domain'
 include 'infra-jpa'
-include 'app-batch'
+include 'application-batch'
+include 'application-core'
 
