@@ -1,8 +1,11 @@
 package com.worbes.infra.rest.client;
 
+import com.worbes.infra.rest.factory.GetRequestBuilder;
+import com.worbes.infra.rest.factory.PostRequestBuilder;
+
 public interface RestApiClient {
 
-    <T> T get(RestApiRequest<Void> request, Class<T> response);
+    <T> T get(GetRequestBuilder request, Class<T> response);
 
-    <T, R> R post(RestApiRequest<T> request, Class<R> response);
+    <T, R> R post(PostRequestBuilder<T> request, Class<R> response);
 }

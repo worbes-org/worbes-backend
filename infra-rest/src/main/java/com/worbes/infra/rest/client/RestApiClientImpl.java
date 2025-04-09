@@ -1,6 +1,8 @@
 package com.worbes.infra.rest.client;
 
 import com.worbes.infra.rest.exception.RestApiClientException;
+import com.worbes.infra.rest.factory.GetRequestBuilder;
+import com.worbes.infra.rest.factory.PostRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -37,7 +39,7 @@ public class RestApiClientImpl implements RestApiClient {
             noRetryFor = NoSuchElementException.class,
             backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
     )
-    public <T> T get(RestApiRequest<Void> request, Class<T> response) {
+    public <T> T get(GetRequestBuilder request, Class<T> response) {
         URI uri = createUri(request.url(), request.queryParams());
         return restClient.get()
                 .uri(uri)
@@ -53,7 +55,7 @@ public class RestApiClientImpl implements RestApiClient {
             noRetryFor = NoSuchElementException.class,
             backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
     )
-    public <T, R> R post(RestApiRequest<T> request, Class<R> response) {
+    public <T, R> R post(PostRequestBuilder<T> request, Class<R> response) {
         URI uri = createUri(request.url(), request.queryParams());
         return restClient.post()
                 .uri(uri)
