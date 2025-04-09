@@ -23,6 +23,9 @@ dependencies {
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.postgresql:postgresql'
 
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.5'
     implementation "com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations"
 

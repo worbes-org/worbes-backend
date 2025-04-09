@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class ItemClass {
+public class ItemClass extends BaseEntity {
 
     @Id
     private Long id;
@@ -42,12 +42,5 @@ public class ItemClass {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "ItemClass{" +
-                "id=" + id +
-                '}';
     }
 }

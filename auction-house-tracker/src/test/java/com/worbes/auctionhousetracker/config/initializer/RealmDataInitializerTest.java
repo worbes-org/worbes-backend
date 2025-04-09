@@ -1,7 +1,7 @@
 package com.worbes.auctionhousetracker.config.initializer;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.infrastructure.rest.BlizzardApiClient;
 import com.worbes.auctionhousetracker.service.RealmService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ class RealmDataInitializerTest {
 
     @BeforeEach
     void setUp() {
-        for (Region region : Region.values()) {
+        for (RegionType region : RegionType.values()) {
             given(blizzardApiClient.fetchRealmIndex(region)).willReturn(new RealmIndexResponse());
         }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
 import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
 import com.worbes.auctionhousetracker.entity.enums.NamespaceType;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
 import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ class RestApiClientImplTest {
 
     @BeforeEach
     void setUp() {
-        Region region = Region.US;
+        RegionType region = RegionType.US;
         this.requestUri = BlizzardApiUrlBuilder.builder(region).itemClassIndex().build();
         this.requestParams = BlizzardApiParamsBuilder.builder(region).namespace(NamespaceType.STATIC).build();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(requestUri);

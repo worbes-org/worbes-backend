@@ -2,10 +2,8 @@ package com.worbes.auctionhousetracker.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
-import com.worbes.auctionhousetracker.entity.enums.Quality;
+import com.worbes.auctionhousetracker.entity.enums.InventoryType;
+import com.worbes.auctionhousetracker.entity.enums.QualityType;
 import lombok.Data;
 
 import java.util.Map;
@@ -16,9 +14,11 @@ public class ItemResponse {
 
     private Long id;
 
-    private Translation name;
+    private Map<String, String> name;
 
-    private Quality quality;
+    private QualityType quality;
+
+    private InventoryType inventoryType;
 
     private Long itemClassId;
 
@@ -26,11 +26,12 @@ public class ItemResponse {
 
     private Integer level;
 
-    private String previewItem;
+    @JsonProperty("preview_item")
+    private Object previewItem;
 
     @JsonProperty("quality")
     private void unpackNestedQuality(Map<String, Object> quality) {
-        this.quality = Quality.valueOf((String) quality.get("type"));
+        this.quality = QualityType.valueOf((String) quality.get("type"));
     }
 
     @JsonProperty("item_class")
@@ -43,13 +44,8 @@ public class ItemResponse {
         this.itemSubclassId = ((Number) itemSubclass.get("id")).longValue();
     }
 
-    @JsonProperty("preview_item")
-    private void unpackPreviewItem(Object previewItem) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            this.previewItem = mapper.writeValueAsString(previewItem);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to convert preview_item to JSON string", e);
-        }
+    @JsonProperty("inventory_type")
+    private void unpackNestedInventoryType(Map<String, Object> inventoryType) {
+        this.inventoryType = InventoryType.valueOf((String) inventoryType.get("type"));
     }
 }

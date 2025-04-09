@@ -2,11 +2,14 @@ package com.worbes.auctionhousetracker.service;
 
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.Realm;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 
 import java.util.List;
 
 public interface RealmService {
+
+    Realm get(RegionType region, Long realmId);
 
     /**
      * API에서 받은 Realm 목록과 DB에 저장된 Realm 목록을 비교하여,
@@ -16,7 +19,9 @@ public interface RealmService {
      * @param region   필터링할 WoW 지역 (예: KR, US 등)
      * @return DB에 저장되지 않은 Realm slug 목록
      */
-    List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region);
+    List<String> getMissingRealmSlugs(RealmIndexResponse response, RegionType region);
 
-    void save(Region region, List<RealmResponse> responses);
+    List<Long> getConnectedRealmIds(RegionType region);
+
+    void save(RegionType region, List<RealmResponse> responses);
 }

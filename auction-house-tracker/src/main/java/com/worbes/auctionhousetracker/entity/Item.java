@@ -1,65 +1,68 @@
 package com.worbes.auctionhousetracker.entity;
 
-import com.worbes.auctionhousetracker.dto.response.ItemResponse;
-import com.worbes.auctionhousetracker.entity.embeded.Translation;
-import com.worbes.auctionhousetracker.entity.enums.Quality;
+import com.worbes.auctionhousetracker.dto.mapper.ItemSaveCommand;
+import com.worbes.auctionhousetracker.entity.enums.InventoryType;
+import com.worbes.auctionhousetracker.entity.enums.QualityType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.Type;
+
+import java.util.Map;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@ToString
-public class Item {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+public class Item extends BaseEntity {
 
     @Id
     private Long id;
 
-    @Embedded
-    private Translation name;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> name;
 
-    private Long itemClassId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_class_id", nullable = false)
+    private ItemClass itemClass;
 
-    private Long itemSubclassId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_subclass_id", nullable = false)
+    private ItemSubclass itemSubclass;
 
     @Enumerated(EnumType.STRING)
-    private Quality quality;
+    @Column(nullable = false, length = 20)
+    private QualityType quality;
 
-    private Integer itemLevel;
+    @Column(nullable = false)
+    private Integer level;
 
-    @Column(columnDefinition = "jsonb")
-    @ColumnTransformer(write = "?::jsonb")
-    private String previewItem;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private InventoryType inventoryType;
 
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Object previewItem;
+
+    @Column(nullable = false)
     private String iconUrl;
 
-    // private 생성자 (빌더가 사용)
-    @Builder(access = AccessLevel.PRIVATE)
-    private Item(Long id, Translation name, Long itemClassId, Long itemSubclassId,
-                 Quality quality, Integer itemLevel, String previewItem, String iconUrl) {
-        this.id = id;
-        this.name = name;
-        this.itemClassId = itemClassId;
-        this.itemSubclassId = itemSubclassId;
-        this.quality = quality;
-        this.itemLevel = itemLevel;
-        this.previewItem = previewItem;
-        this.iconUrl = iconUrl;
-    }
-
-    // 정적 팩토리 메서드
-    public static Item from(ItemResponse response, String iconUrl) {
+    public static Item from(ItemSaveCommand dto, ItemClass itemClass, ItemSubclass itemSubclass) {
         return Item.builder()
-                .id(response.getId())
-                .name(response.getName())
-                .itemClassId(response.getItemClassId())
-                .itemSubclassId(response.getItemSubclassId())
-                .quality(response.getQuality())
-                .itemLevel(response.getLevel())
-                .previewItem(response.getPreviewItem())
-                .iconUrl(iconUrl)
+                .id(dto.getId())
+                .name(dto.getName())
+                .itemClass(itemClass)
+                .itemSubclass(itemSubclass)
+                .iconUrl(dto.getIconUrl())
+                .level(dto.getLevel())
+                .inventoryType(dto.getInventoryType())
+                .previewItem(dto.getPreviewItem())
+                .quality(dto.getQuality())
                 .build();
     }
+
 }

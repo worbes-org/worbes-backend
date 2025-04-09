@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = "item_subclass",
         uniqueConstraints = @UniqueConstraint(name = "uq_item_class_subclass", columnNames = {"item_class_id", "subclass_id"})
 )
-public class ItemSubclass {
+public class ItemSubclass extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

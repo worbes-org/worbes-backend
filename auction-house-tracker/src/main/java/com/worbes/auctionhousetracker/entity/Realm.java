@@ -1,6 +1,6 @@
 package com.worbes.auctionhousetracker.entity;
 
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Table(
         uniqueConstraints = @UniqueConstraint(name = "uk_region_slug", columnNames = {"region", "slug"})
 )
-public class Realm {
+public class Realm extends BaseEntity {
 
     @Id
     private Long id;
@@ -27,7 +27,7 @@ public class Realm {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
-    private Region region;
+    private RegionType region;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb", nullable = false)
@@ -35,4 +35,11 @@ public class Realm {
 
     @Column(length = 50, nullable = false)
     private String slug;
+
+    @Override
+    public String toString() {
+        return "Realm{" +
+                "slug='" + slug + '\'' +
+                '}';
+    }
 }

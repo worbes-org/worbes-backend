@@ -1,117 +1,93 @@
 package com.worbes.auctionhousetracker.service;
 
-import com.worbes.auctionhousetracker.builder.BlizzardApiParamsBuilder;
-import com.worbes.auctionhousetracker.builder.BlizzardApiUrlBuilder;
-import com.worbes.auctionhousetracker.dto.response.AuctionResponse;
+import com.worbes.auctionhousetracker.dto.AuctionDto;
+import com.worbes.auctionhousetracker.dto.mapper.AuctionUpdateCommand;
 import com.worbes.auctionhousetracker.entity.Auction;
-import com.worbes.auctionhousetracker.entity.enums.Region;
-import com.worbes.auctionhousetracker.infrastructure.rest.RestApiClient;
+import com.worbes.auctionhousetracker.entity.Item;
+import com.worbes.auctionhousetracker.entity.Realm;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.worbes.auctionhousetracker.entity.enums.NamespaceType.DYNAMIC;
+import static java.util.stream.Collectors.toSet;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
 
-    private final RestApiClient restApiClient;
     private final AuctionRepository repository;
+    private final ItemService itemService;
+    private final RealmService realmService;
+
 
     @Override
     @Transactional
-    public void updateAuctions(List<Auction> newAuctions, Region region) {
-        updateAuctions(newAuctions, region, null);
+    public void updateAuctions(AuctionUpdateCommand command) {
+        Realm realm = realmService.get(command.getRegion(), command.getRealmId());
+        RegionType region = command.getRegion();
+        List<AuctionDto> dtos = command.getAuctions();
+        log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, Realm: {}, 수신 개수: {})", region, realm, dtos.size());
+
+        Set<Auction> newAuctions = convertDtoToEntity(dtos, region, realm);
+        Set<Auction> activeAuctions = findActiveAuctions(newAuctions, region, realm);
+
+        deactivateClosedAuction(newAuctions, activeAuctions);
+        saveNewAuctions(newAuctions, activeAuctions);
     }
 
-    @Override
-    @Transactional
-    public void updateAuctions(List<Auction> newAuctions, Region region, Long realmId) {
-        validateInputs(newAuctions, region);
+    private Set<Auction> convertDtoToEntity(List<AuctionDto> dtos, RegionType region, Realm realm) {
+        Map<Long, Item> requiredItems = getRequiredItems(dtos);
 
-        log.info("🔄 경매 데이터 업데이트 시작 (Region: {}, RealmId: {})", region, realmId);
-
-        List<Auction> activeAuctions = findActiveAuctions(region, realmId);
-        Set<Long> existingAuctionIds = extractAuctionIds(activeAuctions);
-        Set<Long> newAuctionIds = extractAuctionIds(newAuctions);
-
-        List<Auction> endedAuctions = markEndedAuctions(activeAuctions, newAuctionIds);
-        List<Auction> auctionsToSave = filterNewAuctions(newAuctions, existingAuctionIds);
-
-        repository.saveAll(auctionsToSave);
-
-        log.info("✅ 경매 데이터 업데이트 완료: 새로 추가된 경매 {}개, 종료된 경매 {}개",
-                auctionsToSave.size(), endedAuctions.size());
+        return dtos.stream()
+                .map(dto -> {
+                            Item item = requiredItems.get(dto.getItemId());
+                            return Auction.from(dto, item, realm, region);
+                        }
+                )
+                .filter(auction -> auction.getItem() != null)
+                .collect(toSet());
     }
 
-    // 입력 값 검증 메서드
-    private void validateInputs(List<Auction> newAuctions, Region region) {
-        if (region == null) {
-            throw new IllegalArgumentException("Region must not be null");
-        }
-        if (newAuctions == null) {
-            throw new IllegalArgumentException("New auctions list must not be null");
-        }
+    private Map<Long, Item> getRequiredItems(List<AuctionDto> dtos) {
+        Set<Long> itemIds = dtos.stream()
+                .map(AuctionDto::getItemId)
+                .collect(toSet());
+
+        Map<Long, Item> result = itemService.getItemsBy(itemIds);
+
+        long nullItemCount = dtos.stream().filter(dto -> !result.containsKey(dto.getItemId())).count();
+        if (nullItemCount > 0) log.warn("⚠️ 매핑 실패한 itemId 수: {} / 전체 수신: {}", nullItemCount, dtos.size());
+
+        return result;
     }
 
-    // 활성 경매 조회
-    private List<Auction> findActiveAuctions(Region region, Long realmId) {
-        if (realmId == null) {
-            return repository.findByActiveTrueAndRegion(region);
-        } else {
-            return repository.findByActiveTrueAndRegionAndRealmId(region, realmId);
-        }
+    private void deactivateClosedAuction(Set<Auction> newAuctions, Set<Auction> activeAuctions) {
+        Set<Auction> endedAuctions = new HashSet<>(activeAuctions);
+        endedAuctions.removeAll(newAuctions);
+        endedAuctions.forEach(Auction::end);
+        log.info("종료된 경매 {}개", endedAuctions.size());
     }
 
-    // Auction ID 추출
-    private Set<Long> extractAuctionIds(List<Auction> auctions) {
-        return auctions.stream()
-                .map(Auction::getAuctionId)
-                .collect(Collectors.toSet());
+    private void saveNewAuctions(Set<Auction> newAuctions, Set<Auction> activeAuctions) {
+        Set<Auction> auctionsToInsert = new HashSet<>(newAuctions);
+        auctionsToInsert.removeAll(activeAuctions);
+        repository.saveAll(auctionsToInsert);
+        log.info("💾 신규 경매 저장 완료: {}건", auctionsToInsert.size());
     }
 
-    // 종료된 경매 처리: 새로운 경매 목록에 없는 기존 경매 상태 변경
-    private List<Auction> markEndedAuctions(List<Auction> activeAuctions, Set<Long> newAuctionIds) {
-        return activeAuctions.stream()
-                .filter(auction -> !newAuctionIds.contains(auction.getAuctionId()))
-                .peek(Auction::end)
-                .toList();
-    }
-
-    // 신규 경매 필터링: 기존 경매 목록에 없는 것만 추출
-    private List<Auction> filterNewAuctions(List<Auction> newAuctions, Set<Long> existingAuctionIds) {
-        return newAuctions.stream()
-                .filter(auction -> !existingAuctionIds.contains(auction.getAuctionId()))
-                .toList();
-    }
-
-    @Override
-    public AuctionResponse fetchCommodities(Region region) {
-        return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).commodities().build(),
-                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                AuctionResponse.class
-        );
-    }
-
-    @Override
-    public AuctionResponse fetchAuctions(Region region, Long realmId) {
-        return restApiClient.get(
-                BlizzardApiUrlBuilder.builder(region).auctions(realmId).build(),
-                BlizzardApiParamsBuilder.builder(region).namespace(DYNAMIC).build(),
-                AuctionResponse.class);
-    }
-
-    @Override
-    public void saveAuctions(List<Auction> auctions) {
-        repository.saveAll(auctions);
+    private Set<Auction> findActiveAuctions(Set<Auction> newAuctions, RegionType region, Realm realm) {
+        Set<Long> newIds = newAuctions.stream().map(Auction::getAuctionId).collect(toSet());
+        Set<Auction> result = repository.findByAuctionIdInAndActiveTrueAndRegionAndRealm(newIds, region, realm);
+        log.info("🧹 현재 DB에 존재하는 활성 경매 수: {}", result.size());
+        return result;
     }
 }

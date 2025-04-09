@@ -3,7 +3,7 @@ package com.worbes.auctionhousetracker.service;
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.repository.RealmRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,18 @@ public class RealmServiceImpl implements RealmService {
     private final RealmRepository realmRepository;
 
     @Override
-    public List<String> getMissingRealmSlugs(RealmIndexResponse response, Region region) {
+    public Realm get(RegionType region, Long realmId) {
+        if (realmId == null) return null;
+        return realmRepository.findByIdAndRegion(realmId, region).orElse(null);
+    }
+
+    @Override
+    public List<Long> getConnectedRealmIds(RegionType region) {
+        return realmRepository.findDistinctConnectedRealmIdsByRegion(region);
+    }
+
+    @Override
+    public List<String> getMissingRealmSlugs(RealmIndexResponse response, RegionType region) {
         log.info("[{}] Missing Realm Slug 조회 시작", region.getValue());
         Set<String> existingRealmSlugs = realmRepository.findByRegion(region)
                 .stream()
@@ -39,7 +50,7 @@ public class RealmServiceImpl implements RealmService {
     }
 
     @Override
-    public void save(Region region, List<RealmResponse> responses) {
+    public void save(RegionType region, List<RealmResponse> responses) {
         if (responses.isEmpty()) {
             log.info("responses is empty");
             return;

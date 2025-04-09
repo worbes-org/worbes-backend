@@ -3,7 +3,7 @@ package com.worbes.auctionhousetracker.service;
 import com.worbes.auctionhousetracker.dto.response.RealmIndexResponse;
 import com.worbes.auctionhousetracker.dto.response.RealmResponse;
 import com.worbes.auctionhousetracker.entity.Realm;
-import com.worbes.auctionhousetracker.entity.enums.Region;
+import com.worbes.auctionhousetracker.entity.enums.RegionType;
 import com.worbes.auctionhousetracker.repository.RealmRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,12 +34,12 @@ class RealmServiceImplTest {
     @Test
     void getMissingRealmSlugs_ShouldReturnEmptyList_WhenBothDBAndAPIEmpty() {
         // Given
-        given(realmRepository.findByRegion(Region.KR)).willReturn(List.of());
+        given(realmRepository.findByRegion(RegionType.KR)).willReturn(List.of());
         RealmIndexResponse response = new RealmIndexResponse();
         response.setRealms(List.of()); // API도 비어 있음
 
         // When
-        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, Region.KR);
+        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, RegionType.KR);
 
         // Then
         assertThat(missingRealmIds).isEmpty();
@@ -49,7 +49,7 @@ class RealmServiceImplTest {
     @Test
     void getMissingRealmSlugs_ShouldReturnAllRealmIds_WhenDBIsEmpty() {
         // Given
-        given(realmRepository.findByRegion(Region.KR)).willReturn(List.of()); // DB 비어 있음
+        given(realmRepository.findByRegion(RegionType.KR)).willReturn(List.of()); // DB 비어 있음
 
         RealmIndexResponse response = new RealmIndexResponse();
         response.setRealms(List.of(
@@ -58,7 +58,7 @@ class RealmServiceImplTest {
         ));
 
         // When
-        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, Region.KR);
+        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, RegionType.KR);
 
         // Then
         assertThat(missingRealmIds).containsExactly("azshara", "alleria");
@@ -68,9 +68,9 @@ class RealmServiceImplTest {
     @Test
     void getMissingRealmSlugs_ShouldReturnEmptyList_WhenNoMissingRealms() {
         // Given
-        given(realmRepository.findByRegion(Region.KR)).willReturn(List.of(
-                Realm.builder().id(1L).connectedRealmId(100L).region(Region.KR).slug("azshara").build(),
-                Realm.builder().id(2L).connectedRealmId(101L).region(Region.KR).slug("alleria").build()
+        given(realmRepository.findByRegion(RegionType.KR)).willReturn(List.of(
+                Realm.builder().id(1L).connectedRealmId(100L).region(RegionType.KR).slug("azshara").build(),
+                Realm.builder().id(2L).connectedRealmId(101L).region(RegionType.KR).slug("alleria").build()
         ));
 
         RealmIndexResponse response = new RealmIndexResponse();
@@ -80,7 +80,7 @@ class RealmServiceImplTest {
         ));
 
         // When
-        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, Region.KR);
+        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, RegionType.KR);
 
         // Then
         assertThat(missingRealmIds).isEmpty();
@@ -90,9 +90,9 @@ class RealmServiceImplTest {
     @DisplayName("API에서 받은 Realm 리스트 중 DB에 없는 Realm slug만 반환해야 한다 (Region 필터 적용)")
     void getMissingRealmSlugs_ShouldReturnMissingSlugsForRegion() {
         // Given: DB에 저장된 KR 서버 목록
-        given(realmRepository.findByRegion(Region.KR)).willReturn(List.of(
-                Realm.builder().id(1L).connectedRealmId(100L).region(Region.KR).slug("azshara").build(),
-                Realm.builder().id(2L).connectedRealmId(101L).region(Region.KR).slug("alleria").build()
+        given(realmRepository.findByRegion(RegionType.KR)).willReturn(List.of(
+                Realm.builder().id(1L).connectedRealmId(100L).region(RegionType.KR).slug("azshara").build(),
+                Realm.builder().id(2L).connectedRealmId(101L).region(RegionType.KR).slug("alleria").build()
         ));
 
         // API에서 받은 Realm 데이터 (KR 서버)
@@ -104,7 +104,7 @@ class RealmServiceImplTest {
         ));
 
         // When: getMissingRealmIds 호출
-        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, Region.KR);
+        List<String> missingRealmIds = realmService.getMissingRealmSlugs(response, RegionType.KR);
 
         // Then: DB에 없는 ID(3)만 리턴되어야 함
         assertThat(missingRealmIds).containsExactly("blackhand");
@@ -114,15 +114,15 @@ class RealmServiceImplTest {
     @Test
     void getMissingRealmSlugs_ShouldReturnEmptyList_WhenApiResponseIsEmpty() {
         // Given: DB에는 데이터가 있지만 API는 빈 리스트 반환
-        given(realmRepository.findByRegion(Region.KR)).willReturn(List.of(
-                Realm.builder().id(1L).connectedRealmId(100L).region(Region.KR).slug("azshara").build()
+        given(realmRepository.findByRegion(RegionType.KR)).willReturn(List.of(
+                Realm.builder().id(1L).connectedRealmId(100L).region(RegionType.KR).slug("azshara").build()
         ));
 
         RealmIndexResponse response = new RealmIndexResponse();
         response.setRealms(List.of()); // API 응답이 빈 리스트
 
         // When
-        List<String> missingRealmSlugs = realmService.getMissingRealmSlugs(response, Region.KR);
+        List<String> missingRealmSlugs = realmService.getMissingRealmSlugs(response, RegionType.KR);
 
         // Then
         assertThat(missingRealmSlugs).isEmpty();
@@ -132,7 +132,7 @@ class RealmServiceImplTest {
     @Test
     void save_ShouldExtractIdFromUrlAndStoreRealm_WhenValidUrlGiven() {
         // Given
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> nameAzshara = Map.of("ko_KR", "아즈샤라", "en_US", "Azshara");
 
         List<RealmResponse> responses = List.of(
@@ -157,7 +157,7 @@ class RealmServiceImplTest {
     @Test
     void save_ShouldStoreMultipleRealms_WhenValidListGiven() {
         // Given
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> name1 = Map.of("ko_KR", "굴단", "en_US", "Gul'dan");
         Map<String, String> name2 = Map.of("ko_KR", "데스윙", "en_US", "Deathwing");
 
@@ -182,7 +182,7 @@ class RealmServiceImplTest {
     @Test
     void save_ShouldThrowException_WhenConnectedRealmHrefIsNull() {
         // Given
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> nameAzshara = Map.of("ko_KR", "아즈샤라", "en_US", "Azshara");
 
         List<RealmResponse> responses = List.of(
@@ -199,7 +199,7 @@ class RealmServiceImplTest {
     @Test
     void save_ShouldNotStoreRealms_WhenEmptyListGiven() {
         // Given
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         List<RealmResponse> responses = List.of(); // 빈 리스트
 
         // When
@@ -213,7 +213,7 @@ class RealmServiceImplTest {
     @Test
     void save_ShouldThrowException_WhenInvalidUrlGiven() {
         // Given
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> nameAzshara = Map.of("ko_KR", "아즈샤라", "en_US", "Azshara");
 
         List<RealmResponse> responses = List.of(
@@ -231,7 +231,7 @@ class RealmServiceImplTest {
     void extractIdFromUrl_ShouldThrowException_WhenUrlDoesNotEndWithNumber() {
         // Given
         String urlWithInvalidId = "https://example.com/connected-realm/invalid";
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> nameAzshara = Map.of("ko_KR", "아즈샤라", "en_US", "Azshara");
 
         List<RealmResponse> responses = List.of(
@@ -249,7 +249,7 @@ class RealmServiceImplTest {
     void extractIdFromUrl_ShouldExtractId_WhenUrlEndsWithSlash() {
         // Given
         String urlWithSlash = "https://example.com/connected-realm/67890/";
-        Region region = Region.KR;
+        RegionType region = RegionType.KR;
         Map<String, String> nameAzshara = Map.of("ko_KR", "아즈샤라", "en_US", "Azshara");
 
         List<RealmResponse> responses = List.of(

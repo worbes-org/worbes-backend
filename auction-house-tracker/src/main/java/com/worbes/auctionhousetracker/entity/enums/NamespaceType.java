@@ -10,7 +10,7 @@ public enum NamespaceType {
         this.format = format;
     }
 
-    public String format(Region region) {
+    public String format(RegionType region) {
         return String.format(this.format, region.getValue());
     }
 }

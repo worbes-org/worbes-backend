@@ -23,6 +23,12 @@ public class ItemSubclassServiceImpl implements ItemSubclassService {
     private final RequiredItemClassesProperties properties;
 
     @Override
+    public ItemSubclass get(ItemClass itemClass, Long itemSubclassId) {
+        return itemSubclassRepository.findByItemClassAndSubclassId(itemClass, itemSubclassId)
+                .orElse(null);
+    }
+
+    @Override
     @Transactional
     public void saveRequiredSubclass(List<ItemSubclassResponse> responses, Long itemClassId) {
         ItemClass itemClass = itemClassService.get(itemClassId);

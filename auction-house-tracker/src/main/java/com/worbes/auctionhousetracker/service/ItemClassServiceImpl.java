@@ -25,7 +25,10 @@ public class ItemClassServiceImpl implements ItemClassService {
 
     @Override
     public ItemClass get(Long id) {
-        return itemClassRepository.findById(id).orElseThrow(() -> new NoSuchElementException("ItemClass not found"));
+        return itemClassRepository.findById(id).orElseThrow(() -> {
+            log.error("ItemClass with id {} not found", id);
+            return new NoSuchElementException("ItemClass not found");
+        });
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.worbes.auctionhousetracker.infrastructure.rest;
 
-import com.worbes.auctionhousetracker.exception.*;
+import com.worbes.auctionhousetracker.exception.InternalServerErrorException;
+import com.worbes.auctionhousetracker.exception.RestApiClientException;
+import com.worbes.auctionhousetracker.exception.TooManyRequestsException;
+import com.worbes.auctionhousetracker.exception.UnauthorizedException;
 import com.worbes.auctionhousetracker.infrastructure.oauth.AccessTokenHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -38,7 +42,11 @@ public class RestApiClientImpl implements RestApiClient {
     }
 
     @Override
-    @Retryable(recover = "recover", backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true))
+    @Retryable(
+            recover = "recover",
+            noRetryFor = NoSuchElementException.class,
+            backoff = @Backoff(delay = 1000, multiplier = 2.0, maxDelay = 5000, random = true)
+    )
     public <T> T get(String url, Map<String, String> params, Class<T> responseType) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         params.forEach(builder::queryParam);
@@ -66,7 +74,7 @@ public class RestApiClientImpl implements RestApiClient {
             }
             if (statusCode.equals(NOT_FOUND)) {
                 log.error("🚨 404 Not Found - 해당 데이터 없음");
-                throw new NotFoundException();
+                throw new NoSuchElementException();
             }
             if (statusCode.equals(INTERNAL_SERVER_ERROR)) {
                 log.error("🔥 500 Internal Server Error - 서버 문제 발생");
