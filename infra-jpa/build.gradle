@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'io.spring.dependency-management'
+    id 'io.freefair.lombok'
 }
 
 dependencies {
@@ -10,4 +11,11 @@ dependencies {
 
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.5'
     implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

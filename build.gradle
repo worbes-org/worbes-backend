@@ -14,21 +14,8 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'io.freefair.lombok'
-
     afterEvaluate { project ->
         if (project.plugins.hasPlugin("io.spring.dependency-management")) {
-            project.dependencies {
-                testImplementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude group: "org.junit.vintage", module: "junit-vintage-engine"
-                }
-                testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-            }
-
-            project.tasks.withType(Test).configureEach {
-                useJUnitPlatform()
-            }
-
             project.dependencyManagement {
                 imports {
                     mavenBom 'org.springframework.boot:spring-boot-dependencies:3.3.5'
