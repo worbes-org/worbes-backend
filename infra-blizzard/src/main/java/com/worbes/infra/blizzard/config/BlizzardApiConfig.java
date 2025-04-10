@@ -1,5 +1,6 @@
 package com.worbes.infra.blizzard.config;
 
+import com.worbes.infra.rest.exception.InternalServerErrorException;
 import com.worbes.infra.rest.exception.NotFoundException;
 import com.worbes.infra.rest.exception.TooManyRequestsException;
 import com.worbes.infra.rest.exception.UnauthorizedException;
@@ -26,6 +27,7 @@ public class BlizzardApiConfig {
         classifier.setPolicyMap(Map.of(
                 UnauthorizedException.class, new SimpleRetryPolicy(2),
                 TooManyRequestsException.class, new SimpleRetryPolicy(3),
+                InternalServerErrorException.class, new SimpleRetryPolicy(2),
                 NotFoundException.class, new NeverRetryPolicy()
         ));
         return classifier;
