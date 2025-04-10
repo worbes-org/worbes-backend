@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.oauth;
+package com.worbes.infra.blizzard.client;
 
 public interface AccessTokenHandler {
 
