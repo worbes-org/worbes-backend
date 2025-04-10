@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.common.factory;
+package com.worbes.infra.rest.factory;
 
 import lombok.Builder;
 

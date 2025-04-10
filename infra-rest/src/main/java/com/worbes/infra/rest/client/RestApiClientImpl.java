@@ -1,8 +1,8 @@
-package com.worbes.infra.rest.common.client;
+package com.worbes.infra.rest.client;
 
-import com.worbes.infra.rest.common.exception.RestApiClientException;
-import com.worbes.infra.rest.common.factory.GetRequestBuilder;
-import com.worbes.infra.rest.common.factory.PostRequestBuilder;
+import com.worbes.infra.rest.exception.RestApiClientException;
+import com.worbes.infra.rest.factory.GetRequestBuilder;
+import com.worbes.infra.rest.factory.PostRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;

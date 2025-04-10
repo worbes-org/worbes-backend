@@ -1,10 +1,10 @@
-package com.worbes.infra.rest.common.client;
+package com.worbes.infra.rest.client;
 
-import com.worbes.infra.rest.common.exception.InternalServerErrorException;
-import com.worbes.infra.rest.common.exception.RestApiClientException;
-import com.worbes.infra.rest.common.exception.TooManyRequestsException;
-import com.worbes.infra.rest.common.exception.UnauthorizedException;
-import com.worbes.infra.rest.common.oauth.AccessTokenHandler;
+import com.worbes.infra.rest.exception.InternalServerErrorException;
+import com.worbes.infra.rest.exception.RestApiClientException;
+import com.worbes.infra.rest.exception.TooManyRequestsException;
+import com.worbes.infra.rest.exception.UnauthorizedException;
+import com.worbes.infra.rest.oauth.AccessTokenHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;

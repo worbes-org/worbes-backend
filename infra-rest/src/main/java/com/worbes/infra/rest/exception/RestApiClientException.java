@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.common.exception;
+package com.worbes.infra.rest.exception;
 
 
 import lombok.Getter;
