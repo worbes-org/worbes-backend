@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'io.spring.dependency-management'
 }
 
 dependencies {
@@ -9,11 +10,4 @@ dependencies {
 
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.5'
     implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
-
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
-
-test {
-    useJUnitPlatform()
 }

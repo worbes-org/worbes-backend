@@ -1,9 +1,6 @@
 plugins {
     id 'java-library'
-}
-
-repositories {
-    mavenCentral()
+    id 'io.spring.dependency-management'
 }
 
 dependencies {
@@ -12,16 +9,10 @@ dependencies {
     implementation project(':infra-rest')
 
     implementation("org.springframework.boot:spring-boot-starter")
-    
+
     implementation("com.fasterxml.jackson.core:jackson-databind")
 
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
-test {
-    useJUnitPlatform()
-}
