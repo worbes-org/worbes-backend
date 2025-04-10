@@ -4,7 +4,6 @@ import com.worbes.infra.rest.exception.InternalServerErrorException;
 import com.worbes.infra.rest.exception.RestApiClientException;
 import com.worbes.infra.rest.exception.TooManyRequestsException;
 import com.worbes.infra.rest.exception.UnauthorizedException;
-import com.worbes.infra.rest.oauth.AccessTokenHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -22,8 +21,6 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 public class RestApiErrorHandlerImpl implements RestApiErrorHandler {
 
-    private final AccessTokenHandler accessTokenHandler;
-
     @Override
     public void handle(HttpRequest req, ClientHttpResponse res) {
         try {
@@ -33,20 +30,19 @@ public class RestApiErrorHandlerImpl implements RestApiErrorHandler {
             log.error("API 요청 실패 | URL: {} | 상태 코드: {} | 상태 메세지: {}", requestUrl, statusCode.value(), statusText);
 
             if (statusCode.equals(UNAUTHORIZED)) {
-                log.warn("⚠️ 401 Unauthorized 발생 - 토큰 갱신 시도");
-                accessTokenHandler.refresh();
+                log.warn("⚠️ 401 Unauthorized");
                 throw new UnauthorizedException();
             }
             if (statusCode.equals(NOT_FOUND)) {
-                log.error("🚨 404 Not Found - 해당 데이터 없음");
+                log.error("🚨 404 Not Found");
                 throw new NoSuchElementException();
             }
             if (statusCode.equals(INTERNAL_SERVER_ERROR)) {
-                log.error("🔥 500 Internal Server Error - 서버 문제 발생");
+                log.error("🔥 500 Internal Server Error");
                 throw new InternalServerErrorException();
             }
             if (statusCode.equals(TOO_MANY_REQUESTS)) {
-                log.warn("⏳ 429 Too Many Requests - 요청 제한 초과");
+                log.warn("⏳ 429 Too Many Requests");
                 throw new TooManyRequestsException();
             }
 
