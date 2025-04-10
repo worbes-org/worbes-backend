@@ -23,12 +23,20 @@ public class BlizzardAccessTokenHandler {
     private final RestApiClient restApiClient;
     private final CacheRepository cacheRepository;
 
+    private final Object lock = new Object();
+
     public String get() {
         return cacheRepository.get(getTokenKey())
-                .orElseGet(() -> {
-                    log.info("캐시에 토큰 없음 → 새로 갱신");
-                    return refresh();
-                });
+                .orElseGet(this::refreshWithLock);
+    }
+
+
+    private String refreshWithLock() {
+        synchronized (lock) {
+            // double-check (다른 스레드가 이미 갱신했을 수 있음)
+            return cacheRepository.get(getTokenKey())
+                    .orElseGet(this::refresh);
+        }
     }
 
     public String refresh() {
