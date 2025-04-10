@@ -1,4 +1,4 @@
-package com.worbes.infra.blizzard.client;
+package com.worbes.infra.blizzard.factory;
 
 
 import com.worbes.domain.shared.RegionType;
