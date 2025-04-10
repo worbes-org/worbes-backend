@@ -12,15 +12,15 @@ import java.util.Map;
 public class ItemClassesIndexResponse {
 
     @JsonProperty("item_classes")
-    private List<ItemClassDto> itemClassDtos;
+    private List<ItemClassIndexElement> itemClassIndexElements;
 
     @Getter
     @Setter
-    public static class ItemClassDto {
+    public static class ItemClassIndexElement {
         private Long id;
         private Map<String, String> name;
 
-        public ItemClassDto(Long id, Map<String, String> name) {
+        public ItemClassIndexElement(Long id, Map<String, String> name) {
             this.id = id;
             this.name = name;
         }
