@@ -1,4 +1,4 @@
-package com.worbes.infra.rest.blizzard.config;
+package com.worbes.infra.blizzard.config;
 
 import lombok.Getter;
 import lombok.Setter;

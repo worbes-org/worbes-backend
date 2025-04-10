@@ -1,8 +1,8 @@
-package com.worbes.infra.rest.blizzard.client;
+package com.worbes.infra.blizzard.client;
 
 import com.worbes.application.core.shared.port.CacheRepository;
-import com.worbes.infra.rest.blizzard.config.BlizzardApiConfigProperties;
-import com.worbes.infra.rest.blizzard.response.TokenResponse;
+import com.worbes.infra.blizzard.config.BlizzardApiConfigProperties;
+import com.worbes.infra.blizzard.response.TokenResponse;
 import com.worbes.infra.rest.common.client.RestApiClient;
 import com.worbes.infra.rest.common.factory.PostRequestBuilder;
 import com.worbes.infra.rest.common.oauth.AccessTokenHandler;

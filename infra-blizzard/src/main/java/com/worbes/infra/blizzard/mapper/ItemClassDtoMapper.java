@@ -1,7 +1,7 @@
-package com.worbes.infra.rest.blizzard.mapper;
+package com.worbes.infra.blizzard.mapper;
 
 import com.worbes.application.core.item.dto.ItemClassDto;
-import com.worbes.infra.rest.blizzard.response.ItemClassesIndexResponse;
+import com.worbes.infra.blizzard.response.ItemClassesIndexResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,5 +15,5 @@ public interface ItemClassDtoMapper {
     ItemClassDto toDto(ItemClassesIndexResponse.ItemClassIndexElement element);
 
     List<ItemClassDto> toDtoList(List<ItemClassesIndexResponse.ItemClassIndexElement> elements);
-    
+
 }

@@ -7,9 +7,13 @@ repositories {
 }
 
 dependencies {
+    implementation project(':domain')
     implementation project(':application-core')
+    implementation project(':infra-rest')
 
     implementation("org.springframework.boot:spring-boot-starter")
+    
+    implementation("com.fasterxml.jackson.core:jackson-databind")
 
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
