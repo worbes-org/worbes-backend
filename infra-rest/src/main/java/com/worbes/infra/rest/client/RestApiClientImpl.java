@@ -1,11 +1,11 @@
 package com.worbes.infra.rest.client;
 
 import com.worbes.infra.rest.factory.RestApiRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -14,11 +14,19 @@ import java.util.Map;
 
 
 @Slf4j
-@RequiredArgsConstructor
+@Component
 public class RestApiClientImpl implements RestApiClient {
 
     private final RestClient restClient;
     private final RestApiErrorHandler errorHandler;
+
+    public RestApiClientImpl(RestClient.Builder builder, RestApiErrorHandler errorHandler) {
+        this.restClient = builder
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+        this.errorHandler = errorHandler;
+    }
 
     @Override
     public <T> T get(RestApiRequest request, Class<T> responseType) {
@@ -26,10 +34,7 @@ public class RestApiClientImpl implements RestApiClient {
 
         return restClient.get()
                 .uri(uri)
-                .headers(headers -> {
-                    headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                    request.headers().forEach(headers::add);
-                })
+                .headers(headers -> request.headers().forEach(headers::add))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, errorHandler::handle)
                 .body(responseType);
@@ -41,10 +46,7 @@ public class RestApiClientImpl implements RestApiClient {
 
         return restClient.post()
                 .uri(uri)
-                .headers(headers -> {
-                    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                    request.headers().forEach(headers::add);
-                })
+                .headers(headers -> request.headers().forEach(headers::add))
                 .body(request.body())
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, errorHandler::handle)
