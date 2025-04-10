@@ -17,13 +17,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BlizzardAccessTokenHandler implements AccessTokenHandler {
+public class BlizzardAccessTokenHandler {
 
     private final BlizzardApiConfigProperties properties;
     private final RestApiClient restApiClient;
     private final CacheRepository cacheRepository;
 
-    @Override
     public String get() {
         return cacheRepository.get(getTokenKey())
                 .orElseGet(() -> {
@@ -32,7 +31,6 @@ public class BlizzardAccessTokenHandler implements AccessTokenHandler {
                 });
     }
 
-    @Override
     public String refresh() {
         TokenResponse tokenResponse = fetchNewToken();
         String newToken = tokenResponse.getAccessToken();
