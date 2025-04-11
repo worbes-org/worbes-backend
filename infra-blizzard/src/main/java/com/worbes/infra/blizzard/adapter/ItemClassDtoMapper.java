@@ -1,4 +1,4 @@
-package com.worbes.infra.blizzard.mapper;
+package com.worbes.infra.blizzard.adapter;
 
 import com.worbes.application.core.item.dto.ItemClassDto;
 import com.worbes.infra.blizzard.response.ItemClassesIndexResponse;

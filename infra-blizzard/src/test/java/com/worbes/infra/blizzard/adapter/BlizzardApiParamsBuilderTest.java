@@ -1,7 +1,6 @@
-package com.worbes.infra.blizzard.factory;
+package com.worbes.infra.blizzard.adapter;
 
 import com.worbes.domain.shared.RegionType;
-import com.worbes.infra.blizzard.enums.NamespaceType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

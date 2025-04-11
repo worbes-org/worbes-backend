@@ -1,4 +1,4 @@
-package com.worbes.infra.blizzard.factory;
+package com.worbes.infra.blizzard.adapter;
 
 import com.worbes.domain.shared.RegionType;
 import org.junit.jupiter.api.DisplayName;
