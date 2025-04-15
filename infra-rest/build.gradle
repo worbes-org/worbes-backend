@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation project(':domain')
-    implementation project(':application-core')
+    implementation project(':infra-cache')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.retry:spring-retry'

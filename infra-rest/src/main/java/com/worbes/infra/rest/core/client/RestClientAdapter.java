@@ -1,7 +1,5 @@
 package com.worbes.infra.rest.core.client;
 
-import com.worbes.infra.rest.core.error.RestApiErrorHandler;
-import com.worbes.infra.rest.core.model.RequestParams;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;

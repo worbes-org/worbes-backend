@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisTokenCache implements TokenCache {
 
     private final StringRedisTemplate template;
