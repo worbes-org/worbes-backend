@@ -1,10 +1,12 @@
-package com.worbes.domain.item;
+package com.worbes.application.batch;
 
+import com.worbes.domain.item.ItemClass;
 import com.worbes.domain.item.policy.RequiredItemClassPolicy;
 import com.worbes.domain.item.port.ItemClassRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,5 +26,14 @@ public class ItemClassService {
         missing.removeAll(existing);
 
         return missing.isEmpty();
+    }
+
+    public void saveRequiredClasses(List<ItemClass> candidates) {
+        Set<Long> required = policy.getRequiredIds();
+        List<ItemClass> filtered = candidates.stream()
+                .filter(it -> required.contains(it.getId()))
+                .toList();
+
+        repository.saveAll(filtered);
     }
 }

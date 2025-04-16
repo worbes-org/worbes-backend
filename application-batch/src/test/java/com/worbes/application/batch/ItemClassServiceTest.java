@@ -1,7 +1,10 @@
-package com.worbes.domain.item;
+package com.worbes.application.batch;
 
+import com.worbes.domain.item.ItemClass;
 import com.worbes.domain.item.policy.RequiredItemClassPolicy;
 import com.worbes.domain.item.port.ItemClassRepository;
+import com.worbes.domain.shared.LocaleCode;
+import com.worbes.domain.shared.LocalizedName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +31,8 @@ class ItemClassServiceTest {
     @InjectMocks
     ItemClassService service;
 
+    LocalizedName localizedName = LocalizedName.fromLocalized(Map.of(LocaleCode.KO_KR, "무기"));
+
     @Test
     @DisplayName("모든 필요한 아이템 클래스가 존재하면 true를 반환한다")
     void allRequiredClassesExist_returnsTrue_whenAllPresent() {
@@ -35,9 +40,9 @@ class ItemClassServiceTest {
         Set<Long> requiredIds = Set.of(1L, 2L, 3L);
         given(policy.getRequiredIds()).willReturn(requiredIds);
         given(repository.findAllBy(requiredIds)).willReturn(List.of(
-                ItemClass.create(1L, Map.of()),
-                ItemClass.create(2L, Map.of()),
-                ItemClass.create(3L, Map.of())
+                new ItemClass(1L, localizedName),
+                new ItemClass(2L, localizedName),
+                new ItemClass(3L, localizedName)
         ));
 
         // when
@@ -54,8 +59,8 @@ class ItemClassServiceTest {
         Set<Long> requiredIds = Set.of(1L, 2L, 3L);
         given(policy.getRequiredIds()).willReturn(requiredIds);
         given(repository.findAllBy(requiredIds)).willReturn(List.of(
-                ItemClass.create(1L, Map.of()),
-                ItemClass.create(2L, Map.of()) // 3L 누락
+                new ItemClass(1L, localizedName),
+                new ItemClass(2L, localizedName)
         ));
 
         // when
