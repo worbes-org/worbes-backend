@@ -1,11 +1,11 @@
-package com.worbes.domain.item.dto;
+package com.worbes.application.batch;
 
 import lombok.Data;
 
 import java.util.Map;
 
 @Data
-public class ItemClassDto {
+public class ItemClassIndexDto {
     private Long id;
     private Map<String, String> name;
 }

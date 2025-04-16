@@ -1,7 +1,7 @@
 package com.worbes.jpa.repository;
 
 import com.worbes.domain.item.ItemClass;
-import com.worbes.domain.item.repository.ItemClassRepository;
+import com.worbes.domain.item.port.ItemClassRepository;
 import com.worbes.jpa.entity.ItemClassEntity;
 import com.worbes.jpa.mapper.ItemClassMapper;
 import lombok.RequiredArgsConstructor;

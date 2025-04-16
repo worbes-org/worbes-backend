@@ -1,18 +1,24 @@
 package com.worbes.infra.rest.blizzard.item;
 
-import com.worbes.domain.item.dto.ItemClassDto;
+import com.worbes.application.batch.ItemClassDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface ItemClassDtoMapper {
+    ItemClassDtoMapper INSTANCE = Mappers.getMapper(ItemClassDtoMapper.class);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
-    ItemClassDto toDto(ItemClassesIndexResponse.ItemClass element);
+    @Mapping(target = "subclassResponses", source = "subclassResponses")
+    ItemClassDto toDto(ItemClassResponse response);
 
-    List<ItemClassDto> toDtoList(List<ItemClassesIndexResponse.ItemClass> elements);
+    List<ItemClassDto> toDtoList(List<ItemClassResponse> responses);
 
+    ItemClassDto.ItemSubclass toDto(ItemClassResponse.ItemSubclass response);
+
+    List<ItemClassDto.ItemSubclass> toDtoSubList(List<ItemClassResponse.ItemSubclass> responses);
 }

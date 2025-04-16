@@ -1,4 +1,4 @@
-package com.worbes.domain.item.repository;
+package com.worbes.domain.item.port;
 
 import com.worbes.domain.item.ItemClass;
 
