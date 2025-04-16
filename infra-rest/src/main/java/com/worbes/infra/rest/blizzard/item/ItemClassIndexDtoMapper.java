@@ -1,6 +1,6 @@
 package com.worbes.infra.rest.blizzard.item;
 
-import com.worbes.application.datainit.ItemClassIndexDto;
+import com.worbes.application.initializer.ItemClassIndexDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

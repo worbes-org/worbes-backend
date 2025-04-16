@@ -1,4 +1,4 @@
-package com.worbes.application.datainit;
+package com.worbes.application.initializer;
 
 import lombok.Data;
 
