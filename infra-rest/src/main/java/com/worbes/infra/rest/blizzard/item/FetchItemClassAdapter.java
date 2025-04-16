@@ -30,6 +30,7 @@ public class FetchItemClassAdapter implements FetchItemClassPort {
     public CompletableFuture<ItemClassDto> fetchItemClass(RegionType region, Long itemClassId) {
         String url = ItemApiUrlFactory.itemClassUrl(region, itemClassId);
         Map<String, String> params = QueryParamsBuilder.builder(region).staticNamespace().build();
+
         return CompletableFuture.supplyAsync(() -> apiClient.fetch(url, params, ItemClassResponse.class))
                 .thenApply(ItemClassDtoMapper.INSTANCE::toDto);
     }
