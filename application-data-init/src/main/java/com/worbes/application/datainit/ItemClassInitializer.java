@@ -1,4 +1,4 @@
-package com.worbes.application.batch;
+package com.worbes.application.datainit;
 
 import com.worbes.domain.item.ItemClass;
 import com.worbes.domain.shared.LocalizedName;

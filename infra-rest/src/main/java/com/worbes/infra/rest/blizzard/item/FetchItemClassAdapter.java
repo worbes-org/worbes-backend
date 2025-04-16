@@ -1,8 +1,8 @@
 package com.worbes.infra.rest.blizzard.item;
 
-import com.worbes.application.batch.FetchItemClassPort;
-import com.worbes.application.batch.ItemClassDto;
-import com.worbes.application.batch.ItemClassIndexDto;
+import com.worbes.application.datainit.FetchItemClassPort;
+import com.worbes.application.datainit.ItemClassDto;
+import com.worbes.application.datainit.ItemClassIndexDto;
 import com.worbes.domain.shared.RegionType;
 import com.worbes.infra.rest.blizzard.BlizzardApiClient;
 import com.worbes.infra.rest.blizzard.support.QueryParamsBuilder;
