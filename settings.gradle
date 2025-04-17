@@ -8,3 +8,4 @@ include 'application-initializer'
 include 'worbes-app-auction-sync'
 
 project(":infra-redis").projectDir = file("infra/redis")
+project(":infra-jpa").projectDir = file("infra/jpa")
