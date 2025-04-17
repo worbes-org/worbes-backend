@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation project(':domain')
-    implementation project(':infra-cache')
+    implementation project(':infra-redis')
     implementation project(':application-initializer')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'

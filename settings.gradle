@@ -3,6 +3,8 @@ include 'auction-house-tracker'
 include 'domain'
 include 'infra-jpa'
 include 'infra-rest'
-include 'infra-cache'
+include 'infra-redis'
 include 'application-initializer'
+include 'worbes-app-auction-sync'
 
+project(":infra-redis").projectDir = file("infra/redis")
