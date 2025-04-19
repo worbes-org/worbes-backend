@@ -1,16 +1,11 @@
 rootProject.name = 'worbes'
 include 'auction-house-tracker'
 include 'domain'
-include 'infra-jpa'
-include 'infra-rest'
-include 'infra-redis'
-include 'infra-spring-web'
 include 'application-initializer'
-include 'worbes-app-auction-sync'
-include 'adapter-wow-api-client'
 
-project(":infra-redis").projectDir = file("infra/redis")
-project(":infra-jpa").projectDir = file("infra/jpa")
-project(":infra-spring-web").projectDir = file("infra/spring-web")
-project(":adapter-wow-api-client").projectDir = file("adapters/wow-api-client")
+include 'auction-sync'
+include ':adapter:blizzard-client'
+
+include ':infra:jpa'
+
 

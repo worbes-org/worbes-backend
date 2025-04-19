@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management'
+    id 'io.freefair.lombok'
+}
+
+
+dependencies {
+    implementation project(':domain')
+    implementation project(':application-initializer')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
