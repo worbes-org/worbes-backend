@@ -1,4 +1,9 @@
 rootProject.name = 'worbes'
-include 'auction-house-tracker'
-include 'domain'
+include 'application'
+
+include ':adapter:blizzard-client'
+include ':adapter:persistence'
+include ':adapter:batch'
+
+include ':bootstrap:scheduler'
 

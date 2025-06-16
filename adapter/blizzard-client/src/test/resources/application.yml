@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: blizzard_client_test
+  cache:
+    caffeine:
+      spec: expireAfterWrite=86399s
+blizzard:
+  api:
+    token-url: https://oauth.battle.net/token
+    id: ${BLIZZARD_CLIENT_ID}
+    secret: ${BLIZZARD_CLIENT_SECRET}
+    token-key: "worbes:blizzard:access-token"
