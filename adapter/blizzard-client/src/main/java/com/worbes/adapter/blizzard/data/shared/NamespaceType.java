@@ -1,8 +1,8 @@
 package com.worbes.adapter.blizzard.data.shared;
 
-import com.worbes.domain.shared.RegionType;
+import com.worbes.application.realm.model.RegionType;
 
-public enum NamespaceType {
+enum NamespaceType {
     DYNAMIC("dynamic-%s"),
     STATIC("static-%s");
 

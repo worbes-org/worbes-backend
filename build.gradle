@@ -4,6 +4,10 @@ plugins {
     id 'io.freefair.lombok' version '8.6'
 }
 
+ext {
+    mapstructVersion = '1.6.3'
+}
+
 allprojects {
     group = 'com.worbes'
     version = '0.0.1-SNAPSHOT'

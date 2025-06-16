@@ -1,6 +1,6 @@
 package com.worbes.adapter.blizzard.retry;
 
-import com.worbes.adapter.blizzard.client.BlizzardAccessTokenRestClient;
+import com.worbes.adapter.blizzard.client.BlizzardAccessTokenHandler;
 import com.worbes.adapter.blizzard.client.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class BlizzardTokenRefreshStrategy implements RetryRecoveryStrategy {
 
-    private final BlizzardAccessTokenRestClient oauthClient;
+    private final BlizzardAccessTokenHandler oauthClient;
 
     @Override
     public boolean supports(Throwable e) {

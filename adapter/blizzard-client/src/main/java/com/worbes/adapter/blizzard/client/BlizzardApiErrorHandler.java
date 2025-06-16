@@ -22,12 +22,12 @@ public class BlizzardApiErrorHandler implements RestClientErrorHandler {
             log.error("Blizzard API 요청 실패 | 메서드: {} | URL: {} | 상태 코드: {} | 메시지: {}",
                     request.getMethod(), requestUrl, statusCode.value(), responseBody);
 
-            switch (statusCode.value()) {
-                case 401 -> throw new UnauthorizedException(responseBody);
-                case 429 -> throw new TooManyRequestsException(responseBody);
-                case 500 -> throw new InternalServerErrorException(responseBody);
-                default -> throw new BlizzardApiException(responseBody, statusCode.value());
-            }
+            throw switch (statusCode.value()) {
+                case 401 -> new UnauthorizedException(responseBody);
+                case 429 -> new TooManyRequestsException(responseBody);
+                case 500, 502, 503 -> new InternalServerErrorException(responseBody);
+                default -> new BlizzardApiException(responseBody, statusCode.value());
+            };
         } catch (IOException e) {
             log.error("Blizzard API 응답 처리 중 IOException 발생: {}", e.getMessage());
             throw new BlizzardApiException(e.getMessage(), e);
