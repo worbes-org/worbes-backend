@@ -1,6 +1,6 @@
 package com.worbes.adapter.blizzard.data.auction;
 
-import com.worbes.application.auction.port.in.AuctionFetchResult;
+import com.worbes.application.auction.port.out.FetchAuctionResult;
 import com.worbes.application.realm.model.RegionType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,7 +17,7 @@ public interface AuctionListResponseMapper {
     @Mapping(target = "quantity", source = "response.quantity")
     @Mapping(target = "buyout", source = "response.buyout")
     @Mapping(target = "unitPrice", source = "response.unitPrice")
-    AuctionFetchResult toDto(
+    FetchAuctionResult toDto(
             RegionType region,
             Long realmId,
             AuctionListResponse.AuctionResponse response

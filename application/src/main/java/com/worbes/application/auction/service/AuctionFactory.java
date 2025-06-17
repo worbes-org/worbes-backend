@@ -1,12 +1,12 @@
 package com.worbes.application.auction.service;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.AuctionFetchResult;
+import com.worbes.application.auction.port.out.FetchAuctionResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AuctionFactory {
-    public Auction create(AuctionFetchResult dto) {
+    public Auction create(FetchAuctionResult dto) {
         return Auction.builder()
                 .id(dto.id())
                 .active(true)

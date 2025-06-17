@@ -1,8 +1,8 @@
-package com.worbes.application.auction.port.in;
+package com.worbes.application.auction.port.out;
 
 import com.worbes.application.realm.model.RegionType;
 
-public record AuctionFetchResult(
+public record FetchAuctionResult(
         Long id,
         Long itemId,
         Long quantity,

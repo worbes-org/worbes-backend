@@ -1,6 +1,6 @@
 package com.worbes.adapter.blizzard.data.auction;
 
-import com.worbes.application.auction.port.in.AuctionFetchResult;
+import com.worbes.application.auction.port.out.FetchAuctionResult;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class AuctionListResponseMapperTest {
         response.setUnitPrice(25000L);
 
         // when
-        AuctionFetchResult result = mapper.toDto(region, realmId, response);
+        FetchAuctionResult result = mapper.toDto(region, realmId, response);
 
         // then
         then(result.region()).isEqualTo(region);

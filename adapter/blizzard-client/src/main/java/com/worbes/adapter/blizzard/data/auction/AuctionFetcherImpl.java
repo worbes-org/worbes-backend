@@ -3,8 +3,8 @@ package com.worbes.adapter.blizzard.data.auction;
 import com.worbes.adapter.blizzard.client.BlizzardApiClient;
 import com.worbes.adapter.blizzard.client.BlizzardApiException;
 import com.worbes.adapter.blizzard.data.shared.BlizzardApiUriFactory;
-import com.worbes.application.auction.port.in.AuctionFetchResult;
 import com.worbes.application.auction.port.out.AuctionFetcher;
+import com.worbes.application.auction.port.out.FetchAuctionResult;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class AuctionFetcherImpl implements AuctionFetcher {
     private final BlizzardApiUriFactory uriFactory;
 
     @Override
-    public List<AuctionFetchResult> fetch(RegionType region, Long realmId) {
+    public List<FetchAuctionResult> fetch(RegionType region, Long realmId) {
         URI uri = Optional.ofNullable(realmId)
                 .map(id -> uriFactory.auctionUri(region, id))
                 .orElseGet(() -> uriFactory.commodityUri(region));

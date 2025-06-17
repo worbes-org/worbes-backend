@@ -2,7 +2,7 @@ package com.worbes.adapter.blizzard.data.auction;
 
 import com.worbes.adapter.blizzard.client.BlizzardApiClient;
 import com.worbes.adapter.blizzard.data.shared.BlizzardApiUriFactory;
-import com.worbes.application.auction.port.in.AuctionFetchResult;
+import com.worbes.application.auction.port.out.FetchAuctionResult;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,13 +52,13 @@ class AuctionFetcherImplTest {
         given(apiClient.fetch(expectedUri, AuctionListResponse.class)).willReturn(mockResponse);
         given(mockResponse.getAuctions()).willReturn(List.of(auction1, auction2));
 
-        AuctionFetchResult dto1 = mock(AuctionFetchResult.class, "dto1");
-        AuctionFetchResult dto2 = mock(AuctionFetchResult.class, "dto2");
+        FetchAuctionResult dto1 = mock(FetchAuctionResult.class, "dto1");
+        FetchAuctionResult dto2 = mock(FetchAuctionResult.class, "dto2");
         given(resultMapper.toDto(region, realmId, auction1)).willReturn(dto1);
         given(resultMapper.toDto(region, realmId, auction2)).willReturn(dto2);
 
         // when
-        List<AuctionFetchResult> results = auctionFetcher.fetch(region, realmId);
+        List<FetchAuctionResult> results = auctionFetcher.fetch(region, realmId);
 
         // then
         then(uriFactory).should().auctionUri(region, realmId);
@@ -78,11 +78,11 @@ class AuctionFetcherImplTest {
         given(apiClient.fetch(expectedUri, AuctionListResponse.class)).willReturn(mockResponse);
         given(mockResponse.getAuctions()).willReturn(List.of(auction));
 
-        AuctionFetchResult dto = mock(AuctionFetchResult.class, "dto");
+        FetchAuctionResult dto = mock(FetchAuctionResult.class, "dto");
 
         given(resultMapper.toDto(eq(region), isNull(), same(auction))).willReturn(dto);
 
-        List<AuctionFetchResult> results = auctionFetcher.fetch(region, null);
+        List<FetchAuctionResult> results = auctionFetcher.fetch(region, null);
 
         then(uriFactory).should().commodityUri(region);
         then(apiClient).should().fetch(expectedUri, AuctionListResponse.class);
