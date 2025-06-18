@@ -1,5 +1,6 @@
 package com.worbes.application.item.model;
 
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.common.model.LocalizedName;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,5 +58,9 @@ public class Item {
 
     public Map<String, String> getName() {
         return name.asRaw();
+    }
+
+    public String getName(LocaleCode locale) {
+        return name.get(locale);
     }
 }

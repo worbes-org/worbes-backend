@@ -1,9 +1,11 @@
 package com.worbes.adapter.jpa.repository.auction;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
+import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -69,5 +71,28 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
                         a.auctionId.in(ids)
                 )
                 .execute();
+    }
+
+    @Override
+    public List<SearchAuctionSummaryResult> findAuctionSummariesBy(RegionType region, Long realmId, Set<Long> itemIds) {
+        QAuctionEntity auction = QAuctionEntity.auctionEntity;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        SearchAuctionSummaryResult.class,
+                        auction.itemId,
+                        auction.unitPrice.min(),
+                        auction.buyout.min(),
+                        auction.quantity.sum()
+                ))
+                .from(auction)
+                .where(
+                        auction.region.eq(region),
+                        auction.realmId.eq(realmId),
+                        auction.itemId.in(itemIds),
+                        auction.active.isTrue()
+                )
+                .groupBy(auction.itemId)
+                .fetch();
     }
 }
