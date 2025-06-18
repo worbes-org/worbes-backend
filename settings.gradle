@@ -4,6 +4,7 @@ include 'application'
 include ':adapter:blizzard-client'
 include ':adapter:persistence'
 include ':adapter:batch'
+include ':adapter:web'
 
 include ':bootstrap:scheduler'
 
