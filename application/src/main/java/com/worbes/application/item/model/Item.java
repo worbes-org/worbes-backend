@@ -20,6 +20,7 @@ public class Item {
     private final InventoryType inventoryType;
     private final Object previewItem;
     private final String iconUrl;
+    private final CraftingTierType craftingTier;
 
     @Builder
     private Item(
@@ -31,7 +32,8 @@ public class Item {
             Integer level,
             InventoryType inventoryType,
             Object previewItem,
-            String iconUrl
+            String iconUrl,
+            CraftingTierType craftingTier
     ) {
         this.id = id;
         this.name = LocalizedName.fromRaw(name);
@@ -42,6 +44,7 @@ public class Item {
         this.inventoryType = inventoryType;
         this.previewItem = previewItem;
         this.iconUrl = iconUrl;
+        this.craftingTier = craftingTier;
     }
 
     @Override

@@ -5,5 +5,4 @@ public record SearchItemCommand(
         Long itemSubclassId,
         String name
 ) {
-
 }
