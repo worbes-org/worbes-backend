@@ -3,9 +3,11 @@ package com.worbes.web;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
 import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.SearchAllItemUseCase;
 import com.worbes.application.item.port.in.SearchItemCommand;
+import com.worbes.application.realm.model.RegionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,9 @@ public class SearchAuctionController {
 
     @GetMapping
     public ApiResponse<List<SearchAuctionResponse>> searchAuction(@Valid SearchAuctionRequest request) {
+        log.info("request: {}", request);
+        RegionType region = RegionType.valueOf(request.region());
+        LocaleCode locale = LocaleCode.fromValue(request.locale());
         List<Item> items = searchAllItemUseCase.searchAll(
                 new SearchItemCommand(
                         request.itemClassId(),
@@ -36,9 +41,9 @@ public class SearchAuctionController {
         );
         Map<Item, SearchAuctionSummaryResult> summaries = searchAuctionSummaryUseCase.searchSummaries(
                 new SearchAuctionCommand(
-                        request.region(),
+                        region,
                         request.realmId(),
-                        request.locale()
+                        locale
                 ),
                 items
         );
@@ -46,7 +51,7 @@ public class SearchAuctionController {
                 .map(entry -> new SearchAuctionResponse(
                                 entry.getKey(),
                                 entry.getValue(),
-                                request.locale()
+                                locale
                         )
                 ).toList();
 

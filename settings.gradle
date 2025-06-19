@@ -7,4 +7,5 @@ include ':adapter:batch'
 include ':adapter:web'
 
 include ':bootstrap:scheduler'
+include ':bootstrap:api'
 

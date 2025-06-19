@@ -1,5 +1,6 @@
 package com.worbes.adapter.jpa.entity;
 
+import com.worbes.application.item.model.CraftingTierType;
 import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.QualityType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -49,6 +50,9 @@ public class ItemEntity extends BaseEntity {
     @Column(nullable = false, name = "icon_url")
     private String iconUrl;
 
+    @Column(name = "crafting_tier")
+    private CraftingTierType craftingTier;
+
     @Builder
     private ItemEntity(
             Long id,
@@ -59,7 +63,8 @@ public class ItemEntity extends BaseEntity {
             Integer level,
             InventoryType inventoryType,
             Object previewItem,
-            String iconUrl
+            String iconUrl,
+            CraftingTierType craftingTier
     ) {
         this.id = id;
         this.name = name;
@@ -70,5 +75,6 @@ public class ItemEntity extends BaseEntity {
         this.inventoryType = inventoryType;
         this.previewItem = previewItem;
         this.iconUrl = iconUrl;
+        this.craftingTier = craftingTier;
     }
 }
