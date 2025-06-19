@@ -1,6 +1,7 @@
 package com.worbes.adapter.jpa.mapper;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,7 @@ class RealmEntityMapperTest {
                 .id(1L)
                 .connectedRealmId(100L)
                 .region(RegionType.KR)
-                .name(Map.of("ko_kr", "하이잘", "en_us", "Hyjal"))
+                .name(Map.of(LocaleCode.KO_KR.getValue(), "하이잘", LocaleCode.EN_US.getValue(), "Hyjal"))
                 .slug("hyjal")
                 .build();
 
@@ -47,7 +48,7 @@ class RealmEntityMapperTest {
                 .id(2L)
                 .connectedRealmId(200L)
                 .region(RegionType.KR)
-                .name(Map.of("en_us", "Stormrage", "ko_kr", "스톰레이지"))
+                .name(Map.of(LocaleCode.EN_US.getValue(), "Stormrage", LocaleCode.KO_KR.getValue(), "스톰레이지"))
                 .slug("stormrage")
                 .build();
 

@@ -1,6 +1,7 @@
 package com.worbes.adapter.jpa.repository.item;
 
 import com.worbes.adapter.jpa.entity.ItemEntity;
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.model.QualityType;
@@ -45,8 +46,8 @@ class SearchAllItemTest {
                 Item.builder()
                         .id(1L)
                         .name(Map.of(
-                                "en_us", "Rugged Trapper's Boots",
-                                "ko_kr", "주름진 덫사냥꾼용 장화"
+                                LocaleCode.EN_US.getValue(), "Rugged Trapper's Boots",
+                                LocaleCode.KO_KR.getValue(), "주름진 덫사냥꾼용 장화"
                         ))
                         .itemClassId(1L)
                         .itemSubclassId(2L)
@@ -60,8 +61,8 @@ class SearchAllItemTest {
                 Item.builder()
                         .id(2L)
                         .name(Map.of(
-                                "en_us", "Smooth Leather Gloves",
-                                "ko_kr", "부드러운 가죽 장갑"
+                                LocaleCode.EN_US.getValue(), "Smooth Leather Gloves",
+                                LocaleCode.KO_KR.getValue(), "부드러운 가죽 장갑"
                         ))
                         .itemClassId(1L)
                         .itemSubclassId(2L)
@@ -75,8 +76,8 @@ class SearchAllItemTest {
                 Item.builder()
                         .id(3L)
                         .name(Map.of(
-                                "en_us", "Reinforced Leather Helm",
-                                "ko_kr", "강화 가죽 투구"
+                                LocaleCode.EN_US.getValue(), "Reinforced Leather Helm",
+                                LocaleCode.KO_KR.getValue(), "강화 가죽 투구"
                         ))
                         .itemClassId(1L)
                         .itemSubclassId(2L)
@@ -90,8 +91,8 @@ class SearchAllItemTest {
                 Item.builder()
                         .id(4L)
                         .name(Map.of(
-                                "en_us", "Trapper's Leather Vest",
-                                "ko_kr", "덫사냥꾼용 가죽 조끼"
+                                LocaleCode.EN_US.getValue(), "Trapper's Leather Vest",
+                                LocaleCode.KO_KR.getValue(), "덫사냥꾼용 가죽 조끼"
                         ))
                         .itemClassId(1L)
                         .itemSubclassId(2L)
@@ -140,7 +141,7 @@ class SearchAllItemTest {
         assertThat(results)
                 .hasSize(2)
                 .allSatisfy(item ->
-                        assertThat(item.getName().get("ko_kr")).contains("덫사냥꾼")
+                        assertThat(item.getName().get(LocaleCode.KO_KR.getValue())).contains("덫사냥꾼")
                 );
     }
 
@@ -157,7 +158,7 @@ class SearchAllItemTest {
         assertThat(results)
                 .hasSize(2)
                 .allSatisfy(item ->
-                        assertThat(item.getName().get("en_us").toLowerCase()).contains("trapper")
+                        assertThat(item.getName().get(LocaleCode.EN_US.getValue()).toLowerCase()).contains("trapper")
                 );
     }
 

@@ -1,6 +1,7 @@
 package com.worbes.adapter.jpa.repository.realm;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
 import com.worbes.application.realm.port.out.CreateRealmRepository;
@@ -41,7 +42,7 @@ public class SaveAllTest {
                 .connectedRealmId(connectedRealmId)
                 .region(region)
                 .slug(slug)
-                .name(Map.of("ko_kr", "하이잘", "en_us", "Hyjal"))
+                .name(Map.of(LocaleCode.KO_KR.getValue(), "하이잘", LocaleCode.EN_US.getValue(), "Hyjal"))
                 .build();
     }
 

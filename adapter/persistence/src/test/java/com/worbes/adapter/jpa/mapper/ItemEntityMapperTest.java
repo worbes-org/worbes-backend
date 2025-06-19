@@ -1,6 +1,7 @@
 package com.worbes.adapter.jpa.mapper;
 
 import com.worbes.adapter.jpa.entity.ItemEntity;
+import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.model.QualityType;
@@ -22,7 +23,7 @@ class ItemEntityMapperTest {
         // given
         ItemEntity entity = ItemEntity.builder()
                 .id(1L)
-                .name(Map.of("ko_kr", "검", "en_us", "Sword"))
+                .name(Map.of(LocaleCode.KO_KR.getValue(), "검", LocaleCode.EN_US.getValue(), "Sword"))
                 .itemClassId(2L)
                 .itemSubclassId(3L)
                 .quality(QualityType.RARE)
@@ -38,7 +39,7 @@ class ItemEntityMapperTest {
         // then
         assertThat(item).isNotNull();
         assertThat(item.getId()).isEqualTo(1L);
-        assertThat(item.getName()).containsEntry("ko_kr", "검");
+        assertThat(item.getName()).containsEntry(LocaleCode.KO_KR.getValue(), "검");
         assertThat(item.getItemClassId()).isEqualTo(2L);
         assertThat(item.getItemSubclassId()).isEqualTo(3L);
         assertThat(item.getQuality()).isEqualTo(QualityType.RARE);
@@ -53,7 +54,7 @@ class ItemEntityMapperTest {
         // given
         Item item = Item.builder()
                 .id(10L)
-                .name(Map.of("en_us", "Axe"))
+                .name(Map.of(LocaleCode.EN_US.getValue(), "Axe"))
                 .itemClassId(5L)
                 .itemSubclassId(6L)
                 .quality(QualityType.EPIC)
@@ -69,7 +70,7 @@ class ItemEntityMapperTest {
         // then
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getName()).containsEntry("en_us", "Axe");
+        assertThat(entity.getName()).containsEntry(LocaleCode.EN_US.getValue(), "Axe");
         assertThat(entity.getItemClassId()).isEqualTo(5L);
         assertThat(entity.getItemSubclassId()).isEqualTo(6L);
         assertThat(entity.getQuality()).isEqualTo(QualityType.EPIC);
