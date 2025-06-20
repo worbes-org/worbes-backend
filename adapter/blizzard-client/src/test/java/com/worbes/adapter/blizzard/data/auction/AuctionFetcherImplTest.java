@@ -45,8 +45,8 @@ class AuctionFetcherImplTest {
         Long realmId = 1234L;
         URI expectedUri = URI.create("https://some.api/auction");
         AuctionListResponse mockResponse = mock(AuctionListResponse.class);
-        AuctionListResponse.AuctionResponse auction1 = createAuctionResponse(1L, 100L, 10L, 500L, 50L);
-        AuctionListResponse.AuctionResponse auction2 = createAuctionResponse(2L, 200L, 20L, 1000L, 100L);
+        AuctionListResponse.AuctionResponse auction1 = createAuctionResponse(1L, 100L, 10L, 500L, null);
+        AuctionListResponse.AuctionResponse auction2 = createAuctionResponse(2L, 200L, 20L, 1000L, null);
 
         given(uriFactory.auctionUri(region, realmId)).willReturn(expectedUri);
         given(apiClient.fetch(expectedUri, AuctionListResponse.class)).willReturn(mockResponse);
@@ -72,7 +72,7 @@ class AuctionFetcherImplTest {
     void shouldFetchCommoditiesWhenRealmIdIsNull() {
         URI expectedUri = URI.create("https://some.api/commodities");
         AuctionListResponse mockResponse = mock(AuctionListResponse.class);
-        AuctionListResponse.AuctionResponse auction = createAuctionResponse(3L, 300L, 30L, 3000L, 300L);
+        AuctionListResponse.AuctionResponse auction = createAuctionResponse(3L, 300L, 30L, null, 309000L);
 
         given(uriFactory.commodityUri(region)).willReturn(expectedUri);
         given(apiClient.fetch(expectedUri, AuctionListResponse.class)).willReturn(mockResponse);
@@ -90,7 +90,7 @@ class AuctionFetcherImplTest {
         assertThat(results).containsExactly(dto);
     }
 
-    private AuctionListResponse.AuctionResponse createAuctionResponse(long id, long itemId, long quantity, long buyout, long unitPrice) {
+    private AuctionListResponse.AuctionResponse createAuctionResponse(Long id, Long itemId, Long quantity, Long buyout, Long unitPrice) {
         AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
         response.setId(id);
         response.setItemId(itemId);

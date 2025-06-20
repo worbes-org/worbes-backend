@@ -24,7 +24,7 @@ class AuctionListResponseMapperTest {
         AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
         response.setId(123456789L);
         response.setItemId(98765L);
-        response.setQuantity(20);
+        response.setQuantity(20L);
         response.setBuyout(500000L);
         response.setUnitPrice(25000L);
 

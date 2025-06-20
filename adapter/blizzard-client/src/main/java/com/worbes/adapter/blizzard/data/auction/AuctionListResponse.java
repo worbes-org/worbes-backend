@@ -16,13 +16,13 @@ public class AuctionListResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AuctionResponse {
-        private long id;
-        private long itemId;
-        private long quantity;
-        private long buyout;
+        private Long id;
+        private Long itemId;
+        private Long quantity;
+        private Long buyout;
 
         @JsonProperty("unit_price")
-        private long unitPrice;
+        private Long unitPrice;
 
         @JsonProperty("item")
         private void unpackNestedItem(Map<String, Object> item) {

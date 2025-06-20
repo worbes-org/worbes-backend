@@ -5,7 +5,9 @@ import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.CraftingTierType;
 import com.worbes.application.item.model.Item;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AuctionSummary {
 
     private final Item item;
@@ -19,8 +21,8 @@ public class AuctionSummary {
     public AuctionSummary(Item item, SearchAuctionSummaryResult summaryResult) {
         this.item = item;
         this.available = summaryResult.available();
-        Long totalCooper = item.isCommodity() ? summaryResult.lowestUnitPrice() : summaryResult.lowestBuyout();
-        this.price = new Price(totalCooper);
+        Long rawPrice = getRawPrice(summaryResult.lowestUnitPrice(), summaryResult.lowestBuyout());
+        this.price = new Price(rawPrice);
     }
 
     public String getItemName(LocaleCode localeCode) {
@@ -33,5 +35,16 @@ public class AuctionSummary {
 
     public String getIconUrl() {
         return item.getIconUrl();
+    }
+
+    private Long getRawPrice(Long unitPrice, Long buyout) {
+        if (unitPrice != null && unitPrice > 0 && buyout == null) {
+            return unitPrice;
+        } else if (buyout != null && buyout > 0 && unitPrice == null) {
+            return buyout;
+        } else {
+            log.error("buyout and unitPrice are both null or zero buyout = {}, unitPrice =  {}", buyout, unitPrice);
+            throw new IllegalArgumentException("buyout and unitPrice are both null or zero buyout");
+        }
     }
 }
