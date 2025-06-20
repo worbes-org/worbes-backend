@@ -1,8 +1,7 @@
 package com.worbes.application.auction.model;
 
-import lombok.Getter;
+import java.util.Objects;
 
-@Getter
 public class Price {
 
     private final int totalCopper;
@@ -26,6 +25,18 @@ public class Price {
     @Override
     public String toString() {
         return String.format("%dg %ds %dc", getGold(), getSilver(), getCopper());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Price price = (Price) o;
+        return totalCopper == price.totalCopper;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(totalCopper);
     }
 }
 
