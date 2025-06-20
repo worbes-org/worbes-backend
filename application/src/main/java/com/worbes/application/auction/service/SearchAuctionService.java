@@ -1,5 +1,6 @@
 package com.worbes.application.auction.service;
 
+import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
@@ -22,16 +23,14 @@ public class SearchAuctionService implements SearchAuctionSummaryUseCase {
     private final SearchAuctionRepository searchAuctionRepository;
 
     @Override
-    public Map<Item, SearchAuctionSummaryResult> searchSummaries(SearchAuctionCommand command, List<Item> items) {
+    public List<AuctionSummary> searchSummaries(SearchAuctionCommand command, List<Item> items) {
         Map<Long, Item> itemMap = items.stream()
                 .collect(Collectors.toMap(Item::getId, Function.identity()));
         List<SearchAuctionSummaryResult> results = searchAuctionRepository.searchSummaries(command, itemMap.keySet());
 
         return results.stream()
                 .filter(result -> itemMap.containsKey(result.itemId()))
-                .collect(Collectors.toMap(
-                        result -> itemMap.get(result.itemId()),
-                        Function.identity()
-                ));
+                .map(summaryResult -> new AuctionSummary(itemMap.get(summaryResult.itemId()), summaryResult))
+                .toList();
     }
 }

@@ -1,8 +1,8 @@
 package com.worbes.web;
 
+import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
-import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
 import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.SearchAllItemUseCase;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -29,7 +28,6 @@ public class SearchAuctionController {
 
     @GetMapping
     public ApiResponse<List<SearchAuctionResponse>> searchAuction(@Valid SearchAuctionRequest request) {
-        log.info("request: {}", request);
         RegionType region = RegionType.valueOf(request.region());
         LocaleCode locale = LocaleCode.fromValue(request.locale());
         List<Item> items = searchAllItemUseCase.searchAll(
@@ -39,7 +37,7 @@ public class SearchAuctionController {
                         request.itemName()
                 )
         );
-        Map<Item, SearchAuctionSummaryResult> summaries = searchAuctionSummaryUseCase.searchSummaries(
+        List<AuctionSummary> auctionSummaries = searchAuctionSummaryUseCase.searchSummaries(
                 new SearchAuctionCommand(
                         region,
                         request.realmId(),
@@ -47,13 +45,9 @@ public class SearchAuctionController {
                 ),
                 items
         );
-        List<SearchAuctionResponse> result = summaries.entrySet().stream()
-                .map(entry -> new SearchAuctionResponse(
-                                entry.getKey(),
-                                entry.getValue(),
-                                locale
-                        )
-                ).toList();
+        List<SearchAuctionResponse> result = auctionSummaries.stream()
+                .map(as -> new SearchAuctionResponse(as, locale))
+                .toList();
 
         return new ApiResponse<>(result);
     }

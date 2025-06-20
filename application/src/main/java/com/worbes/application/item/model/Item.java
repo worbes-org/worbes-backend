@@ -66,4 +66,8 @@ public class Item {
     public String getName(LocaleCode locale) {
         return name.get(locale);
     }
+
+    public boolean isCommodity() {
+        return itemClassId == null;
+    }
 }
