@@ -21,8 +21,7 @@ public class AuctionSummary {
     public AuctionSummary(Item item, SearchAuctionSummaryResult summaryResult) {
         this.item = item;
         this.available = summaryResult.available();
-        Long rawPrice = getRawPrice(summaryResult.lowestUnitPrice(), summaryResult.lowestBuyout());
-        this.price = new Price(rawPrice);
+        this.price = new Price(summaryResult.minPrice());
     }
 
     public String getItemName(LocaleCode localeCode) {
@@ -35,16 +34,5 @@ public class AuctionSummary {
 
     public String getIconUrl() {
         return item.getIconUrl();
-    }
-
-    private Long getRawPrice(Long unitPrice, Long buyout) {
-        if (unitPrice != null && unitPrice > 0 && buyout == 0) {
-            return unitPrice;
-        } else if (buyout != null && buyout > 0 && unitPrice == 0) {
-            return buyout;
-        } else {
-            log.error("buyout and unitPrice are both null or zero buyout = {}, unitPrice =  {}", buyout, unitPrice);
-            throw new IllegalArgumentException("buyout and unitPrice are both null or zero buyout");
-        }
     }
 }

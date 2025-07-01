@@ -43,7 +43,7 @@ public class SearchAuctionSummariesTest {
                         .auctionId(1L)
                         .itemId(itemId1)
                         .unitPrice(500L)
-                        .buyout(0L)
+                        .buyout(null)
                         .quantity(3L)
                         .active(true)
                         .region(region)
@@ -53,7 +53,7 @@ public class SearchAuctionSummariesTest {
                         .auctionId(2L)
                         .itemId(itemId1)
                         .unitPrice(300L)
-                        .buyout(0L)
+                        .buyout(null)
                         .quantity(2L)
                         .active(true)
                         .region(region)
@@ -67,7 +67,7 @@ public class SearchAuctionSummariesTest {
                         .auctionId(3L)
                         .itemId(itemId2)
                         .unitPrice(800L)
-                        .buyout(0L)
+                        .buyout(null)
                         .quantity(4L)
                         .active(true)
                         .region(region)
@@ -93,8 +93,7 @@ public class SearchAuctionSummariesTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(summary1.lowestUnitPrice()).isEqualTo(300L);
-        assertThat(summary1.lowestBuyout()).isEqualTo(0L);
+        assertThat(summary1.minPrice()).isEqualTo(300L);
         assertThat(summary1.available()).isEqualTo(5L); // 3 + 2
 
         SearchAuctionSummaryResult summary2 = results.stream()
@@ -102,8 +101,7 @@ public class SearchAuctionSummariesTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(summary2.lowestUnitPrice()).isEqualTo(800L);
-        assertThat(summary2.lowestBuyout()).isEqualTo(0L);
+        assertThat(summary2.minPrice()).isEqualTo(800L);
         assertThat(summary2.available()).isEqualTo(4L);
     }
 }

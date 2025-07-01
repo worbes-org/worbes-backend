@@ -2,6 +2,7 @@ package com.worbes.adapter.jpa.repository.auction;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Coalesce;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
@@ -62,12 +63,15 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
         RegionType region = command.region();
         Long realmId = command.realmId();
 
+        Coalesce<Long> minPrice = new Coalesce<>(Long.class)
+                .add(auction.unitPrice.min())
+                .add(auction.buyout.min());
+
         return queryFactory
                 .select(Projections.constructor(
                         SearchAuctionSummaryResult.class,
                         auction.itemId,
-                        auction.unitPrice.min(),
-                        auction.buyout.min(),
+                        minPrice,
                         auction.quantity.sum()
                 ))
                 .from(auction)
