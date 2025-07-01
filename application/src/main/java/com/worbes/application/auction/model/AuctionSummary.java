@@ -7,6 +7,8 @@ import com.worbes.application.item.model.Item;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 @Slf4j
 public class AuctionSummary {
 
@@ -26,6 +28,10 @@ public class AuctionSummary {
 
     public String getItemName(LocaleCode localeCode) {
         return item.getName(localeCode);
+    }
+
+    public Map<String, String> getItemName() {
+        return item.getName();
     }
 
     public CraftingTierType getCraftingTier() {

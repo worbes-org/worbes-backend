@@ -4,7 +4,6 @@ import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
 import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
-import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,8 +78,7 @@ public class SearchAuctionSummariesTest {
         List<SearchAuctionSummaryResult> results = auctionRepository.searchSummaries(
                 new SearchAuctionCommand(
                         region,
-                        realmId,
-                        LocaleCode.KO_KR
+                        realmId
                 ),
                 Set.of(itemId1, itemId2)
         );

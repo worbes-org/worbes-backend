@@ -3,7 +3,6 @@ package com.worbes.web;
 import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
-import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.SearchAllItemUseCase;
 import com.worbes.application.item.port.in.SearchItemCommand;
@@ -27,7 +26,7 @@ public class SearchAuctionController {
 
     @GetMapping
     public ApiResponse<List<SearchAuctionResponse>> searchAuction(@Valid SearchAuctionRequest request) {
-        LocaleCode locale = LocaleCode.fromValue(request.locale());
+
         List<Item> items = searchAllItemUseCase.searchAll(
                 new SearchItemCommand(
                         request.itemClassId(),
@@ -38,13 +37,12 @@ public class SearchAuctionController {
         List<AuctionSummary> auctionSummaries = searchAuctionSummaryUseCase.searchSummaries(
                 new SearchAuctionCommand(
                         request.region(),
-                        request.realmId(),
-                        locale
+                        request.realmId()
                 ),
                 items
         );
         List<SearchAuctionResponse> result = auctionSummaries.stream()
-                .map(as -> new SearchAuctionResponse(as, locale))
+                .map(SearchAuctionResponse::new)
                 .toList();
 
         return new ApiResponse<>(result);
