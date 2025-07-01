@@ -125,11 +125,6 @@ class FetchItemServiceTest {
         // given
         Set<Long> itemIds = Set.of(1L);
 
-        ItemFetchResult itemResult1 = mock(ItemFetchResult.class);
-        MediaFetchResult mediaResult1 = mock(MediaFetchResult.class);
-        given(itemFetcher.fetchItemAsync(1L)).willReturn(CompletableFuture.completedFuture(itemResult1));
-        given(mediaFetcher.fetchMediaAsync(1L)).willReturn(CompletableFuture.completedFuture(mediaResult1));
-
         // when
         Thread testThread = Thread.currentThread();
 

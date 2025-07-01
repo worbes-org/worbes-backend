@@ -1,7 +1,9 @@
 package com.worbes.web;
 
+import com.worbes.application.realm.model.RegionType;
+
 public record SearchAuctionRequest(
-        String region,
+        RegionType region,
         Long realmId,
         String locale,
         Long itemClassId,

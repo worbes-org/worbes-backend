@@ -7,7 +7,6 @@ import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.SearchAllItemUseCase;
 import com.worbes.application.item.port.in.SearchItemCommand;
-import com.worbes.application.realm.model.RegionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,6 @@ public class SearchAuctionController {
 
     @GetMapping
     public ApiResponse<List<SearchAuctionResponse>> searchAuction(@Valid SearchAuctionRequest request) {
-        RegionType region = RegionType.valueOf(request.region());
         LocaleCode locale = LocaleCode.fromValue(request.locale());
         List<Item> items = searchAllItemUseCase.searchAll(
                 new SearchItemCommand(
@@ -39,7 +37,7 @@ public class SearchAuctionController {
         );
         List<AuctionSummary> auctionSummaries = searchAuctionSummaryUseCase.searchSummaries(
                 new SearchAuctionCommand(
-                        region,
+                        request.region(),
                         request.realmId(),
                         locale
                 ),
