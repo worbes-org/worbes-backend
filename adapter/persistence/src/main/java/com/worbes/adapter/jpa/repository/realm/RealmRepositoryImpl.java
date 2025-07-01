@@ -36,6 +36,13 @@ public class RealmRepositoryImpl implements FindRealmRepository, CreateRealmRepo
     }
 
     @Override
+    public List<Realm> findByRegion(RegionType region) {
+        return jpaRepository.findByRegion(region).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<Long> findDistinctConnectedRealmIdByRegion(RegionType region) {
         return jpaRepository.findDistinctConnectedRealmIdsByRegion(region);
     }
