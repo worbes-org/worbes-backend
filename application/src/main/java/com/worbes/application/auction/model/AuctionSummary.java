@@ -38,9 +38,9 @@ public class AuctionSummary {
     }
 
     private Long getRawPrice(Long unitPrice, Long buyout) {
-        if (unitPrice != null && unitPrice > 0 && buyout == null) {
+        if (unitPrice != null && unitPrice > 0 && buyout == 0) {
             return unitPrice;
-        } else if (buyout != null && buyout > 0 && unitPrice == null) {
+        } else if (buyout != null && buyout > 0 && unitPrice == 0) {
             return buyout;
         } else {
             log.error("buyout and unitPrice are both null or zero buyout = {}, unitPrice =  {}", buyout, unitPrice);
