@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.realm;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
 import com.worbes.adapter.jpa.mapper.RealmEntityMapper;

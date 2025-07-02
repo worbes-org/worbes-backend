@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.item;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.ItemEntity;
 import com.worbes.application.common.model.LocaleCode;
@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @Rollback
-@DisplayName("Integration::ItemRepository::SearchAll")
-class SearchAllItemTest {
+@DisplayName("Integration::ItemRepository::searchAll")
+class ItemSearchAllTest {
 
     @Autowired
     private SearchItemRepository searchItemRepository;

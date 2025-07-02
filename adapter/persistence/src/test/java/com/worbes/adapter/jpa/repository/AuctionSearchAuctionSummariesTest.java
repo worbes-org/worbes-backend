@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.auction;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-@DisplayName("Integration::AuctionRepository")
-public class SearchAuctionSummariesTest {
+@DisplayName("Integration::SearchAuctionRepository::")
+public class AuctionSearchAuctionSummariesTest {
 
     @Autowired
     private SearchAuctionRepository auctionRepository;

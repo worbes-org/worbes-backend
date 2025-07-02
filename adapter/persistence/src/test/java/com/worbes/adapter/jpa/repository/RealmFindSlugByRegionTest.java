@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.realm;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
 import com.worbes.application.realm.model.RegionType;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Integration::FindRealmRepository::findSlugByRegion 통합 테스트")
 @Transactional
 @Rollback
-public class FindSlugByRegionTest {
+public class RealmFindSlugByRegionTest {
 
     @Autowired
     private FindRealmRepository findRealmRepository;

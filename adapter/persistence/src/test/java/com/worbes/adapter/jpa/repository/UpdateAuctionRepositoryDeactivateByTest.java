@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.auction;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.application.auction.port.out.UpdateAuctionRepository;
@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @Rollback
-@DisplayName("Integration::AuctionRepository::deactivateBy")
-public class DeactivateByTest {
+@DisplayName("Integration::UpdateAuctionRepository::deactivateBy")
+public class UpdateAuctionRepositoryDeactivateByTest {
 
     @Autowired
     private UpdateAuctionRepository updateAuctionRepository;

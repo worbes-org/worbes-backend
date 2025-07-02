@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.auction;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.application.realm.model.RegionType;

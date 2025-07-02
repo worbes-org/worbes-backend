@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.realm;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
 import com.worbes.application.realm.model.RegionType;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @Rollback
 @DisplayName("Integration::FindRealmRepository::findDistinctConnectedRealmIdsByRegion")
-public class FindDistinctConnectedRealmIdsByRegionTest {
+public class RealmFindDistinctConnectedRealmIdsByRegionTest {
 
     @Autowired
     private FindRealmRepository findRealmRepository;

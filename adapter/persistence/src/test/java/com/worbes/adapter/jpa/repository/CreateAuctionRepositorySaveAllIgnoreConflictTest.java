@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.auction;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.application.auction.model.Auction;
@@ -23,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 @Rollback
-@DisplayName("Integration::AuctionRepository::saveAllIgnoreConflict")
-public class SaveAllIgnoreConflictTest {
+@DisplayName("Integration::CreateAuctionRepository::saveAllIgnoreConflict")
+public class CreateAuctionRepositorySaveAllIgnoreConflictTest {
 
     private final RegionType region = RegionType.KR;
     private final Long realmId = 101L;

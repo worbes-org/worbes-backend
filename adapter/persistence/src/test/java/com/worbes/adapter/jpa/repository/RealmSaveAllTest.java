@@ -1,4 +1,4 @@
-package com.worbes.adapter.jpa.repository.realm;
+package com.worbes.adapter.jpa.repository;
 
 import com.worbes.adapter.jpa.entity.RealmEntity;
 import com.worbes.application.common.model.LocaleCode;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @DisplayName("Integration::CreateRealmRepository::SaveAll")
-public class SaveAllTest {
+public class RealmSaveAllTest {
 
     @Autowired
     private CreateRealmRepository createRealmRepository;
