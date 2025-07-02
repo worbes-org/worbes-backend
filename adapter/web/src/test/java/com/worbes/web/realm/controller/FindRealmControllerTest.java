@@ -49,6 +49,7 @@ class FindRealmControllerTest {
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/realms")
                 .param("region", "KR")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -81,6 +82,7 @@ class FindRealmControllerTest {
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/realms")
                 .param("region", "KR")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -99,6 +101,7 @@ class FindRealmControllerTest {
     void returnsBadRequestWhenRegionIsMissing() throws Exception {
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/realms")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -111,6 +114,7 @@ class FindRealmControllerTest {
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/realms")
                 .param("region", "INVALID")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
