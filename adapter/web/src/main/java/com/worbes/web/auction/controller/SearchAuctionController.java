@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,16 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @Slf4j
-@RestController
-@RequestMapping("/api/v1/auctions")
 @RequiredArgsConstructor
+@RestController
+@RequestMapping(
+        value = "/api/v1/auctions",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+)
 public class SearchAuctionController {
 
     private final SearchAllItemUseCase searchAllItemUseCase;
     private final SearchAuctionSummaryUseCase searchAuctionSummaryUseCase;
 
     @GetMapping
-    public Slice<SearchAuctionResponse> searchAuction(@Valid SearchAuctionRequest request, Pageable pageable) {
+    public Slice<SearchAuctionResponse> searchAuction(
+            @Valid SearchAuctionRequest request,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
         log.info("[AuctionSearch] Received request: {}", request);
         List<Item> items = searchAllItemUseCase.searchAll(
                 new SearchItemCommand(
