@@ -85,7 +85,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public Long deactivateBy(RegionType region, Long realmId, Set<Long> auctionIds) {
+    public Long deactivate(RegionType region, Long realmId, Set<Long> auctionIds) {
         QAuctionEntity a = QAuctionEntity.auctionEntity;
 
         BooleanExpression realmCondition = (realmId != null)

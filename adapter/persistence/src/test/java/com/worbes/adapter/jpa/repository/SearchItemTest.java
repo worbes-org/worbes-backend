@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @Rollback
-@DisplayName("Integration::ItemRepository::searchAll")
-class ItemSearchAllTest {
+@DisplayName("Integration::SearchItemRepository")
+class SearchItemTest {
 
     @Autowired
     private SearchItemRepository searchItemRepository;
@@ -116,7 +116,7 @@ class ItemSearchAllTest {
         SearchItemCommand command = new SearchItemCommand(null, null, "가죽");
 
         // when
-        List<Item> results = searchItemRepository.searchAll(command);
+        List<Item> results = searchItemRepository.search(command);
 
         // then
         assertThat(results)
@@ -135,7 +135,7 @@ class ItemSearchAllTest {
         SearchItemCommand command = new SearchItemCommand(null, null, "덫사냥꾼");
 
         // when
-        List<Item> results = searchItemRepository.searchAll(command);
+        List<Item> results = searchItemRepository.search(command);
 
         // then
         assertThat(results)
@@ -152,7 +152,7 @@ class ItemSearchAllTest {
         SearchItemCommand command = new SearchItemCommand(null, null, "trapper");
 
         // when
-        List<Item> results = searchItemRepository.searchAll(command);
+        List<Item> results = searchItemRepository.search(command);
 
         // then
         assertThat(results)
@@ -171,7 +171,7 @@ class ItemSearchAllTest {
         );
 
         // when
-        List<Item> results = searchItemRepository.searchAll(command);
+        List<Item> results = searchItemRepository.search(command);
 
         // then
         assertThat(results).isEmpty();

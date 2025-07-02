@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Integration::FindRealmRepository::findSlugByRegion 통합 테스트")
 @Transactional
 @Rollback
-public class RealmFindSlugByRegionTest {
+public class FindRealmSlugByRegionTest {
 
     @Autowired
     private FindRealmRepository findRealmRepository;

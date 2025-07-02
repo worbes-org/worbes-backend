@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @DisplayName("Integration::CreateAuctionRepository::saveAllIgnoreConflict")
-public class CreateAuctionRepositorySaveAllIgnoreConflictTest {
+public class SaveAllAuctionIgnoreConflictTest {
 
     private final RegionType region = RegionType.KR;
     private final Long realmId = 101L;

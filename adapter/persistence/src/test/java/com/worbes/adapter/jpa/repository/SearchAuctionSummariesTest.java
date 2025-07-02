@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @DisplayName("Integration::SearchAuctionRepository::")
-public class AuctionSearchAuctionSummariesTest {
+public class SearchAuctionSummariesTest {
 
     @Autowired
     private SearchAuctionRepository auctionRepository;

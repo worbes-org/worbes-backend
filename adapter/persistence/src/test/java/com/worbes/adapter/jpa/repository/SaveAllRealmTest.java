@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @DisplayName("Integration::CreateRealmRepository::SaveAll")
-public class RealmSaveAllTest {
+public class SaveAllRealmTest {
 
     @Autowired
     private CreateRealmRepository createRealmRepository;

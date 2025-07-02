@@ -36,7 +36,7 @@ public class ItemRepositoryImpl implements CreateItemRepository, SearchItemRepos
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Item> searchAll(SearchItemCommand command) {
+    public List<Item> search(SearchItemCommand command) {
         StringBuilder sql = new StringBuilder("SELECT * FROM item WHERE 1=1");
         Map<String, Object> parameters = new HashMap<>();
 

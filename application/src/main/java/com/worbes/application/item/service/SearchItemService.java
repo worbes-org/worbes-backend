@@ -19,6 +19,6 @@ public class SearchItemService implements SearchAllItemUseCase {
 
     @Override
     public List<Item> searchAll(SearchItemCommand command) {
-        return searchItemRepository.searchAll(command);
+        return searchItemRepository.search(command);
     }
 }

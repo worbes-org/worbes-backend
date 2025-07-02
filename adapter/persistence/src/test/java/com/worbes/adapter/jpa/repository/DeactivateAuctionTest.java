@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @Rollback
 @DisplayName("Integration::UpdateAuctionRepository::deactivateBy")
-public class UpdateAuctionRepositoryDeactivateByTest {
+public class DeactivateAuctionTest {
 
     @Autowired
     private UpdateAuctionRepository updateAuctionRepository;
@@ -60,7 +60,7 @@ public class UpdateAuctionRepositoryDeactivateByTest {
         Set<Long> idsToDeactivate = Set.of(1L, 2L, 3L, 4L);
 
         // when
-        Long updated = updateAuctionRepository.deactivateBy(RegionType.KR, 101L, idsToDeactivate);
+        Long updated = updateAuctionRepository.deactivate(RegionType.KR, 101L, idsToDeactivate);
         entityManager.clear();
 
         // then
@@ -87,7 +87,7 @@ public class UpdateAuctionRepositoryDeactivateByTest {
         entityManager.flush();
 
         // when
-        Long updated = updateAuctionRepository.deactivateBy(RegionType.KR, null, Set.of(10L, 11L));
+        Long updated = updateAuctionRepository.deactivate(RegionType.KR, null, Set.of(10L, 11L));
         entityManager.clear();
 
         // then
@@ -105,7 +105,7 @@ public class UpdateAuctionRepositoryDeactivateByTest {
         entityManager.flush();
 
         // 존재하지 않는 조건으로 요청
-        Long updated = updateAuctionRepository.deactivateBy(RegionType.US, 111L, Set.of(20L));
+        Long updated = updateAuctionRepository.deactivate(RegionType.US, 111L, Set.of(20L));
 
         // then
         assertThat(updated).isZero();
@@ -129,7 +129,7 @@ public class UpdateAuctionRepositoryDeactivateByTest {
         Thread.sleep(1000);
 
         // when
-        Long updated = updateAuctionRepository.deactivateBy(RegionType.KR, 101L, Set.of(30L));
+        Long updated = updateAuctionRepository.deactivate(RegionType.KR, 101L, Set.of(30L));
         entityManager.clear();
 
         // then

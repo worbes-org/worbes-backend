@@ -6,5 +6,5 @@ import com.worbes.application.item.port.in.SearchItemCommand;
 import java.util.List;
 
 public interface SearchItemRepository {
-    List<Item> searchAll(SearchItemCommand command);
+    List<Item> search(SearchItemCommand command);
 }

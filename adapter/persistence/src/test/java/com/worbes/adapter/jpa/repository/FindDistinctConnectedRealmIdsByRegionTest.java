@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @Rollback
 @DisplayName("Integration::FindRealmRepository::findDistinctConnectedRealmIdsByRegion")
-public class RealmFindDistinctConnectedRealmIdsByRegionTest {
+public class FindDistinctConnectedRealmIdsByRegionTest {
 
     @Autowired
     private FindRealmRepository findRealmRepository;
