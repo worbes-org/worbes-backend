@@ -1,4 +1,4 @@
-package com.worbes.web;
+package com.worbes.web.auction.controller;
 
 import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
@@ -6,9 +6,14 @@ import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.SearchAllItemUseCase;
 import com.worbes.application.item.port.in.SearchItemCommand;
+import com.worbes.web.auction.model.SearchAuctionRequest;
+import com.worbes.web.auction.model.SearchAuctionResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +30,8 @@ public class SearchAuctionController {
     private final SearchAuctionSummaryUseCase searchAuctionSummaryUseCase;
 
     @GetMapping
-    public ApiResponse<List<SearchAuctionResponse>> searchAuction(@Valid SearchAuctionRequest request) {
-
+    public Slice<SearchAuctionResponse> searchAuction(@Valid SearchAuctionRequest request, Pageable pageable) {
+        log.info("[AuctionSearch] Received request: {}", request);
         List<Item> items = searchAllItemUseCase.searchAll(
                 new SearchItemCommand(
                         request.itemClassId(),
@@ -37,7 +42,9 @@ public class SearchAuctionController {
         List<AuctionSummary> auctionSummaries = searchAuctionSummaryUseCase.searchSummaries(
                 new SearchAuctionCommand(
                         request.region(),
-                        request.realmId()
+                        request.realmId(),
+                        pageable.getOffset(),
+                        pageable.getPageSize()
                 ),
                 items
         );
@@ -45,6 +52,12 @@ public class SearchAuctionController {
                 .map(SearchAuctionResponse::new)
                 .toList();
 
-        return new ApiResponse<>(result);
+        boolean hasNext = result.size() > pageable.getPageSize();
+        if (hasNext) {
+            result = result.subList(0, pageable.getPageSize());
+        }
+        log.info("[AuctionSearch] Returning {} results (hasNext={})", result.size(), hasNext);
+
+        return new SliceImpl<>(result, pageable, hasNext);
     }
 }

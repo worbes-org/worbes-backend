@@ -78,7 +78,9 @@ public class SearchAuctionSummariesTest {
         List<SearchAuctionSummaryResult> results = auctionRepository.searchSummaries(
                 new SearchAuctionCommand(
                         region,
-                        realmId
+                        realmId,
+                        0,
+                        20
                 ),
                 Set.of(itemId1, itemId2)
         );

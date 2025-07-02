@@ -15,12 +15,14 @@ import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
 import com.worbes.application.auction.port.out.UpdateAuctionRepository;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuctionRepository, SearchAuctionRepository {
@@ -60,8 +62,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     @Override
     public List<SearchAuctionSummaryResult> searchSummaries(SearchAuctionCommand command, Set<Long> itemIds) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
-        RegionType region = command.region();
-        Long realmId = command.realmId();
+        int pageSize = command.pageSize();
 
         Coalesce<Long> minPrice = new Coalesce<>(Long.class)
                 .add(auction.unitPrice.min())
@@ -76,12 +77,14 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 ))
                 .from(auction)
                 .where(
-                        auction.region.eq(region),
-                        auction.realmId.eq(realmId),
+                        auction.region.eq(command.region()),
+                        auction.realmId.eq(command.realmId()),
                         auction.itemId.in(itemIds),
                         auction.active.isTrue()
                 )
                 .groupBy(auction.itemId)
+                .offset(command.offset())
+                .limit(pageSize + 1)
                 .fetch();
     }
 }

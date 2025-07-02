@@ -1,4 +1,4 @@
-package com.worbes.web;
+package com.worbes.web.auction.model;
 
 import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.item.model.CraftingTierType;

@@ -1,4 +1,4 @@
-package com.worbes.web;
+package com.worbes.web.realm.model;
 
 import com.worbes.application.realm.model.Realm;
 

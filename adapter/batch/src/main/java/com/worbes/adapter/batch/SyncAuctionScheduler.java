@@ -38,7 +38,6 @@ public class SyncAuctionScheduler {
         this.asyncJobLauncher = asyncJobLauncher;
     }
 
-    //    @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "0 0 * * * *")
     public void runAuctionSyncJob() {
         RegionType region = RegionType.KR;

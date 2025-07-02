@@ -1,7 +1,11 @@
-package com.worbes.web;
+package com.worbes.web.realm.controller;
 
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.port.in.FindRealmByRegionUseCase;
+import com.worbes.web.common.model.ApiResponse;
+import com.worbes.web.realm.model.FindRealmRequest;
+import com.worbes.web.realm.model.FindRealmResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +23,9 @@ public class FindRealmController {
     private final FindRealmByRegionUseCase findRealmByRegionUseCase;
 
     @GetMapping
-    public ApiResponse<List<FindRealmResponse>> findRealmByRegion(FindRealmRequest request) {
-        log.info("[FindRealmController] 요청 수신 - region: {}", request.region());
+    public ApiResponse<List<FindRealmResponse>> findRealmByRegion(@Valid FindRealmRequest request) {
         List<Realm> realms = findRealmByRegionUseCase.findByRegion(request.region());
         List<FindRealmResponse> responses = realms.stream().map(FindRealmResponse::new).toList();
-        log.info("[FindRealmController] 응답 생성 완료 - region: {}, realms: {}", request.region(), responses.size());
 
         return new ApiResponse<>(responses);
     }

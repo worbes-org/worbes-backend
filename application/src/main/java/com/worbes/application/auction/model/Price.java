@@ -4,21 +4,21 @@ import java.util.Objects;
 
 public class Price {
 
-    private final int totalCopper;
+    private final Long totalCopper;
 
     public Price(Long totalCopper) {
-        this.totalCopper = Math.toIntExact(totalCopper);
+        this.totalCopper = totalCopper;
     }
 
-    public int getGold() {
+    public Long getGold() {
         return totalCopper / 10_000;
     }
 
-    public int getSilver() {
+    public Long getSilver() {
         return (totalCopper % 10_000) / 100;
     }
 
-    public int getCopper() {
+    public Long getCopper() {
         return totalCopper % 100;
     }
 
@@ -31,7 +31,7 @@ public class Price {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Price price = (Price) o;
-        return totalCopper == price.totalCopper;
+        return Objects.equals(totalCopper, price.totalCopper);
     }
 
     @Override

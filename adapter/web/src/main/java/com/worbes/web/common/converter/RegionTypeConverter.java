@@ -1,4 +1,4 @@
-package com.worbes.web;
+package com.worbes.web.common.converter;
 
 import com.worbes.application.realm.model.RegionType;
 import org.springframework.core.convert.converter.Converter;
