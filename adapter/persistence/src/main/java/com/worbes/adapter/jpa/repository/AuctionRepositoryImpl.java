@@ -3,14 +3,11 @@ package com.worbes.adapter.jpa.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Coalesce;
-import com.querydsl.core.types.dsl.DateTimeTemplate;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
 import com.worbes.adapter.jpa.mapper.AuctionEntityMapper;
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.model.AuctionHistory;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.out.CreateAuctionRepository;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
@@ -90,10 +87,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     @Override
     public Long deactivate(RegionType region, Long realmId, Set<Long> auctionIds) {
         QAuctionEntity a = QAuctionEntity.auctionEntity;
-
-        BooleanExpression realmCondition = (realmId != null)
-                ? a.realmId.eq(realmId)
-                : a.realmId.isNull();
+        BooleanExpression realmCondition = getRealmCondition(a, realmId);
 
         return queryFactory.update(a)
                 .set(a.active, false)
@@ -110,10 +104,9 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     public List<SearchAuctionSummaryResult> searchSummaries(SearchAuctionCommand command, Set<Long> itemIds) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
         int pageSize = command.pageSize();
-
-        Coalesce<Long> minPrice = new Coalesce<>(Long.class)
-                .add(auction.unitPrice.min())
-                .add(auction.buyout.min());
+        Long realmId = command.realmId();
+        Coalesce<Long> minPrice = coalescePrice(auction);
+        BooleanExpression realmCondition = getRealmCondition(auction, realmId);
 
         return queryFactory
                 .select(Projections.constructor(
@@ -125,7 +118,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 .from(auction)
                 .where(
                         auction.region.eq(command.region()),
-                        auction.realmId.eq(command.realmId()),
+                        realmCondition,
                         auction.itemId.in(itemIds),
                         auction.active.isTrue()
                 )
@@ -138,9 +131,8 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     @Override
     public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
-        Coalesce<Long> price = new Coalesce<>(Long.class)
-                .add(auction.unitPrice)
-                .add(auction.buyout);
+        Coalesce<Long> price = coalescePrice(auction);
+        BooleanExpression realmCondition = getRealmCondition(auction, realmId);
 
         List<AuctionEntity> entities = queryFactory
                 .selectFrom(auction)
@@ -148,7 +140,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                         auction.active.isTrue(),
                         auction.itemId.eq(itemId),
                         auction.region.eq(region),
-                        auction.realmId.eq(realmId)
+                        realmCondition
                 )
                 .orderBy(price.asc().nullsLast())
                 .fetch();
@@ -158,43 +150,15 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 .toList();
     }
 
-    @Override
-    public List<AuctionHistory> findHistory(
-            Long itemId,
-            RegionType region,
-            Long realmId,
-            LocalDateTime now
-    ) {
-        QAuctionEntity auction = QAuctionEntity.auctionEntity;
+    private Coalesce<Long> coalescePrice(QAuctionEntity auction) {
+        return new Coalesce<>(Long.class)
+                .add(auction.unitPrice)
+                .add(auction.buyout);
+    }
 
-        Coalesce<Long> minPrice = new Coalesce<>(Long.class)
-                .add(auction.unitPrice.min())
-                .add(auction.buyout.min());
-
-        DateTimeTemplate<LocalDateTime> hourTrunc = Expressions.dateTimeTemplate(
-                LocalDateTime.class,
-                "DATE_TRUNC('hour', {0})",
-                auction.createdAt
-        );
-
-        LocalDateTime oneWeekAgo = now.minusDays(7);
-
-        return queryFactory
-                .select(Projections.constructor(
-                        AuctionHistory.class,
-                        hourTrunc,
-                        auction.quantity.sum(),
-                        minPrice
-                ))
-                .from(auction)
-                .where(
-                        auction.itemId.eq(itemId),
-                        auction.region.eq(region),
-                        auction.realmId.eq(realmId),
-                        auction.createdAt.goe(oneWeekAgo)
-                )
-                .groupBy(hourTrunc)
-                .orderBy(hourTrunc.asc())
-                .fetch();
+    private BooleanExpression getRealmCondition(QAuctionEntity auction, Long realmId) {
+        return (realmId != null)
+                ? auction.realmId.eq(realmId)
+                : auction.realmId.isNull();
     }
 }

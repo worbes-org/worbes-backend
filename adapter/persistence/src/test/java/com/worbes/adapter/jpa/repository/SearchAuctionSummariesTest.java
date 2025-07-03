@@ -104,4 +104,6 @@ public class SearchAuctionSummariesTest {
         assertThat(summary2.minPrice()).isEqualTo(800L);
         assertThat(summary2.available()).isEqualTo(4L);
     }
+
+    //TODO: active 상태의 경매가 없는 경우
 }

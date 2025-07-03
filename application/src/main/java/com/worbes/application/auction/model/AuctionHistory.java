@@ -1,14 +1,12 @@
 package com.worbes.application.auction.model;
 
+import com.worbes.application.item.model.Item;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-@Getter
 @AllArgsConstructor
 public class AuctionHistory {
-    private LocalDateTime time;
-    private Long totalQuantity;
-    private Long minPrice;
+    private final Item item;
+    private final List<AuctionHourlySummary> summaries;
 }

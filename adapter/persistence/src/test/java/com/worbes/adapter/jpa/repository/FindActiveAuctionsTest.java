@@ -37,7 +37,7 @@ public class FindActiveAuctionsTest {
                 .buyout(300L)
                 .active(true)
                 .region(RegionType.KR)
-                .realmId(1L)
+                .realmId(null)
                 .build());
 
         jpaRepository.save(AuctionEntity.builder()
@@ -48,7 +48,7 @@ public class FindActiveAuctionsTest {
                 .buyout(150L)
                 .active(true)
                 .region(RegionType.KR)
-                .realmId(1L)
+                .realmId(null)
                 .build());
 
         jpaRepository.save(AuctionEntity.builder()
@@ -59,7 +59,7 @@ public class FindActiveAuctionsTest {
                 .buyout(60L)
                 .active(true)
                 .region(RegionType.KR)
-                .realmId(1L)
+                .realmId(null)
                 .build());
 
         jpaRepository.save(AuctionEntity.builder()
@@ -70,12 +70,12 @@ public class FindActiveAuctionsTest {
                 .buyout(600L)
                 .active(false) // 비활성
                 .region(RegionType.KR)
-                .realmId(1L)
+                .realmId(null)
                 .build());
 
         // when
         List<Auction> results = auctionRepository.findActiveAuctions(
-                100L, RegionType.KR, 1L
+                100L, RegionType.KR, null
         );
 
         // then

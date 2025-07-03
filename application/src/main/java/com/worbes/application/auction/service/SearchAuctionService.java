@@ -1,11 +1,14 @@
 package com.worbes.application.auction.service;
 
+import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.model.AuctionSummary;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
 import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
 import com.worbes.application.item.model.Item;
+import com.worbes.application.item.port.out.SearchItemRepository;
+import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class SearchAuctionService implements SearchAuctionSummaryUseCase {
 
     private final SearchAuctionRepository searchAuctionRepository;
+    private final SearchItemRepository searchItemRepository;
 
     @Override
     public List<AuctionSummary> searchSummaries(SearchAuctionCommand command, List<Item> items) {
@@ -33,4 +37,9 @@ public class SearchAuctionService implements SearchAuctionSummaryUseCase {
                 .map(summaryResult -> new AuctionSummary(itemMap.get(summaryResult.itemId()), summaryResult))
                 .toList();
     }
+
+    public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
+        return searchAuctionRepository.findActiveAuctions(itemId, region, realmId);
+    }
+
 }
