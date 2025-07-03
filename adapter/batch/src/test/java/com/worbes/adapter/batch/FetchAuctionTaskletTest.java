@@ -83,10 +83,8 @@ class FetchAuctionTaskletTest {
                     .itemId(1002L)
                     .realmId(1234L)
                     .quantity(5L)
-                    .unitPrice(8000L)
-                    .buyout(9000L)
+                    .price(8000L)
                     .region(RegionType.KR)
-                    .active(true)
                     .build();
             auctions.add(auction);
         }

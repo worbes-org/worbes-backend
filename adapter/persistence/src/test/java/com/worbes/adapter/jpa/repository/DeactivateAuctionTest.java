@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -32,14 +31,12 @@ public class DeactivateAuctionTest {
     @Autowired
     private EntityManager entityManager;
 
-    private static AuctionEntity createAuction(Long auctionId, RegionType region, Long realmId, boolean active) {
+    private static AuctionEntity createAuction(Long auctionId, RegionType region, Long realmId) {
         return AuctionEntity.builder()
                 .auctionId(auctionId)
                 .itemId(1L)
                 .quantity(1L)
-                .unitPrice(100L)
-                .buyout(1000L)
-                .active(active)
+                .price(100L)
                 .region(region)
                 .realmId(realmId)
                 .build();
@@ -49,10 +46,10 @@ public class DeactivateAuctionTest {
     @DisplayName("주어진 region, realmId, auctionIds 조건에 맞는 경매만 비활성화된다")
     void shouldDeactivateMatchingAuctionsOnly() {
         // given
-        AuctionEntity target1 = createAuction(1L, RegionType.KR, 101L, true);
-        AuctionEntity target2 = createAuction(2L, RegionType.KR, 101L, true);
-        AuctionEntity notTarget1 = createAuction(3L, RegionType.KR, 102L, true); // 다른 realm
-        AuctionEntity notTarget2 = createAuction(4L, RegionType.US, 101L, true); // 다른 region
+        AuctionEntity target1 = createAuction(1L, RegionType.KR, 101L);
+        AuctionEntity target2 = createAuction(2L, RegionType.KR, 101L);
+        AuctionEntity notTarget1 = createAuction(3L, RegionType.KR, 102L); // 다른 realm
+        AuctionEntity notTarget2 = createAuction(4L, RegionType.US, 101L); // 다른 region
 
         jpaRepository.saveAll(List.of(target1, target2, notTarget1, notTarget2));
         entityManager.flush();
@@ -68,20 +65,20 @@ public class DeactivateAuctionTest {
 
         AuctionEntity check1 = jpaRepository.findById(target1.getId()).orElseThrow();
         AuctionEntity check2 = jpaRepository.findById(target2.getId()).orElseThrow();
-        assertThat(check1.isActive()).isFalse();
-        assertThat(check2.isActive()).isFalse();
+        assertThat(check1.getEndedAt()).isNotNull();
+        assertThat(check2.getEndedAt()).isNotNull();
 
         // 다른 경매는 여전히 true
-        assertThat(jpaRepository.findById(notTarget1.getId()).orElseThrow().isActive()).isTrue();
-        assertThat(jpaRepository.findById(notTarget2.getId()).orElseThrow().isActive()).isTrue();
+        assertThat(jpaRepository.findById(notTarget1.getId()).orElseThrow().getEndedAt()).isNull();
+        assertThat(jpaRepository.findById(notTarget2.getId()).orElseThrow().getEndedAt()).isNull();
     }
 
     @Test
     @DisplayName("realmId가 null인 경매도 정상적으로 비활성화된다")
     void shouldDeactivateAuctionsWithNullRealmId() {
         // given
-        AuctionEntity match = createAuction(10L, RegionType.KR, null, true);
-        AuctionEntity notMatch = createAuction(11L, RegionType.KR, 111L, true);
+        AuctionEntity match = createAuction(10L, RegionType.KR, null);
+        AuctionEntity notMatch = createAuction(11L, RegionType.KR, 111L);
 
         jpaRepository.saveAll(List.of(match, notMatch));
         entityManager.flush();
@@ -92,15 +89,15 @@ public class DeactivateAuctionTest {
 
         // then
         assertThat(updated).isEqualTo(1);
-        assertThat(jpaRepository.findById(match.getId()).orElseThrow().isActive()).isFalse();
-        assertThat(jpaRepository.findById(notMatch.getId()).orElseThrow().isActive()).isTrue();
+        assertThat(jpaRepository.findById(match.getId()).orElseThrow().getEndedAt()).isNotNull();
+        assertThat(jpaRepository.findById(notMatch.getId()).orElseThrow().getEndedAt()).isNull();
     }
 
     @Test
     @DisplayName("조건에 맞는 경매가 없으면 0을 반환한다")
     void shouldReturnZeroWhenNoMatch() {
         // given
-        AuctionEntity entity = createAuction(20L, RegionType.KR, 999L, true);
+        AuctionEntity entity = createAuction(20L, RegionType.KR, 999L);
         jpaRepository.save(entity);
         entityManager.flush();
 
@@ -109,21 +106,16 @@ public class DeactivateAuctionTest {
 
         // then
         assertThat(updated).isZero();
-        assertThat(jpaRepository.findById(entity.getId()).orElseThrow().isActive()).isTrue();
+        assertThat(jpaRepository.findById(entity.getId()).orElseThrow().getEndedAt()).isNull();
     }
 
     @Test
-    @DisplayName("비활성화 시 updatedAt이 갱신된다")
+    @DisplayName("경매 종료 시 ended_at이 갱신된다")
     void shouldUpdateUpdatedAtWhenDeactivated() throws InterruptedException {
         // given
-        AuctionEntity entity = createAuction(30L, RegionType.KR, 101L, true);
+        AuctionEntity entity = createAuction(30L, RegionType.KR, 101L);
         jpaRepository.save(entity);
         entityManager.flush();
-
-        // 최초 updatedAt 저장
-        LocalDateTime beforeUpdate = jpaRepository.findById(entity.getId())
-                .orElseThrow()
-                .getUpdatedAt();
 
         // 변경 시점을 확실히 구분하기 위해 sleep
         Thread.sleep(1000);
@@ -136,7 +128,6 @@ public class DeactivateAuctionTest {
         assertThat(updated).isEqualTo(1);
 
         AuctionEntity updatedEntity = jpaRepository.findById(entity.getId()).orElseThrow();
-        assertThat(updatedEntity.isActive()).isFalse();
-        assertThat(updatedEntity.getUpdatedAt()).isAfter(beforeUpdate);
+        assertThat(updatedEntity.getEndedAt()).isNotNull();
     }
 }

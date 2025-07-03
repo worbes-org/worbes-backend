@@ -23,10 +23,8 @@ class AuctionEntityMapperTest {
                 .itemId(200L)
                 .realmId(300L)
                 .quantity(10L)
-                .unitPrice(5000L)
-                .buyout(5500L)
+                .price(5000L)
                 .region(RegionType.KR)
-                .active(true)
                 .build();
 
         // When
@@ -37,10 +35,8 @@ class AuctionEntityMapperTest {
         then(result.getItemId()).isEqualTo(200L);
         then(result.getRealmId()).isEqualTo(300L);
         then(result.getQuantity()).isEqualTo(10L);
-        then(result.getUnitPrice()).isEqualTo(5000L);
-        then(result.getBuyout()).isEqualTo(5500L);
+        then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
-        then(result.isActive()).isTrue();
     }
 
     @Test
@@ -52,10 +48,8 @@ class AuctionEntityMapperTest {
                 .itemId(200L)
                 .realmId(300L)
                 .quantity(10L)
-                .unitPrice(5000L)
-                .buyout(5500L)
+                .price(5000L)
                 .region(RegionType.KR)
-                .active(true)
                 .build();
 
         // When
@@ -66,10 +60,9 @@ class AuctionEntityMapperTest {
         then(result.getItemId()).isEqualTo(200L);
         then(result.getRealmId()).isEqualTo(300L);
         then(result.getQuantity()).isEqualTo(10L);
-        then(result.getUnitPrice()).isEqualTo(5000L);
-        then(result.getBuyout()).isEqualTo(5500L);
+        then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
-        then(result.isActive()).isTrue();
+        then(result.getEndedAt()).isNull();
         then(result.getId()).isNull(); // DB 생성 ID는 null이어야 함
     }
 }

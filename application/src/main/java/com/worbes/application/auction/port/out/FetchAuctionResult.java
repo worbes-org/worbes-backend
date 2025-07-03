@@ -6,8 +6,7 @@ public record FetchAuctionResult(
         Long id,
         Long itemId,
         Long quantity,
-        Long buyout,
-        Long unitPrice,
+        Long price,
         RegionType region,
         Long realmId) {
 }

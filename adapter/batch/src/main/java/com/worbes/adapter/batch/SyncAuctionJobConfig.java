@@ -121,7 +121,7 @@ public class SyncAuctionJobConfig {
         provider.setDataSource(dataSource);
         provider.setSelectClause("SELECT auction_id");
         provider.setFromClause("FROM auction");
-        String whereClause = "WHERE region = :region AND active = true";
+        String whereClause = "WHERE region = :region AND ended_at IS NULL";
         if (realmId == null) {
             whereClause += " AND realm_id IS NULL";
         } else {

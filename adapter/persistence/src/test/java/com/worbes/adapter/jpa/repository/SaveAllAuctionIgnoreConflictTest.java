@@ -40,9 +40,7 @@ public class SaveAllAuctionIgnoreConflictTest {
                 .id(auctionId)
                 .itemId(1L)
                 .quantity(5L)
-                .unitPrice(500L)
-                .buyout(1000L)
-                .active(true)
+                .price(500L)
                 .region(region)
                 .realmId(realmId)
                 .build();
@@ -136,9 +134,7 @@ public class SaveAllAuctionIgnoreConflictTest {
                 .id(null)
                 .itemId(1L)
                 .quantity(5L)
-                .unitPrice(500L)
-                .buyout(1000L)
-                .active(true)
+                .price(500L)
                 .region(region)
                 .realmId(realmId)
                 .build();
@@ -165,32 +161,5 @@ public class SaveAllAuctionIgnoreConflictTest {
         assertThat(firstSave).isEqualTo(1);
         assertThat(secondSave).isEqualTo(0);
         assertThat(thirdSave).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("nullable 필드는 null 값으로 저장 가능하다")
-    void givenNullableFieldsNull_whenSaveAllIgnoreConflict_thenSaveSuccess() {
-        // given
-        Auction auctionWithNulls = Auction.builder()
-                .id(5001L)
-                .itemId(1L)
-                .quantity(5L)
-                .unitPrice(null)
-                .buyout(null)
-                .active(true)
-                .region(region)
-                .realmId(realmId)
-                .build();
-
-        // when
-        int saved = createAuctionRepository.saveAllIgnoreConflict(List.of(auctionWithNulls));
-
-        // then
-        List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();
-        assertThat(savedEntities).hasSize(1);
-        AuctionEntity entity = savedEntities.get(0);
-        assertThat(entity.getUnitPrice()).isNull();
-        assertThat(entity.getBuyout()).isNull();
-        assertThat(saved).isEqualTo(1);
     }
 }

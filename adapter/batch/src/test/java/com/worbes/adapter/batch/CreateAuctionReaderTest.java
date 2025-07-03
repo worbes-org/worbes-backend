@@ -31,8 +31,8 @@ class CreateAuctionReaderTest {
     void beforeStep_validSnapshot_setsIterator() {
         // given
         List<Auction> auctions = List.of(
-                Auction.builder().id(1L).region(RegionType.KR).active(true).build(),
-                Auction.builder().id(2L).region(RegionType.KR).active(true).build()
+                Auction.builder().id(1L).region(RegionType.KR).build(),
+                Auction.builder().id(2L).region(RegionType.KR).build()
         );
 
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();

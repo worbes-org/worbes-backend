@@ -3,13 +3,18 @@ package com.worbes.adapter.jpa.entity;
 import com.worbes.application.realm.model.RegionType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Table(name = "auction")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class AuctionEntity extends BaseEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class AuctionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +29,8 @@ public class AuctionEntity extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
-    @Column(name = "unit_price")
-    private Long unitPrice;
-
-    private Long buyout;
-
     @Column(nullable = false)
-    private boolean active;
+    private Long price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
@@ -39,23 +39,27 @@ public class AuctionEntity extends BaseEntity {
     @Column(name = "realm_id")
     private Long realmId;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Setter
+    @Column(name = "ended_at")
+    private LocalDateTime endedAt;
+
     @Builder
     private AuctionEntity(
             Long auctionId,
             Long itemId,
             Long quantity,
-            Long unitPrice,
-            Long buyout,
-            boolean active,
+            Long price,
             RegionType region,
             Long realmId
     ) {
         this.auctionId = auctionId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.buyout = buyout;
-        this.active = active;
+        this.price = price;
         this.region = region;
         this.realmId = realmId;
     }

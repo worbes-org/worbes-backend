@@ -18,10 +18,8 @@ public class Auction implements Serializable {
     private final Long itemId;
     private final Long realmId;
     private final Long quantity;
-    private final Long unitPrice;
-    private final Long buyout;
+    private final Long price;
     private final RegionType region;
-    private final boolean active;
 
     @Builder
     private Auction(
@@ -29,19 +27,15 @@ public class Auction implements Serializable {
             Long itemId,
             Long realmId,
             Long quantity,
-            Long unitPrice,
-            Long buyout,
-            RegionType region,
-            boolean active
+            Long price,
+            RegionType region
     ) {
         this.id = id;
         this.itemId = itemId;
         this.realmId = realmId;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.buyout = buyout;
+        this.price = price;
         this.region = region;
-        this.active = active;
     }
 
     @Override

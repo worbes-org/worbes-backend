@@ -2,7 +2,6 @@ package com.worbes.adapter.jpa.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Coalesce;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
@@ -41,24 +40,18 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                     auction_id,
                     item_id,
                     quantity,
-                    unit_price,
-                    buyout,
-                    active,
+                    price,
                     region,
                     realm_id,
-                    created_at,
-                    updated_at
+                    created_at
                 )
                 VALUES (
                     :auctionId,
                     :itemId,
                     :quantity,
-                    :unitPrice,
-                    :buyout,
-                    :active,
+                    :price,
                     :region,
                     :realmId,
-                    NOW(),
                     NOW()
                 )
                 ON CONFLICT (auction_id) DO NOTHING
@@ -73,9 +66,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                         .addValue("auctionId", auction.getAuctionId())
                         .addValue("itemId", auction.getItemId())
                         .addValue("quantity", auction.getQuantity())
-                        .addValue("unitPrice", auction.getUnitPrice())
-                        .addValue("buyout", auction.getBuyout())
-                        .addValue("active", auction.isActive())
+                        .addValue("price", auction.getPrice())
                         .addValue("region", auction.getRegion().name())
                         .addValue("realmId", auction.getRealmId()))
                 .toArray(MapSqlParameterSource[]::new);
@@ -90,8 +81,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
         BooleanExpression realmCondition = getRealmCondition(a, realmId);
 
         return queryFactory.update(a)
-                .set(a.active, false)
-                .set(a.updatedAt, LocalDateTime.now())
+                .set(a.endedAt, LocalDateTime.now())
                 .where(
                         a.region.eq(region),
                         realmCondition,
@@ -105,14 +95,13 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
         int pageSize = command.pageSize();
         Long realmId = command.realmId();
-        Coalesce<Long> minPrice = coalescePrice(auction);
         BooleanExpression realmCondition = getRealmCondition(auction, realmId);
 
         return queryFactory
                 .select(Projections.constructor(
                         SearchAuctionSummaryResult.class,
                         auction.itemId,
-                        minPrice,
+                        auction.price.min(),
                         auction.quantity.sum()
                 ))
                 .from(auction)
@@ -120,7 +109,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                         auction.region.eq(command.region()),
                         realmCondition,
                         auction.itemId.in(itemIds),
-                        auction.active.isTrue()
+                        auction.endedAt.isNull()
                 )
                 .groupBy(auction.itemId)
                 .offset(command.offset())
@@ -131,29 +120,22 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     @Override
     public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
-        Coalesce<Long> price = coalescePrice(auction);
         BooleanExpression realmCondition = getRealmCondition(auction, realmId);
 
         List<AuctionEntity> entities = queryFactory
                 .selectFrom(auction)
                 .where(
-                        auction.active.isTrue(),
+                        auction.endedAt.isNull(),
                         auction.itemId.eq(itemId),
                         auction.region.eq(region),
                         realmCondition
                 )
-                .orderBy(price.asc().nullsLast())
+                .orderBy(auction.price.asc().nullsLast())
                 .fetch();
 
         return entities.stream()
                 .map(mapper::toDomain)
                 .toList();
-    }
-
-    private Coalesce<Long> coalescePrice(QAuctionEntity auction) {
-        return new Coalesce<>(Long.class)
-                .add(auction.unitPrice)
-                .add(auction.buyout);
     }
 
     private BooleanExpression getRealmCondition(QAuctionEntity auction, Long realmId) {

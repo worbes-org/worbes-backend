@@ -15,8 +15,7 @@ public interface AuctionListResponseMapper {
     @Mapping(target = "id", source = "response.id")
     @Mapping(target = "itemId", source = "response.itemId")
     @Mapping(target = "quantity", source = "response.quantity")
-    @Mapping(target = "buyout", source = "response.buyout")
-    @Mapping(target = "unitPrice", source = "response.unitPrice")
+    @Mapping(target = "price", source = "response.price")
     FetchAuctionResult toDto(
             RegionType region,
             Long realmId,

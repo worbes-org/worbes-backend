@@ -19,10 +19,17 @@ public class AuctionListResponse {
         private Long id;
         private Long itemId;
         private Long quantity;
-        private Long buyout;
+        private Long price;
 
         @JsonProperty("unit_price")
-        private Long unitPrice;
+        private void unitPriceToPrice(Long unitPrice) {
+            this.price = unitPrice;
+        }
+
+        @JsonProperty("buyout")
+        private void buyoutToPrice(Long buyout) {
+            this.price = buyout;
+        }
 
         @JsonProperty("item")
         private void unpackNestedItem(Map<String, Object> item) {
