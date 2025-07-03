@@ -3,11 +3,14 @@ package com.worbes.adapter.jpa.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Coalesce;
+import com.querydsl.core.types.dsl.DateTimeTemplate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.AuctionEntity;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
 import com.worbes.adapter.jpa.mapper.AuctionEntityMapper;
 import com.worbes.application.auction.model.Auction;
+import com.worbes.application.auction.model.AuctionHistory;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.out.CreateAuctionRepository;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
@@ -30,7 +33,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuctionRepository, SearchAuctionRepository {
 
-    private final AuctionEntityMapper auctionEntityMapper;
+    private final AuctionEntityMapper mapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final JPAQueryFactory queryFactory;
 
@@ -65,7 +68,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 """;
 
         List<AuctionEntity> entities = auctions.stream()
-                .map(auctionEntityMapper::toEntity)
+                .map(mapper::toEntity)
                 .toList();
 
         MapSqlParameterSource[] params = entities.stream()
@@ -129,6 +132,69 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 .groupBy(auction.itemId)
                 .offset(command.offset())
                 .limit(pageSize + 1)
+                .fetch();
+    }
+
+    @Override
+    public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
+        QAuctionEntity auction = QAuctionEntity.auctionEntity;
+        Coalesce<Long> price = new Coalesce<>(Long.class)
+                .add(auction.unitPrice)
+                .add(auction.buyout);
+
+        List<AuctionEntity> entities = queryFactory
+                .selectFrom(auction)
+                .where(
+                        auction.active.isTrue(),
+                        auction.itemId.eq(itemId),
+                        auction.region.eq(region),
+                        auction.realmId.eq(realmId)
+                )
+                .orderBy(price.asc().nullsLast())
+                .fetch();
+
+        return entities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<AuctionHistory> findHistory(
+            Long itemId,
+            RegionType region,
+            Long realmId,
+            LocalDateTime now
+    ) {
+        QAuctionEntity auction = QAuctionEntity.auctionEntity;
+
+        Coalesce<Long> minPrice = new Coalesce<>(Long.class)
+                .add(auction.unitPrice.min())
+                .add(auction.buyout.min());
+
+        DateTimeTemplate<LocalDateTime> hourTrunc = Expressions.dateTimeTemplate(
+                LocalDateTime.class,
+                "DATE_TRUNC('hour', {0})",
+                auction.createdAt
+        );
+
+        LocalDateTime oneWeekAgo = now.minusDays(7);
+
+        return queryFactory
+                .select(Projections.constructor(
+                        AuctionHistory.class,
+                        hourTrunc,
+                        auction.quantity.sum(),
+                        minPrice
+                ))
+                .from(auction)
+                .where(
+                        auction.itemId.eq(itemId),
+                        auction.region.eq(region),
+                        auction.realmId.eq(realmId),
+                        auction.createdAt.goe(oneWeekAgo)
+                )
+                .groupBy(hourTrunc)
+                .orderBy(hourTrunc.asc())
                 .fetch();
     }
 }

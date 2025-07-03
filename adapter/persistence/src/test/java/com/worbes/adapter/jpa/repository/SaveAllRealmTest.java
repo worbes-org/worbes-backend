@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 @Rollback
-@DisplayName("Integration::CreateRealmRepository::SaveAll")
+@DisplayName("Integration::CreateRealmRepository::saveAll")
 public class SaveAllRealmTest {
 
     @Autowired
