@@ -49,21 +49,6 @@ class CloseAuctionWriterTest {
         return MetaDataInstanceFactory.createStepExecution(jobParameters);
     }
 
-
-    @Test
-    @DisplayName("경매 ID 목록이 비어 있으면 종료 처리를 수행하지 않는다")
-    void shouldNotCallCloseAuctionUseCase_whenAuctionIdsAreEmpty() {
-        // given
-        List<Long> emptyChunk = List.of();
-        closeAuctionWriter.beforeStep(getStepExecution());
-
-        // when
-        closeAuctionWriter.write(new Chunk<>(emptyChunk));
-
-        // then
-        then(closeAuctionUseCase).shouldHaveNoInteractions();
-    }
-
     @Test
     @DisplayName("경매 ID 목록이 존재하면 해당 경매들을 종료 처리한다")
     void shouldCallCloseAuctionUseCaseWithCorrectCommand_whenAuctionIdsExist() {

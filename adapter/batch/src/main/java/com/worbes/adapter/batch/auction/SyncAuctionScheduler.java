@@ -42,13 +42,16 @@ public class SyncAuctionScheduler {
     @Scheduled(cron = "0 0 * * * *")
     public void runAuctionSyncJob() {
         RegionType region = RegionType.KR;
+
+        //commodity
+        launchAuctionSyncJob(createFetchCommodityJobParameters(region));
+
+        //auction
         List<Long> connectedRealmIds = findConnectedRealmUseCase.findConnectedRealmId(region);
-        connectedRealmIds.add(null); //for commodities API
         connectedRealmIds.stream()
-                .map(id -> createJobParameters(id, region))
+                .map(id -> createFetchAuctionJobParameters(id, region))
                 .forEach(this::launchAuctionSyncJob);
     }
-
 
     private void launchAuctionSyncJob(JobParameters params) {
         try {
@@ -62,15 +65,19 @@ public class SyncAuctionScheduler {
         }
     }
 
-    private JobParameters createJobParameters(Long connectedRealmId, RegionType region) {
+    private JobParameters createFetchAuctionJobParameters(Long connectedRealmId, RegionType region) {
+        JobParametersBuilder builder = new JobParametersBuilder()
+                .addString(REGION.getKey(), region.name())
+                .addLong(REALM_ID.getKey(), connectedRealmId)
+                .addLocalDateTime(AUCTION_DATE.getKey(), LocalDateTime.now());
+
+        return builder.toJobParameters();
+    }
+
+    private JobParameters createFetchCommodityJobParameters(RegionType region) {
         JobParametersBuilder builder = new JobParametersBuilder()
                 .addString(REGION.getKey(), region.name())
                 .addLocalDateTime(AUCTION_DATE.getKey(), LocalDateTime.now());
-
-        // connectedRealmId가 null이 아닐 때만 파라미터에 추가
-        if (connectedRealmId != null) {
-            builder.addLong(REALM_ID.getKey(), connectedRealmId);
-        }
 
         return builder.toJobParameters();
     }

@@ -43,7 +43,7 @@ class SyncAuctionSchedulerTest {
     private SyncAuctionScheduler scheduler;
 
     @Test
-    @DisplayName("realmId 2개와 commodities(null)에 대해 Job이 각각 실행되어야 한다")
+    @DisplayName("realmId 2개와 commodities 에 대해 Job이 각각 실행되어야 한다")
     void runAuctionSyncJob_should_launch_job_for_each_realm_and_commodities() throws Exception {
         // given
         RegionType regionType = RegionType.KR;
@@ -84,9 +84,6 @@ class SyncAuctionSchedulerTest {
     @DisplayName("Job 실행 중 예외가 발생하면 RuntimeException으로 래핑되어 던져져야 한다")
     void launchAuctionSyncJob_should_throw_exception_when_job_launcher_fails() throws Exception {
         // given
-        List<Long> realmIds = new ArrayList<>(List.of(1L));
-        given(findConnectedRealmUseCase.findConnectedRealmId(RegionType.KR)).willReturn(realmIds);
-
         willThrow(new JobExecutionAlreadyRunningException("Job already running"))
                 .given(asyncJobLauncher).run(any(Job.class), any(JobParameters.class));
 

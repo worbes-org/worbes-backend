@@ -35,7 +35,7 @@ public class InitializeItemJobConfig {
     @JobScope
     public Step initializeItemStep(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
+            @Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager,
             @Qualifier("auctionItemIdReader") JdbcPagingItemReader<Long> auctionItemIdReader,
             CreateItemWriter createItemWriter
     ) {

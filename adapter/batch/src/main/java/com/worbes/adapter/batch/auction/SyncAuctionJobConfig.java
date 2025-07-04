@@ -46,7 +46,7 @@ public class SyncAuctionJobConfig {
     @JobScope
     public Step fetchAuctionStep(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
+            @Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager,
             FetchAuctionTasklet tasklet
     ) {
         return new StepBuilder("fetchAuctionStep", jobRepository)
@@ -64,7 +64,7 @@ public class SyncAuctionJobConfig {
     @JobScope
     public Step closeAuctionStep(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
+            @Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager,
             @Qualifier("closeAuctionReader") JdbcPagingItemReader<Long> reader,
             CloseAuctionProcessor processor,
             CloseAuctionWriter writer
@@ -138,7 +138,7 @@ public class SyncAuctionJobConfig {
     @JobScope
     public Step createAuctionStep(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
+            @Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager,
             CreateAuctionReader createAuctionReader,
             CreateAuctionWriter writer
     ) {
