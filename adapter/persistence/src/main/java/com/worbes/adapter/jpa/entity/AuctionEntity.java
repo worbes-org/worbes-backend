@@ -43,7 +43,6 @@ public class AuctionEntity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Setter
     @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
@@ -54,7 +53,8 @@ public class AuctionEntity {
             Long quantity,
             Long price,
             RegionType region,
-            Long realmId
+            Long realmId,
+            LocalDateTime endedAt
     ) {
         this.auctionId = auctionId;
         this.itemId = itemId;
@@ -62,5 +62,6 @@ public class AuctionEntity {
         this.price = price;
         this.region = region;
         this.realmId = realmId;
+        this.endedAt = endedAt;
     }
 }

@@ -4,9 +4,13 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.jpa.entity.AuctionEntity;
+import com.worbes.adapter.jpa.entity.AuctionStatsSnapshotEntity;
 import com.worbes.adapter.jpa.entity.QAuctionEntity;
+import com.worbes.adapter.jpa.entity.QAuctionStatsSnapshotEntity;
 import com.worbes.adapter.jpa.mapper.AuctionEntityMapper;
+import com.worbes.adapter.jpa.mapper.AuctionStatsSnapshotEntityMapper;
 import com.worbes.application.auction.model.Auction;
+import com.worbes.application.auction.model.AuctionStatsSnapshot;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.out.CreateAuctionRepository;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
@@ -29,7 +33,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuctionRepository, SearchAuctionRepository {
 
-    private final AuctionEntityMapper mapper;
+    private final AuctionEntityMapper auctionEntityMapper;
+    private final AuctionStatsSnapshotEntityMapper statsSnapshotMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final JPAQueryFactory queryFactory;
 
@@ -58,7 +63,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 """;
 
         List<AuctionEntity> entities = auctions.stream()
-                .map(mapper::toEntity)
+                .map(auctionEntityMapper::toEntity)
                 .toList();
 
         MapSqlParameterSource[] params = entities.stream()
@@ -134,7 +139,27 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 .fetch();
 
         return entities.stream()
-                .map(mapper::toDomain)
+                .map(auctionEntityMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<AuctionStatsSnapshot> findHourlySnapshots(Long itemId, RegionType region, Long realmId, Integer dayMinus) {
+        QAuctionStatsSnapshotEntity snapshot = QAuctionStatsSnapshotEntity.auctionStatsSnapshotEntity;
+
+        List<AuctionStatsSnapshotEntity> entities = queryFactory
+                .selectFrom(snapshot)
+                .where(
+                        snapshot.itemId.eq(itemId),
+                        snapshot.region.eq(region),
+                        snapshot.time.goe(LocalDateTime.now().minusDays(dayMinus)),
+                        realmId == null ? snapshot.realmId.isNull() : snapshot.realmId.eq(realmId)
+                )
+                .orderBy(snapshot.time.asc())
+                .fetch();
+
+        return entities.stream()
+                .map(statsSnapshotMapper::toDomain)
                 .toList();
     }
 

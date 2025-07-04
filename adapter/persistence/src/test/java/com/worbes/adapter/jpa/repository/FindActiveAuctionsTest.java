@@ -64,8 +64,8 @@ public class FindActiveAuctionsTest {
                 .price(100L)
                 .region(RegionType.KR)
                 .realmId(null)
+                .endedAt(LocalDateTime.now())
                 .build();
-        endedAuction.setEndedAt(LocalDateTime.now());
         jpaRepository.save(endedAuction);
     }
 

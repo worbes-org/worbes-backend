@@ -79,7 +79,7 @@ WITH hours AS (SELECT DISTINCT DATE_TRUNC('hour', created_at) AS hour,
                                region,
                                realm_id
                FROM auction),
-     summary AS (SELECT h.hour,
+     summary AS (SELECT h.hour                                                                  AS time,
                         h.item_id,
                         h.region,
                         h.realm_id,
@@ -100,4 +100,4 @@ WITH hours AS (SELECT DISTINCT DATE_TRUNC('hour', created_at) AS hour,
                  FROM hours h)
 SELECT *
 FROM summary
-ORDER BY hour;
+ORDER BY time;
