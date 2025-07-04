@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.springframework.batch.item.ItemReader;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_SNAPSHOT;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNAPSHOT;
 
 @Slf4j
 public class CreateAuctionReader implements ItemReader<Auction>, StepExecutionListener {

@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.port.in.FetchAuctionCommand;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;

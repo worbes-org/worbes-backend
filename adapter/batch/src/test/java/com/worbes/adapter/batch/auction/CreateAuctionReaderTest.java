@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.realm.model.RegionType;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_SNAPSHOT;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNAPSHOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

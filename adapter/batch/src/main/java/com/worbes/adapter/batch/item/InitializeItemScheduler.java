@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_DATE;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_DATE;
 
 @Slf4j
 @Component

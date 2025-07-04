@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.port.in.CreateAuctionUseCase;
@@ -16,8 +16,8 @@ import org.springframework.batch.item.ItemWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_COUNT;
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_SNAPSHOT;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_COUNT;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNAPSHOT;
 
 @Slf4j
 @RequiredArgsConstructor

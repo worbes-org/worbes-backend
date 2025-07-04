@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.realm.model.RegionType;
 import com.worbes.application.realm.port.in.FindConnectedRealmUseCase;
@@ -12,14 +12,13 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
 
 @Slf4j
 @Component
@@ -39,8 +38,8 @@ public class SyncAuctionScheduler {
         this.asyncJobLauncher = asyncJobLauncher;
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-//    @Scheduled(cron = "0 0 * * * *")
+    //    @EventListener(ApplicationReadyEvent.class)
+    @Scheduled(cron = "0 0 * * * *")
     public void runAuctionSyncJob() {
         RegionType region = RegionType.KR;
         List<Long> connectedRealmIds = findConnectedRealmUseCase.findConnectedRealmId(region);

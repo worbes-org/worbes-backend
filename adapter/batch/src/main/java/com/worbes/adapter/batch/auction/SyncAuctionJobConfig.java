@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.port.in.CloseAuctionUseCase;

@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.port.in.CloseAuctionCommand;
 import com.worbes.application.auction.port.in.CloseAuctionUseCase;
@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.REALM_ID;
-import static com.worbes.adapter.batch.SyncAuctionParameters.REGION;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REALM_ID;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REGION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +39,6 @@ public class CloseAuctionWriter implements ItemWriter<Long>, StepExecutionListen
     @Override
     public void write(Chunk<? extends Long> chunk) {
         Set<Long> toCloseAuctionIds = new HashSet<>(chunk.getItems());
-        if (toCloseAuctionIds.isEmpty()) return;
         closeAuctionUseCase.closeAuctions(new CloseAuctionCommand(region, realmId, toCloseAuctionIds));
     }
 }

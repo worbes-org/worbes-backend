@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import org.springframework.batch.core.ExitStatus;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.AUCTION_SNAPSHOT;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNAPSHOT;
 
 public class CloseAuctionProcessor implements ItemProcessor<Long, Long>, StepExecutionListener {
 

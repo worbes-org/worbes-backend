@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.realm.model.RegionType;
 import com.worbes.application.realm.port.in.FindConnectedRealmUseCase;
@@ -17,8 +17,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.REALM_ID;
-import static com.worbes.adapter.batch.SyncAuctionParameters.REGION;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REALM_ID;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REGION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.item;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

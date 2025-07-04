@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.item;
 
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.CreateItemUseCase;

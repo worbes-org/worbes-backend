@@ -1,4 +1,4 @@
-package com.worbes.adapter.batch;
+package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.port.in.FetchAuctionCommand;
@@ -17,7 +17,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import java.util.List;
 import java.util.Optional;
 
-import static com.worbes.adapter.batch.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
 
 @Slf4j
 @RequiredArgsConstructor
