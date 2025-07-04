@@ -1,7 +1,6 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.FetchAuctionCommand;
 import com.worbes.application.auction.port.in.FetchAuctionUseCase;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
@@ -56,8 +55,7 @@ class FetchAuctionTaskletTest {
     @Test
     public void shouldFetchAuctionsAndStoreInExecutionContext() throws Exception {
         List<Auction> expected = createAuctions(1000);
-        given(fetchAuctionUseCase.fetchAuctions(new FetchAuctionCommand(region, realmId)))
-                .willReturn(expected);
+        given(fetchAuctionUseCase.fetchAuctions(region, realmId)).willReturn(expected);
 
         StepExecution stepExecution = getStepExecution();
         StepContribution stepContribution = new StepContribution(stepExecution);
@@ -71,8 +69,7 @@ class FetchAuctionTaskletTest {
         assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_SNAPSHOT.getKey())).isEqualTo(expected);
         assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_COUNT.getKey())).isEqualTo(expected.size());
 
-        then(fetchAuctionUseCase).should(times(1))
-                .fetchAuctions(new FetchAuctionCommand(region, realmId));
+        then(fetchAuctionUseCase).should(times(1)).fetchAuctions(region, realmId);
     }
 
     private List<Auction> createAuctions(int count) {

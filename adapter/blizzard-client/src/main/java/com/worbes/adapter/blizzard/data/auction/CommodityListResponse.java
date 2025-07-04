@@ -9,17 +9,19 @@ import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AuctionListResponse {
+public class CommodityListResponse {
 
-    private List<AuctionResponse> auctions;
+    private List<CommodityResponse> auctions;
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class AuctionResponse {
+    public static class CommodityResponse {
         private Long id;
         private Long itemId;
         private Long quantity;
-        private Long buyout;
+
+        @JsonProperty("unit_price")
+        private Long unitPrice;
 
         @JsonProperty("item")
         private void unpackNestedItem(Map<String, Object> item) {

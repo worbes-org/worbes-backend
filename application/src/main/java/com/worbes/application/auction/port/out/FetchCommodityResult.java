@@ -2,12 +2,11 @@ package com.worbes.application.auction.port.out;
 
 import com.worbes.application.realm.model.RegionType;
 
-public record FetchAuctionResult(
+public record FetchCommodityResult(
         Long id,
         Long itemId,
         Long quantity,
-        Long buyout,
-        RegionType region,
-        Long realmId
+        Long unitPrice,
+        RegionType region
 ) {
 }

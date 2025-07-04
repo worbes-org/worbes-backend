@@ -1,7 +1,6 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.FetchAuctionCommand;
 import com.worbes.application.auction.port.in.FetchAuctionUseCase;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +33,7 @@ public class FetchAuctionTasklet implements Tasklet {
                 .orElseThrow(() -> new IllegalArgumentException("Region not found"));
         Long realmId = jobParameters.getLong(REALM_ID.getKey(), null);
 
-        List<Auction> snapshot = fetchAuctionUseCase.fetchAuctions(
-                new FetchAuctionCommand(RegionType.valueOf(region), realmId)
-        );
+        List<Auction> snapshot = fetchAuctionSnapshot(region, realmId);
         log.info("경매 스냅샷 조회 완료 - region={}, realmId={}, 수집 수={}", region, realmId, snapshot.size());
 
         ExecutionContext jobContext = jobExecution.getExecutionContext();
@@ -44,5 +41,13 @@ public class FetchAuctionTasklet implements Tasklet {
         jobContext.put(AUCTION_COUNT.getKey(), snapshot.size());
 
         return RepeatStatus.FINISHED;
+    }
+
+    private List<Auction> fetchAuctionSnapshot(String region, Long realmId) {
+        RegionType regionType = RegionType.valueOf(region);
+        if (region == null) {
+            return fetchAuctionUseCase.fetchCommodities(regionType);
+        }
+        return fetchAuctionUseCase.fetchAuctions(regionType, realmId);
     }
 }

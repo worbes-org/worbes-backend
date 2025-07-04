@@ -1,7 +1,6 @@
 package com.worbes.application.auction.service;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.FetchAuctionCommand;
 import com.worbes.application.auction.port.in.FetchAuctionUseCase;
 import com.worbes.application.auction.port.out.AuctionFetcher;
 import com.worbes.application.realm.model.RegionType;
@@ -18,11 +17,15 @@ public class FetchAuctionService implements FetchAuctionUseCase {
     private final AuctionFactory auctionFactory;
 
     @Override
-    public List<Auction> fetchAuctions(FetchAuctionCommand command) {
-        RegionType regionType = command.region();
-        Long realmId = command.realmId();
+    public List<Auction> fetchAuctions(RegionType region, Long realmId) {
+        return auctionFetcher.fetchAuctions(region, realmId).stream()
+                .map(auctionFactory::create)
+                .toList();
+    }
 
-        return auctionFetcher.fetch(regionType, realmId).stream()
+    @Override
+    public List<Auction> fetchCommodities(RegionType region) {
+        return auctionFetcher.fetchCommodities(region).stream()
                 .map(auctionFactory::create)
                 .toList();
     }
