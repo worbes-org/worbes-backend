@@ -35,7 +35,7 @@ public class InitializeItemJobConfig {
     @JobScope
     public Step initializeItemStep(
             JobRepository jobRepository,
-            @Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager,
+            PlatformTransactionManager transactionManager,
             @Qualifier("auctionItemIdReader") JdbcPagingItemReader<Long> auctionItemIdReader,
             CreateItemWriter createItemWriter
     ) {
@@ -70,7 +70,7 @@ public class InitializeItemJobConfig {
         provider.setDataSource(dataSource);
         provider.setSelectClause("SELECT DISTINCT item_id");
         provider.setFromClause("FROM auction");
-        provider.setWhereClause("WHERE active = true");
+        provider.setWhereClause("WHERE ended_at IS NULL");
         provider.setSortKey("item_id");
 
         return provider;

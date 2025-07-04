@@ -164,8 +164,9 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     private BooleanExpression getRealmCondition(QAuctionEntity auction, Long realmId) {
-        return (realmId != null)
-                ? auction.realmId.eq(realmId)
-                : auction.realmId.isNull();
+        if (realmId == null) {
+            return auction.realmId.isNull();
+        }
+        return auction.realmId.eq(realmId).or(auction.realmId.isNull());
     }
 }

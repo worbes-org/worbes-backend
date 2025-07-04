@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DisplayName("Integration::SearchAuctionRepository::findHourlySnapshots")
+@Sql(scripts = "auction-cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class FindHourlyAuctionSnapshotTest {
 
     @Autowired

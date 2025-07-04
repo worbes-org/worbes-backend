@@ -1,8 +1,12 @@
 package com.worbes.application.auction.model;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
-public class Price {
+
+@Getter
+public class Price implements Comparable<Price> {
 
     private final Long totalCopper;
 
@@ -37,6 +41,11 @@ public class Price {
     @Override
     public int hashCode() {
         return Objects.hashCode(totalCopper);
+    }
+
+    @Override
+    public int compareTo(Price other) {
+        return this.totalCopper.compareTo(other.totalCopper);
     }
 }
 

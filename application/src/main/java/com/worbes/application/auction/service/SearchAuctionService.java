@@ -1,7 +1,10 @@
 package com.worbes.application.auction.service;
 
 import com.worbes.application.auction.model.Auction;
+import com.worbes.application.auction.model.AuctionDetail;
+import com.worbes.application.auction.model.AuctionStatsSnapshot;
 import com.worbes.application.auction.model.AuctionSummary;
+import com.worbes.application.auction.port.in.GetAuctionDetailUseCase;
 import com.worbes.application.auction.port.in.SearchAuctionCommand;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryUseCase;
 import com.worbes.application.auction.port.out.SearchAuctionRepository;
@@ -21,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SearchAuctionService implements SearchAuctionSummaryUseCase {
+public class SearchAuctionService implements SearchAuctionSummaryUseCase, GetAuctionDetailUseCase {
 
     private final SearchAuctionRepository searchAuctionRepository;
     private final SearchItemRepository searchItemRepository;
@@ -38,8 +41,12 @@ public class SearchAuctionService implements SearchAuctionSummaryUseCase {
                 .toList();
     }
 
-    public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
-        return searchAuctionRepository.findActiveAuctions(itemId, region, realmId);
-    }
+    @Override
+    public AuctionDetail getAuctionDetail(Long itemId, RegionType region, Long realmId) {
+        Item item = searchItemRepository.findById(itemId);
+        List<Auction> activeAuctions = searchAuctionRepository.findActiveAuctions(itemId, region, realmId);
+        List<AuctionStatsSnapshot> snapshots = searchAuctionRepository.findHourlySnapshots(itemId, region, realmId, 7);
 
+        return new AuctionDetail(item, activeAuctions, snapshots);
+    }
 }

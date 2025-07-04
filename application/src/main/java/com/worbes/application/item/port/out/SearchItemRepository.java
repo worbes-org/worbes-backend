@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SearchItemRepository {
     List<Item> search(SearchItemCommand command);
+
+    Item findById(Long itemId);
 }

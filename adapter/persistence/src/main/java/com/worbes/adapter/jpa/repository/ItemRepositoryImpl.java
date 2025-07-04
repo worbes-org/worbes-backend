@@ -7,6 +7,7 @@ import com.worbes.application.item.port.in.SearchItemCommand;
 import com.worbes.application.item.port.out.CreateItemRepository;
 import com.worbes.application.item.port.out.SearchItemRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -62,5 +63,12 @@ public class ItemRepositoryImpl implements CreateItemRepository, SearchItemRepos
         return result.stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Item findById(Long itemId) {
+        return jpaRepository.findById(itemId)
+                .map(mapper::toDomain)
+                .orElseThrow(EntityNotFoundException::new);
     }
 }
