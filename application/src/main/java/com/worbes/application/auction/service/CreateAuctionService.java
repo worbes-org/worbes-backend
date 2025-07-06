@@ -16,6 +16,8 @@ public class CreateAuctionService implements CreateAuctionUseCase {
 
     @Override
     public int createAuctions(List<Auction> auctions) {
+        if (auctions.isEmpty()) return 0;
+
         return createAuctionRepository.upsertAllQuantityIfChanged(auctions);
     }
 }

@@ -8,7 +8,6 @@ import org.mapstruct.factory.Mappers;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@DisplayName("Unit::AuctionEntityMapper")
 class AuctionEntityMapperTest {
 
     private final AuctionEntityMapper mapper = Mappers.getMapper(AuctionEntityMapper.class);

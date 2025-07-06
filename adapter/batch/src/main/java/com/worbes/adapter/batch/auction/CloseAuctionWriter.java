@@ -1,7 +1,6 @@
 package com.worbes.adapter.batch.auction;
 
-import com.worbes.application.auction.port.in.CloseAuctionCommand;
-import com.worbes.application.auction.port.in.CloseAuctionUseCase;
+import com.worbes.application.auction.port.in.EndAuctionUseCase;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,7 @@ import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REGION;
 @RequiredArgsConstructor
 public class CloseAuctionWriter implements ItemWriter<Long>, StepExecutionListener {
 
-    private final CloseAuctionUseCase closeAuctionUseCase;
+    private final EndAuctionUseCase endAuctionUseCase;
 
     private RegionType region;
     private Long realmId;
@@ -39,6 +38,6 @@ public class CloseAuctionWriter implements ItemWriter<Long>, StepExecutionListen
     @Override
     public void write(Chunk<? extends Long> chunk) {
         Set<Long> toCloseAuctionIds = new HashSet<>(chunk.getItems());
-        closeAuctionUseCase.closeAuctions(new CloseAuctionCommand(region, realmId, toCloseAuctionIds));
+        endAuctionUseCase.end(region, realmId, toCloseAuctionIds);
     }
 }

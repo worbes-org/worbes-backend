@@ -19,8 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @Sql(scripts = "auction-cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@DisplayName("Integration::UpdateAuctionRepository::markAuctionsEnded")
-public class MarkAuctionsEndedTest {
+public class AuctionRepositoryUpdateEndedAtTest {
 
     private final RegionType region = RegionType.KR;
     private final Long realmId = 101L;
@@ -64,7 +63,7 @@ public class MarkAuctionsEndedTest {
             Set<Long> idsToEnd = Set.of(1L, 2L, 3L, 4L);
 
             // when
-            Long updated = auctionRepository.markAuctionsEnded(region, realmId, idsToEnd);
+            Long updated = auctionRepository.updateEndedAt(region, realmId, idsToEnd);
             entityManager.clear();
 
             // then
@@ -88,7 +87,7 @@ public class MarkAuctionsEndedTest {
             entityManager.flush();
 
             // when
-            Long updated = auctionRepository.markAuctionsEnded(region, null, Set.of(10L, 11L));
+            Long updated = auctionRepository.updateEndedAt(region, null, Set.of(10L, 11L));
             entityManager.clear();
 
             // then
@@ -110,7 +109,7 @@ public class MarkAuctionsEndedTest {
             entityManager.flush();
 
             // when
-            Long updated = auctionRepository.markAuctionsEnded(RegionType.US, 111L, Set.of(20L));
+            Long updated = auctionRepository.updateEndedAt(RegionType.US, 111L, Set.of(20L));
 
             // then
             assertThat(updated).isZero();

@@ -20,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Sql(scripts = "auction-cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@DisplayName("Integration::CreateAuctionRepository::upsertAllQuantityIfChanged")
-public class UpsertAllQuantityIfChangedTest {
+public class AuctionRepositoryUpsertAllQuantityIfChangedTest {
 
     private final RegionType region = RegionType.KR;
     private final Long realmId = 101L;

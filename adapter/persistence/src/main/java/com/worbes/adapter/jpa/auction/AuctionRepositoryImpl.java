@@ -78,7 +78,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public Long markAuctionsEnded(RegionType region, Long realmId, Set<Long> auctionIds) {
+    public Long updateEndedAt(RegionType region, Long realmId, Set<Long> auctionIds) {
         QAuctionEntity a = QAuctionEntity.auctionEntity;
         BooleanExpression realmCondition = getRealmCondition(a, realmId);
 

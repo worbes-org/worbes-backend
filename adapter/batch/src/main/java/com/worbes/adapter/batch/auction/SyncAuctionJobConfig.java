@@ -1,8 +1,8 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.CloseAuctionUseCase;
 import com.worbes.application.auction.port.in.CreateAuctionUseCase;
+import com.worbes.application.auction.port.in.EndAuctionUseCase;
 import com.worbes.application.auction.port.in.FetchAuctionUseCase;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -79,8 +79,8 @@ public class SyncAuctionJobConfig {
 
     @Bean
     @StepScope
-    public CloseAuctionWriter closeAuctionWriter(CloseAuctionUseCase closeAuctionUseCase) {
-        return new CloseAuctionWriter(closeAuctionUseCase);
+    public CloseAuctionWriter closeAuctionWriter(EndAuctionUseCase endAuctionUseCase) {
+        return new CloseAuctionWriter(endAuctionUseCase);
     }
 
     @Bean

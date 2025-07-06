@@ -1,7 +1,6 @@
 package com.worbes.adapter.batch.auction;
 
-import com.worbes.application.auction.port.in.CloseAuctionCommand;
-import com.worbes.application.auction.port.in.CloseAuctionUseCase;
+import com.worbes.application.auction.port.in.EndAuctionUseCase;
 import com.worbes.application.realm.model.RegionType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +34,7 @@ class CloseAuctionWriterTest {
     private final Long realmId = 1L;
 
     @MockBean
-    private CloseAuctionUseCase closeAuctionUseCase;
+    private EndAuctionUseCase endAuctionUseCase;
 
     @Autowired
     private CloseAuctionWriter closeAuctionWriter;
@@ -61,7 +60,7 @@ class CloseAuctionWriterTest {
         closeAuctionWriter.write(new Chunk<>(chunk));
 
         // then
-        then(closeAuctionUseCase).should()
-                .closeAuctions(new CloseAuctionCommand(region, realmId, auctionIds));
+        then(endAuctionUseCase).should()
+                .end(region, realmId, auctionIds);
     }
 }
