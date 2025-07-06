@@ -39,7 +39,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public int saveAllIgnoreConflict(List<Auction> auctions) {
+    public int upsertAllQuantityIfChanged(List<Auction> auctions) {
         String sql = """
                 INSERT INTO auction (
                     auction_id,
@@ -59,7 +59,9 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                     :realmId,
                     NOW()
                 )
-                ON CONFLICT (auction_id) DO NOTHING
+                ON CONFLICT (auction_id) DO UPDATE SET
+                    quantity = EXCLUDED.quantity
+                WHERE auction.quantity != EXCLUDED.quantity
                 """;
 
         List<AuctionEntity> entities = auctions.stream()

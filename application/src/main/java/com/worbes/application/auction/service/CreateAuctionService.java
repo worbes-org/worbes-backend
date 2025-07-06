@@ -16,6 +16,6 @@ public class CreateAuctionService implements CreateAuctionUseCase {
 
     @Override
     public int createAuctions(List<Auction> auctions) {
-        return createAuctionRepository.saveAllIgnoreConflict(auctions);
+        return createAuctionRepository.upsertAllQuantityIfChanged(auctions);
     }
 }

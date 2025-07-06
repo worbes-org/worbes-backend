@@ -53,8 +53,8 @@ public class SaveAllAuctionIgnoreConflictTest {
         Auction auction3 = createAuction(1001L, region, realmId); // 중복 ID
 
         // when
-        int saved = createAuctionRepository.saveAllIgnoreConflict(List.of(auction1, auction2));
-        int conflict = createAuctionRepository.saveAllIgnoreConflict(List.of(auction3));// 중복 저장 시도
+        int saved = createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction1, auction2));
+        int conflict = createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction3));// 중복 저장 시도
 
         // then
         List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();
@@ -77,7 +77,7 @@ public class SaveAllAuctionIgnoreConflictTest {
     @DisplayName("빈 리스트 저장 시 아무 것도 저장하지 않는다")
     void givenEmptyList_whenSaveAllIgnoreConflict_thenNothingSaved() {
         // when
-        int saved = createAuctionRepository.saveAllIgnoreConflict(Collections.emptyList());
+        int saved = createAuctionRepository.upsertAllQuantityIfChanged(Collections.emptyList());
 
         // then
         List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();
@@ -96,7 +96,7 @@ public class SaveAllAuctionIgnoreConflictTest {
         );
 
         // when
-        int saved = createAuctionRepository.saveAllIgnoreConflict(auctions);
+        int saved = createAuctionRepository.upsertAllQuantityIfChanged(auctions);
 
         // then
         List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();
@@ -110,13 +110,13 @@ public class SaveAllAuctionIgnoreConflictTest {
         // given
         Auction auction1 = createAuction(3001L, region, realmId);
         Auction auction2 = createAuction(3002L, region, realmId);
-        createAuctionRepository.saveAllIgnoreConflict(List.of(auction1));
+        createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction1));
 
         Auction duplicate1 = createAuction(3001L, region, realmId); // 중복
         Auction newAuction = createAuction(3003L, region, realmId);
 
         // when
-        int saved = createAuctionRepository.saveAllIgnoreConflict(List.of(duplicate1, auction2, newAuction));
+        int saved = createAuctionRepository.upsertAllQuantityIfChanged(List.of(duplicate1, auction2, newAuction));
 
         // then
         List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();
@@ -138,7 +138,7 @@ public class SaveAllAuctionIgnoreConflictTest {
                 .build();
 
         // when, then
-        assertThatThrownBy(() -> createAuctionRepository.saveAllIgnoreConflict(List.of(badAuction)))
+        assertThatThrownBy(() -> createAuctionRepository.upsertAllQuantityIfChanged(List.of(badAuction)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -149,9 +149,9 @@ public class SaveAllAuctionIgnoreConflictTest {
         Auction auction = createAuction(4001L, region, realmId);
 
         // when
-        int firstSave = createAuctionRepository.saveAllIgnoreConflict(List.of(auction));
-        int secondSave = createAuctionRepository.saveAllIgnoreConflict(List.of(auction));
-        int thirdSave = createAuctionRepository.saveAllIgnoreConflict(List.of(auction));
+        int firstSave = createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction));
+        int secondSave = createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction));
+        int thirdSave = createAuctionRepository.upsertAllQuantityIfChanged(List.of(auction));
 
         // then
         List<AuctionEntity> savedEntities = auctionJpaRepository.findAll();

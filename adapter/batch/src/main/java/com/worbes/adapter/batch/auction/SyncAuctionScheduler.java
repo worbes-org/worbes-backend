@@ -43,18 +43,11 @@ public class SyncAuctionScheduler {
 //    @Scheduled(cron = "0 0 * * * *")
     public void runAuctionSyncJob() {
         RegionType region = RegionType.KR;
-
-        //commodity
-        launchAuctionSyncJob(createFetchCommodityJobParameters(region));
-
-        //auction
-        List<Long> connectedRealmIds = findConnectedRealmUseCase.findConnectedRealmId(region);
-        connectedRealmIds.stream()
-                .map(id -> createFetchAuctionJobParameters(id, region))
-                .forEach(this::launchAuctionSyncJob);
+        launchCommoditySyncJob(region);
+//        launchAuctionSyncJob(region);
     }
 
-    private void launchAuctionSyncJob(JobParameters params) {
+    private void runJobLauncher(JobParameters params) {
         try {
             asyncJobLauncher.run(job, params);
         } catch (JobExecutionAlreadyRunningException |
@@ -66,20 +59,27 @@ public class SyncAuctionScheduler {
         }
     }
 
-    private JobParameters createFetchAuctionJobParameters(Long connectedRealmId, RegionType region) {
+    private JobParameters createJobParameters(RegionType region, Long connectedRealmId) {
         JobParametersBuilder builder = new JobParametersBuilder()
                 .addString(REGION.getKey(), region.name())
-                .addLong(REALM_ID.getKey(), connectedRealmId)
                 .addLocalDateTime(AUCTION_DATE.getKey(), LocalDateTime.now());
+
+        if (connectedRealmId == null) {
+            return builder.toJobParameters();
+        }
+        builder.addLong(REALM_ID.getKey(), connectedRealmId);
 
         return builder.toJobParameters();
     }
 
-    private JobParameters createFetchCommodityJobParameters(RegionType region) {
-        JobParametersBuilder builder = new JobParametersBuilder()
-                .addString(REGION.getKey(), region.name())
-                .addLocalDateTime(AUCTION_DATE.getKey(), LocalDateTime.now());
+    private void launchCommoditySyncJob(RegionType region) {
+        runJobLauncher(createJobParameters(region, null));
+    }
 
-        return builder.toJobParameters();
+    private void launchAuctionSyncJob(RegionType region) {
+        List<Long> connectedRealmIds = findConnectedRealmUseCase.findConnectedRealmId(region);
+        connectedRealmIds.stream()
+                .map(id -> createJobParameters(region, id))
+                .forEach(this::runJobLauncher);
     }
 }

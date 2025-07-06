@@ -5,5 +5,5 @@ import com.worbes.application.auction.model.Auction;
 import java.util.List;
 
 public interface CreateAuctionRepository {
-    int saveAllIgnoreConflict(List<Auction> auctions);
+    int upsertAllQuantityIfChanged(List<Auction> auctions);
 }

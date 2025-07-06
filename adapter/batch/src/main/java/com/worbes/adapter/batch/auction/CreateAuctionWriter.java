@@ -10,7 +10,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemWriter;
 
 import java.util.ArrayList;
@@ -21,30 +20,17 @@ import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNA
 
 @Slf4j
 @RequiredArgsConstructor
-public class CreateAuctionWriter implements ItemWriter<Auction>, StepExecutionListener, ItemStream {
+public class CreateAuctionWriter implements ItemWriter<Auction>, StepExecutionListener {
 
-    private static final String TOTAL_SAVED_KEY = "createAuctionWriter.totalSavedCount";
     private final CreateAuctionUseCase createAuctionUseCase;
-    private int totalSavedCount = 0;
+    private int totalUpdatedOrInsertedAuction = 0;
 
     @Override
     public void write(Chunk<? extends Auction> chunk) {
         List<Auction> chunkedAuction = new ArrayList<>(chunk.getItems());
         if (chunkedAuction.isEmpty()) return;
-        int savedCount = createAuctionUseCase.createAuctions(chunkedAuction);
-        totalSavedCount += savedCount;
-    }
-
-    @Override
-    public void open(ExecutionContext executionContext) {
-        if (executionContext.containsKey(TOTAL_SAVED_KEY)) {
-            totalSavedCount = executionContext.getInt(TOTAL_SAVED_KEY);
-        }
-    }
-
-    @Override
-    public void update(ExecutionContext executionContext) {
-        executionContext.putInt(TOTAL_SAVED_KEY, totalSavedCount);
+        int updatedOrInsertedAuctions = createAuctionUseCase.createAuctions(chunkedAuction);
+        totalUpdatedOrInsertedAuction += updatedOrInsertedAuctions;
     }
 
     @Override
@@ -52,16 +38,10 @@ public class CreateAuctionWriter implements ItemWriter<Auction>, StepExecutionLi
         JobExecution jobExecution = stepExecution.getJobExecution();
         ExecutionContext jobContext = jobExecution.getExecutionContext();
 
-        int auctionCount = jobContext.getInt(AUCTION_COUNT.getKey());
-        if (auctionCount <= 0 || auctionCount < totalSavedCount) {
-            return ExitStatus.FAILED;
-        }
-        stepExecution.setWriteCount(totalSavedCount);
-        stepExecution.setFilterCount(auctionCount - totalSavedCount);
+        stepExecution.setWriteCount(totalUpdatedOrInsertedAuction);
 
         jobContext.remove(AUCTION_SNAPSHOT.getKey());
         jobContext.remove(AUCTION_COUNT.getKey());
-        jobContext.remove(TOTAL_SAVED_KEY);
 
         return ExitStatus.COMPLETED;
     }
