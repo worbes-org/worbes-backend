@@ -1,7 +1,7 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.in.FindConnectedRealmUseCase;
+import com.worbes.application.realm.port.in.GetConnectedRealmIdUseCase;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -14,6 +14,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -25,26 +26,26 @@ import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
 @Component
 public class SyncAuctionScheduler {
 
-    private final FindConnectedRealmUseCase findConnectedRealmUseCase;
+    private final GetConnectedRealmIdUseCase getConnectedRealmUseCase;
     private final Job job;
     private final JobLauncher asyncJobLauncher;
 
     public SyncAuctionScheduler(
-            FindConnectedRealmUseCase findConnectedRealmUseCase,
+            GetConnectedRealmIdUseCase getConnectedRealmUseCase,
             @Qualifier("auctionSyncJob") Job job,
             JobLauncher asyncJobLauncher
     ) {
-        this.findConnectedRealmUseCase = findConnectedRealmUseCase;
+        this.getConnectedRealmUseCase = getConnectedRealmUseCase;
         this.job = job;
         this.asyncJobLauncher = asyncJobLauncher;
     }
 
+    @Scheduled(cron = "0 0 * * * *")
     @EventListener(ApplicationReadyEvent.class)
-//    @Scheduled(cron = "0 0 * * * *")
     public void runAuctionSyncJob() {
         RegionType region = RegionType.KR;
         launchCommoditySyncJob(region);
-//        launchAuctionSyncJob(region);
+        launchAuctionSyncJob(region);
     }
 
     private void runJobLauncher(JobParameters params) {
@@ -77,7 +78,7 @@ public class SyncAuctionScheduler {
     }
 
     private void launchAuctionSyncJob(RegionType region) {
-        List<Long> connectedRealmIds = findConnectedRealmUseCase.findConnectedRealmId(region);
+        List<Long> connectedRealmIds = getConnectedRealmUseCase.getConnectedRealmId(region);
         connectedRealmIds.stream()
                 .map(id -> createJobParameters(region, id))
                 .forEach(this::runJobLauncher);

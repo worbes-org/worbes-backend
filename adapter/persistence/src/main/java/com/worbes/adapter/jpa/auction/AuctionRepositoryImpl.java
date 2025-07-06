@@ -4,12 +4,11 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.model.AuctionStatsSnapshot;
-import com.worbes.application.auction.port.in.SearchAuctionCommand;
-import com.worbes.application.auction.port.out.CreateAuctionRepository;
-import com.worbes.application.auction.port.out.SearchAuctionRepository;
-import com.worbes.application.auction.port.out.SearchAuctionSummaryResult;
-import com.worbes.application.auction.port.out.UpdateAuctionRepository;
+import com.worbes.application.auction.port.in.SearchAuctionSummaryCondition;
+import com.worbes.application.auction.port.out.AuctionReadRepository;
+import com.worbes.application.auction.port.out.AuctionSummary;
+import com.worbes.application.auction.port.out.AuctionTrend;
+import com.worbes.application.auction.port.out.AuctionWriteRepository;
 import com.worbes.application.realm.model.RegionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +25,15 @@ import java.util.Set;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuctionRepository, SearchAuctionRepository {
+public class AuctionRepositoryImpl implements AuctionWriteRepository, AuctionReadRepository {
 
     private final AuctionEntityMapper auctionEntityMapper;
-    private final AuctionStatsSnapshotEntityMapper statsSnapshotMapper;
+    private final AuctionTrendViewMapper statsSnapshotMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public int upsertAllQuantityIfChanged(List<Auction> auctions) {
+    public int upsertAll(List<Auction> auctions) {
         String sql = """
                 INSERT INTO auction (
                     auction_id,
@@ -78,9 +77,9 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public Long updateEndedAt(RegionType region, Long realmId, Set<Long> auctionIds) {
+    public Long updateEndedAtBy(RegionType region, Long realmId, Set<Long> auctionIds) {
         QAuctionEntity a = QAuctionEntity.auctionEntity;
-        BooleanExpression realmCondition = getRealmCondition(a, realmId);
+        BooleanExpression realmCondition = createRealmCondition(a, realmId);
 
         return queryFactory.update(a)
                 .set(a.endedAt, Instant.now())
@@ -93,36 +92,40 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public List<SearchAuctionSummaryResult> searchSummaries(SearchAuctionCommand command, Set<Long> itemIds) {
+    public List<AuctionSummary> findAllSummaryByCondition(SearchAuctionSummaryCondition condition) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
-        int pageSize = command.pageSize();
-        Long realmId = command.realmId();
-        BooleanExpression realmCondition = getRealmCondition(auction, realmId);
+        RegionType region = condition.region();
+        Long realmId = condition.realmId();
+        Set<Long> itemIds = condition.itemIds();
+        int pageSize = condition.pageInfo().pageSize();
+        long offset = condition.pageInfo().offset();
+        BooleanExpression realmCondition = createRealmCondition(auction, realmId);
+
 
         return queryFactory
                 .select(Projections.constructor(
-                        SearchAuctionSummaryResult.class,
+                        AuctionSummary.class,
                         auction.itemId,
                         auction.price.min(),
                         auction.quantity.sum()
                 ))
                 .from(auction)
                 .where(
-                        auction.region.eq(command.region()),
+                        auction.region.eq(region),
                         realmCondition,
                         auction.itemId.in(itemIds),
                         auction.endedAt.isNull()
                 )
                 .groupBy(auction.itemId)
-                .offset(command.offset())
+                .offset(offset)
                 .limit(pageSize + 1)
                 .fetch();
     }
 
     @Override
-    public List<Auction> findActiveAuctions(Long itemId, RegionType region, Long realmId) {
+    public List<Auction> findAllActiveBy(Long itemId, RegionType region, Long realmId) {
         QAuctionEntity auction = QAuctionEntity.auctionEntity;
-        BooleanExpression realmCondition = getRealmCondition(auction, realmId);
+        BooleanExpression realmCondition = createRealmCondition(auction, realmId);
 
         List<AuctionEntity> entities = queryFactory
                 .selectFrom(auction)
@@ -141,18 +144,18 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public List<AuctionStatsSnapshot> findHourlySnapshots(Long itemId, RegionType region, Long realmId, Integer dayMinus) {
-        QAuctionStatsSnapshotEntity snapshot = QAuctionStatsSnapshotEntity.auctionStatsSnapshotEntity;
+    public List<AuctionTrend> findHourlyTrendBy(Long itemId, RegionType region, Long realmId, Integer dayMinus) {
+        QAuctionTrendView trendView = QAuctionTrendView.auctionTrendView;
 
-        List<AuctionStatsSnapshotEntity> entities = queryFactory
-                .selectFrom(snapshot)
+        List<AuctionTrendView> entities = queryFactory
+                .selectFrom(trendView)
                 .where(
-                        snapshot.itemId.eq(itemId),
-                        snapshot.region.eq(region),
-                        snapshot.time.goe(LocalDateTime.now().minusDays(dayMinus)),
-                        realmId == null ? snapshot.realmId.isNull() : snapshot.realmId.eq(realmId)
+                        trendView.itemId.eq(itemId),
+                        trendView.region.eq(region),
+                        trendView.time.goe(LocalDateTime.now().minusDays(dayMinus)),
+                        realmId == null ? trendView.realmId.isNull() : trendView.realmId.eq(realmId)
                 )
-                .orderBy(snapshot.time.asc())
+                .orderBy(trendView.time.asc())
                 .fetch();
 
         return entities.stream()
@@ -160,7 +163,7 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
                 .toList();
     }
 
-    private BooleanExpression getRealmCondition(QAuctionEntity auction, Long realmId) {
+    private BooleanExpression createRealmCondition(QAuctionEntity auction, Long realmId) {
         if (realmId == null) {
             return auction.realmId.isNull();
         }

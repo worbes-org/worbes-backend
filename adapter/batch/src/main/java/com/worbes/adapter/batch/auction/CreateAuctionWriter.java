@@ -1,7 +1,7 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
-import com.worbes.application.auction.port.in.CreateAuctionUseCase;
+import com.worbes.application.auction.port.in.SyncAuctionUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -22,14 +22,14 @@ import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNA
 @RequiredArgsConstructor
 public class CreateAuctionWriter implements ItemWriter<Auction>, StepExecutionListener {
 
-    private final CreateAuctionUseCase createAuctionUseCase;
+    private final SyncAuctionUseCase syncAuctionUseCase;
     private int totalUpdatedOrInsertedAuction = 0;
 
     @Override
     public void write(Chunk<? extends Auction> chunk) {
+        if (chunk.isEmpty()) return;
         List<Auction> chunkedAuction = new ArrayList<>(chunk.getItems());
-        if (chunkedAuction.isEmpty()) return;
-        int updatedOrInsertedAuctions = createAuctionUseCase.createAuctions(chunkedAuction);
+        int updatedOrInsertedAuctions = syncAuctionUseCase.syncAll(chunkedAuction);
         totalUpdatedOrInsertedAuction += updatedOrInsertedAuctions;
     }
 

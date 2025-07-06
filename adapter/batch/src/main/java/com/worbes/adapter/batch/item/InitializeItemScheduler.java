@@ -43,6 +43,7 @@ public class InitializeItemScheduler {
                  JobRestartException |
                  JobInstanceAlreadyCompleteException |
                  JobParametersInvalidException e) {
+            log.error("배치 실행 실패 | jobName={} | 예외={}", job.getName(), e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

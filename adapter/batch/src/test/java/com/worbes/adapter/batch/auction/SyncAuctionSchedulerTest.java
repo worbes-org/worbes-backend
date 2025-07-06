@@ -1,7 +1,7 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.in.FindConnectedRealmUseCase;
+import com.worbes.application.realm.port.in.GetConnectedRealmIdUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,11 +27,10 @@ import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Unit::SyncAuctionScheduler")
 class SyncAuctionSchedulerTest {
 
     @Mock
-    private FindConnectedRealmUseCase findConnectedRealmUseCase;
+    private GetConnectedRealmIdUseCase getConnectedRealmUseCase;
 
     @Mock
     private Job job;
@@ -48,7 +47,7 @@ class SyncAuctionSchedulerTest {
         // given
         RegionType regionType = RegionType.KR;
         List<Long> realmIds = new ArrayList<>(List.of(101L, 102L));
-        given(findConnectedRealmUseCase.findConnectedRealmId(regionType)).willReturn(realmIds);
+        given(getConnectedRealmUseCase.getConnectedRealmId(regionType)).willReturn(realmIds);
 
         // when
         scheduler.runAuctionSyncJob();

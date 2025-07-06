@@ -1,7 +1,6 @@
 package com.worbes.adapter.batch.auction;
 
 import com.worbes.application.auction.model.Auction;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ExecutionContext;
@@ -39,11 +38,5 @@ public class CloseAuctionProcessor implements ItemProcessor<Long, Long>, StepExe
             return null;
         }
         return auctionId;
-    }
-
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        newAuctionIds = null;
-        return ExitStatus.COMPLETED;
     }
 }

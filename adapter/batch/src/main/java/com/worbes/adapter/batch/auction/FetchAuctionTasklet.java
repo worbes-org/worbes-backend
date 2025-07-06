@@ -34,6 +34,9 @@ public class FetchAuctionTasklet implements Tasklet {
         Long realmId = jobParameters.getLong(REALM_ID.getKey(), null);
 
         List<Auction> snapshot = fetchAuctionSnapshot(region, realmId);
+        if (snapshot.isEmpty()) {
+            throw new IllegalStateException("경매 스냅샷이 비어 있습니다.");
+        }
         log.info("경매 스냅샷 조회 완료 - region={}, realmId={}, 수집 수={}", region, realmId, snapshot.size());
 
         ExecutionContext jobContext = jobExecution.getExecutionContext();

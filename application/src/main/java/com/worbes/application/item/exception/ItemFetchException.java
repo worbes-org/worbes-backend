@@ -13,4 +13,10 @@ public class ItemFetchException extends RuntimeException {
         this.statusCode = statusCode;
         this.itemId = itemId;
     }
+
+    public ItemFetchException(String message, Throwable cause, Long itemId) {
+        super(message, cause);
+        this.statusCode = -1;
+        this.itemId = itemId;
+    }
 }

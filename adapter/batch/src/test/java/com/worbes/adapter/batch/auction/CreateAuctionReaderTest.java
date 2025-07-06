@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
-@DisplayName("Integration::CreateAuctionReader")
 @SpringJUnitConfig(CreateAuctionReader.class)
 @SpringBatchTest
 class CreateAuctionReaderTest {

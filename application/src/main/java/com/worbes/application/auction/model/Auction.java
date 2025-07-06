@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 @Getter
@@ -20,6 +21,7 @@ public class Auction implements Serializable {
     private final Long quantity;
     private final Long price;
     private final RegionType region;
+    private final Instant endedAt;
 
     @Builder
     private Auction(
@@ -28,7 +30,8 @@ public class Auction implements Serializable {
             Long realmId,
             Long quantity,
             Long price,
-            RegionType region
+            RegionType region,
+            Instant endedAt
     ) {
         this.id = id;
         this.itemId = itemId;
@@ -36,6 +39,7 @@ public class Auction implements Serializable {
         this.quantity = quantity;
         this.price = price;
         this.region = region;
+        this.endedAt = endedAt;
     }
 
     @Override

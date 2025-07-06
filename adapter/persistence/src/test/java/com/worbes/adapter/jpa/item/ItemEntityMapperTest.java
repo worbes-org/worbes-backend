@@ -4,7 +4,6 @@ import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.model.QualityType;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -12,7 +11,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Unit::ItemEntityMapper")
 class ItemEntityMapperTest {
 
     private final ItemEntityMapper mapper = Mappers.getMapper(ItemEntityMapper.class);

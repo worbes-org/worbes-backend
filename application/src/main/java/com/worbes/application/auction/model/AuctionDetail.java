@@ -1,5 +1,6 @@
 package com.worbes.application.auction.model;
 
+import com.worbes.application.auction.port.out.AuctionTrend;
 import com.worbes.application.item.model.Item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 public class AuctionDetail {
     private final Item item;
     private final List<Auction> auctions;
-    private final List<AuctionStatsSnapshot> statsSnapshots;
+    private final List<AuctionTrend> trends;
 
     public Map<Long, Long> getAvailable() {
         return auctions.stream()

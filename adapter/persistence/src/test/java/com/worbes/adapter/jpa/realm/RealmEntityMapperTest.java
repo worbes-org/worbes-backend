@@ -11,7 +11,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@DisplayName("Unit::RealmEntityMapper")
 class RealmEntityMapperTest {
 
     private final RealmEntityMapper mapper = Mappers.getMapper(RealmEntityMapper.class);

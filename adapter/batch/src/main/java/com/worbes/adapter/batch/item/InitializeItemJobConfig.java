@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @Configuration
 public class InitializeItemJobConfig {
@@ -43,6 +45,10 @@ public class InitializeItemJobConfig {
                 .<Long, Long>chunk(50, transactionManager)
                 .reader(auctionItemIdReader)
                 .writer(createItemWriter)
+                .faultTolerant()
+                .skip(ExecutionException.class)
+                .skip(TimeoutException.class)
+                .skipLimit(3)
                 .build();
     }
 
