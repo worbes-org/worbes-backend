@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableJpaAuditing
 @EnableJpaRepositories(
-        basePackages = "com.worbes.adapter.jpa.repository",
+        basePackages = "com.worbes.adapter.jpa",
         entityManagerFactoryRef = "appEntityManagerFactory",
         transactionManagerRef = "appTransactionManager"
 )
@@ -54,7 +54,7 @@ public class JpaConfig {
             EntityManagerFactoryBuilder builder
     ) {
         return builder.dataSource(dataSource)
-                .packages("com.worbes.adapter.jpa.entity")
+                .packages("com.worbes.adapter.jpa")
                 .persistenceUnit("app")
                 .properties(jpaProperties.getProperties())
                 .build();
