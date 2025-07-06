@@ -14,7 +14,7 @@ public class CloseAuctionService implements CloseAuctionUseCase {
 
     @Override
     public Long closeAuctions(CloseAuctionCommand command) {
-        return updateAuctionRepository.deactivate(
+        return updateAuctionRepository.markAuctionsEnded(
                 command.region(),
                 command.realmId(),
                 command.auctionIds()

@@ -7,7 +7,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Table(name = "auction")
 @Entity
@@ -44,10 +44,10 @@ public class AuctionEntity {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "ended_at")
-    private LocalDateTime endedAt;
+    private Instant endedAt;
 
     @Builder
     private AuctionEntity(
@@ -57,7 +57,7 @@ public class AuctionEntity {
             Long price,
             RegionType region,
             Long realmId,
-            LocalDateTime endedAt
+            Instant endedAt
     ) {
         this.auctionId = auctionId;
         this.itemId = itemId;

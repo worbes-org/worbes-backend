@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +63,7 @@ public class FindActiveAuctionsTest {
                 .price(100L)
                 .region(RegionType.KR)
                 .realmId(null)
-                .endedAt(LocalDateTime.now())
+                .endedAt(Instant.now())
                 .build();
         jpaRepository.save(endedAuction);
     }

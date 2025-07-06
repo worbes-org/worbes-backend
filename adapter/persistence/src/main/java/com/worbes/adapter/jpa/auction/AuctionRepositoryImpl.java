@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -77,12 +78,12 @@ public class AuctionRepositoryImpl implements CreateAuctionRepository, UpdateAuc
     }
 
     @Override
-    public Long deactivate(RegionType region, Long realmId, Set<Long> auctionIds) {
+    public Long markAuctionsEnded(RegionType region, Long realmId, Set<Long> auctionIds) {
         QAuctionEntity a = QAuctionEntity.auctionEntity;
         BooleanExpression realmCondition = getRealmCondition(a, realmId);
 
         return queryFactory.update(a)
-                .set(a.endedAt, LocalDateTime.now())
+                .set(a.endedAt, Instant.now())
                 .where(
                         a.region.eq(region),
                         realmCondition,
