@@ -21,7 +21,7 @@ class AuctionEntityMapperTest {
                 .auctionId(1001L)
                 .itemId(200L)
                 .realmId(300L)
-                .quantity(10L)
+                .quantity(10)
                 .price(5000L)
                 .region(RegionType.KR)
                 .build();

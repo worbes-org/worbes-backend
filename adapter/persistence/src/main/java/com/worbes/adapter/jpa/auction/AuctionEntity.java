@@ -2,6 +2,7 @@ package com.worbes.adapter.jpa.auction;
 
 import com.worbes.application.realm.model.RegionType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,9 +28,11 @@ public class AuctionEntity {
     private Long itemId;
 
     @Column(nullable = false)
-    private Long quantity;
+    @Min(0L)
+    private Integer quantity;
 
     @Column(nullable = false)
+    @Min(1L)
     private Long price;
 
     @Enumerated(EnumType.STRING)
@@ -50,7 +53,7 @@ public class AuctionEntity {
     private AuctionEntity(
             Long auctionId,
             Long itemId,
-            Long quantity,
+            Integer quantity,
             Long price,
             RegionType region,
             Long realmId,

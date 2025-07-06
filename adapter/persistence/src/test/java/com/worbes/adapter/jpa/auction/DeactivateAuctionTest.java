@@ -34,7 +34,7 @@ public class DeactivateAuctionTest {
         return AuctionEntity.builder()
                 .auctionId(auctionId)
                 .itemId(1L)
-                .quantity(1L)
+                .quantity(1)
                 .price(100L)
                 .region(region)
                 .realmId(realmId)
