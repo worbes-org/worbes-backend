@@ -22,7 +22,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 
-@DisplayName("RealmFetcherImpl Unit Test")
 @ExtendWith(MockitoExtension.class)
 class RealmFetcherImplTest {
 

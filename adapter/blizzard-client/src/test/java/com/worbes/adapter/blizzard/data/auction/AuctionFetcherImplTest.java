@@ -23,7 +23,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-@DisplayName("Unit::AuctionFetcherImpl")
 @ExtendWith(MockitoExtension.class)
 class AuctionFetcherImplTest {
 

@@ -2,7 +2,7 @@ package com.worbes.web.realm.controller;
 
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.port.in.GetRealmUseCase;
-import com.worbes.web.common.model.ApiResponse;
+import com.worbes.web.common.ApiResponse;
 import com.worbes.web.realm.model.GetRealmRequest;
 import com.worbes.web.realm.model.GetRealmResponse;
 import jakarta.validation.Valid;

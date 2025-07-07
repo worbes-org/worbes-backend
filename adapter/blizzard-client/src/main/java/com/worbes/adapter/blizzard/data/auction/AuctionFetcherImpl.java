@@ -2,6 +2,7 @@ package com.worbes.adapter.blizzard.data.auction;
 
 import com.worbes.adapter.blizzard.client.BlizzardApiClient;
 import com.worbes.adapter.blizzard.data.shared.BlizzardApiUriFactory;
+import com.worbes.adapter.blizzard.data.shared.BlizzardResponseValidator;
 import com.worbes.application.auction.port.out.AuctionFetcher;
 import com.worbes.application.auction.port.out.FetchAuctionResult;
 import com.worbes.application.auction.port.out.FetchCommodityResult;
@@ -20,6 +21,7 @@ public class AuctionFetcherImpl implements AuctionFetcher {
     private final AuctionListResponseMapper auctionListResponseMapper;
     private final CommodityListResponseMapper commodityListResponseMapper;
     private final BlizzardApiUriFactory uriFactory;
+    private final BlizzardResponseValidator validator;
 
     @Override
     public List<FetchAuctionResult> fetchAuctions(RegionType region, Long realmId) {
@@ -27,6 +29,7 @@ public class AuctionFetcherImpl implements AuctionFetcher {
         AuctionListResponse result = apiClient.fetch(uri, AuctionListResponse.class);
 
         return result.getAuctions().stream()
+                .map(validator::validate)
                 .map(response -> auctionListResponseMapper.toDto(region, realmId, response))
                 .toList();
     }
@@ -37,6 +40,7 @@ public class AuctionFetcherImpl implements AuctionFetcher {
         CommodityListResponse result = apiClient.fetch(uri, CommodityListResponse.class);
 
         return result.getAuctions().stream()
+                .map(validator::validate)
                 .map(response -> commodityListResponseMapper.toDto(region, response))
                 .toList();
     }

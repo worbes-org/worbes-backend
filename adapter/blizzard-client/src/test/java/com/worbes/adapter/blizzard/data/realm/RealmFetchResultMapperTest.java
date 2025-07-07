@@ -10,7 +10,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Unit::RealmResponseMapper")
 class RealmFetchResultMapperTest {
 
     private final RealmResponseMapper mapper = Mappers.getMapper(RealmResponseMapper.class);

@@ -11,7 +11,6 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("Unit::ItemFetchExceptionHandler")
 class ItemFetchExceptionHandlerTest {
 
     private final ItemFetchExceptionHandler handler = new ItemFetchExceptionHandler();
@@ -52,7 +51,7 @@ class ItemFetchExceptionHandlerTest {
 
         // then
         assertThatThrownBy(() -> exceptionFunction.apply(cause))
-                .isInstanceOf(CompletionException.class)
+                .isInstanceOf(ItemFetchException.class)
                 .hasCause(cause);
     }
 

@@ -5,7 +5,7 @@ import com.worbes.application.auction.port.in.GetAuctionDetailUseCase;
 import com.worbes.web.auction.model.GetAuctionDetailRequest;
 import com.worbes.web.auction.model.GetAuctionDetailResponse;
 import com.worbes.web.auction.model.ItemResponse;
-import com.worbes.web.common.model.ApiResponse;
+import com.worbes.web.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

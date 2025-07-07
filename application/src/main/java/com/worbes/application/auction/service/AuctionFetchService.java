@@ -18,6 +18,10 @@ public class AuctionFetchService implements FetchAuctionUseCase {
 
     @Override
     public List<Auction> fetchAuctions(RegionType region, Long realmId) {
+        if (region == null || realmId == null) {
+            throw new IllegalArgumentException("Region and Realm ID must not be null");
+        }
+
         return auctionFetcher.fetchAuctions(region, realmId).stream()
                 .map(auctionFactory::create)
                 .toList();
@@ -25,6 +29,10 @@ public class AuctionFetchService implements FetchAuctionUseCase {
 
     @Override
     public List<Auction> fetchCommodities(RegionType region) {
+        if (region == null) {
+            throw new IllegalArgumentException("Region must not be null");
+        }
+
         return auctionFetcher.fetchCommodities(region).stream()
                 .map(auctionFactory::create)
                 .toList();

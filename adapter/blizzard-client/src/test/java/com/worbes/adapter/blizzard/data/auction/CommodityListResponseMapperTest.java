@@ -8,7 +8,6 @@ import org.mapstruct.factory.Mappers;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@DisplayName("Unit::CommodityListResponseMapper")
 class CommodityListResponseMapperTest {
 
     private final CommodityListResponseMapper mapper = Mappers.getMapper(CommodityListResponseMapper.class);

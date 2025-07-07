@@ -44,10 +44,6 @@ public class ItemEntity extends BaseEntity {
     @Column(nullable = false, length = 20, name = "inventory_type")
     private InventoryType inventoryType;
 
-    @Type(JsonType.class)
-    @Column(columnDefinition = "jsonb", nullable = false, name = "preview_item")
-    private Object previewItem;
-
     @Column(nullable = false, name = "icon_url")
     private String iconUrl;
 
@@ -63,7 +59,6 @@ public class ItemEntity extends BaseEntity {
             QualityType quality,
             Integer level,
             InventoryType inventoryType,
-            Object previewItem,
             String iconUrl,
             CraftingTierType craftingTier
     ) {
@@ -74,7 +69,6 @@ public class ItemEntity extends BaseEntity {
         this.quality = quality;
         this.level = level;
         this.inventoryType = inventoryType;
-        this.previewItem = previewItem;
         this.iconUrl = iconUrl;
         this.craftingTier = craftingTier;
     }

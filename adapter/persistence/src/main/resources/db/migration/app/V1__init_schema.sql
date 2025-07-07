@@ -45,8 +45,7 @@ create table if not exists public.item
             check ((quality)::text = ANY
                    ((ARRAY ['POOR'::character varying, 'COMMON'::character varying, 'UNCOMMON'::character varying, 'RARE'::character varying, 'EPIC'::character varying, 'LEGENDARY'::character varying, 'ARTIFACT'::character varying, 'HEIRLOOM'::character varying, 'WOW_TOKEN'::character varying])::text[])),
     icon_url         varchar(255) not null,
-    name             jsonb        not null,
-    preview_item     jsonb        not null
+    name             jsonb        not null
 );
 
 alter table public.item

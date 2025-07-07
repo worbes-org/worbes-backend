@@ -31,7 +31,6 @@ public class InitializeItemScheduler {
         this.jobLauncher = jobLauncher;
     }
 
-    //    @EventListener(ApplicationReadyEvent.class)
     public void launchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
