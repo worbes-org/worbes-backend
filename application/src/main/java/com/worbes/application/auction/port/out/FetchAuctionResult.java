@@ -5,7 +5,7 @@ import com.worbes.application.realm.model.RegionType;
 public record FetchAuctionResult(
         Long id,
         Long itemId,
-        Long quantity,
+        Integer quantity,
         Long buyout,
         RegionType region,
         Long realmId

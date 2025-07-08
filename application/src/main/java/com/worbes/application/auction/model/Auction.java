@@ -18,7 +18,7 @@ public class Auction implements Serializable {
     private final Long id;
     private final Long itemId;
     private final Long realmId;
-    private final Long quantity;
+    private final Integer quantity;
     private final Long price;
     private final RegionType region;
     private final Instant endedAt;
@@ -28,7 +28,7 @@ public class Auction implements Serializable {
             Long id,
             Long itemId,
             Long realmId,
-            Long quantity,
+            Integer quantity,
             Long price,
             RegionType region,
             Instant endedAt

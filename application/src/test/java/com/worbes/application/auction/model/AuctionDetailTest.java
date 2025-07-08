@@ -1,7 +1,7 @@
 package com.worbes.application.auction.model;
 
-import com.worbes.application.item.model.Item;
 import com.worbes.application.auction.port.out.AuctionTrend;
+import com.worbes.application.item.model.Item;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +18,11 @@ class AuctionDetailTest {
     void testGetAvailable() {
         // given
         Item item = Item.builder().id(1L).name(Map.of("ko_KR", "테스트아이템")).build();
-        Auction a1 = Auction.builder().id(1L).itemId(1L).quantity(10L).price(1000L).build();
-        Auction a2 = Auction.builder().id(2L).itemId(1L).quantity(5L).price(900L).build();
-        Auction a3 = Auction.builder().id(3L).itemId(1L).quantity(3L).price(1000L).build();
-        Auction a4 = Auction.builder().id(4L).itemId(1L).quantity(7L).price(1200L).build();
-        Auction a5 = Auction.builder().id(5L).itemId(1L).quantity(2L).price(900L).build();
+        Auction a1 = Auction.builder().id(1L).itemId(1L).quantity(10).price(1000L).build();
+        Auction a2 = Auction.builder().id(2L).itemId(1L).quantity(5).price(900L).build();
+        Auction a3 = Auction.builder().id(3L).itemId(1L).quantity(3).price(1000L).build();
+        Auction a4 = Auction.builder().id(4L).itemId(1L).quantity(7).price(1200L).build();
+        Auction a5 = Auction.builder().id(5L).itemId(1L).quantity(2).price(900L).build();
         List<Auction> auctions = List.of(a1, a2, a3, a4, a5);
         AuctionDetail detail = new AuctionDetail(item, auctions, List.of());
 

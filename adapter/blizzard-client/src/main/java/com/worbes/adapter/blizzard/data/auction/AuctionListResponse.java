@@ -27,7 +27,7 @@ public class AuctionListResponse {
         private Long itemId;
 
         @NotNull
-        private Long quantity;
+        private Integer quantity;
 
         private Long buyout;
 

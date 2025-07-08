@@ -31,7 +31,7 @@ public class AuctionWriteRepositoryUpsertAllTest {
     @Autowired
     private AuctionJpaRepository auctionJpaRepository;
 
-    private Auction createAuction(Long auctionId, Long itemId, Long quantity, Long price, RegionType region, Long realmId) {
+    private Auction createAuction(Long auctionId, Long itemId, Integer quantity, Long price, RegionType region, Long realmId) {
         return Auction.builder()
                 .id(auctionId)
                 .itemId(itemId)
@@ -49,13 +49,13 @@ public class AuctionWriteRepositoryUpsertAllTest {
         @DisplayName("수량이 변경된 경우에만 update 된다")
         void upsert_updates_only_when_quantity_changed() {
             // given: 최초 저장
-            Auction auction1 = createAuction(1001L, 1L, 10L, 1000L, region, realmId);
-            Auction auction2 = createAuction(1002L, 2L, 20L, 2000L, region, realmId);
+            Auction auction1 = createAuction(1001L, 1L, 10, 1000L, region, realmId);
+            Auction auction2 = createAuction(1002L, 2L, 20, 2000L, region, realmId);
             auctionWriteRepository.upsertAll(List.of(auction1, auction2));
 
             // when: auction1의 quantity만 변경
-            Auction auction1Changed = createAuction(1001L, 1L, 99L, 1000L, region, realmId);
-            Auction auction2Unchanged = createAuction(1002L, 2L, 20L, 2000L, region, realmId);
+            Auction auction1Changed = createAuction(1001L, 1L, 99, 1000L, region, realmId);
+            Auction auction2Unchanged = createAuction(1002L, 2L, 20, 2000L, region, realmId);
             int updated = auctionWriteRepository.upsertAll(List.of(auction1Changed, auction2Unchanged));
 
             // then: auction1만 update, auction2는 update 없음
@@ -71,7 +71,7 @@ public class AuctionWriteRepositoryUpsertAllTest {
         @DisplayName("변경 사항이 없으면 update가 발생하지 않는다")
         void upsert_no_update_when_no_change() {
             // given
-            Auction auction = createAuction(2001L, 1L, 10L, 1000L, region, realmId);
+            Auction auction = createAuction(2001L, 1L, 10, 1000L, region, realmId);
             auctionWriteRepository.upsertAll(List.of(auction));
 
             // when: 동일 데이터로 upsert
@@ -87,13 +87,13 @@ public class AuctionWriteRepositoryUpsertAllTest {
         @DisplayName("여러 건 중 일부만 변경된 경우 변경된 건만 update 된다")
         void upsert_partial_update() {
             // given
-            Auction auction1 = createAuction(3001L, 1L, 10L, 1000L, region, realmId);
-            Auction auction2 = createAuction(3002L, 2L, 20L, 2000L, region, realmId);
-            Auction auction3 = createAuction(3003L, 3L, 30L, 3000L, region, realmId);
+            Auction auction1 = createAuction(3001L, 1L, 10, 1000L, region, realmId);
+            Auction auction2 = createAuction(3002L, 2L, 20, 2000L, region, realmId);
+            Auction auction3 = createAuction(3003L, 3L, 30, 3000L, region, realmId);
             auctionWriteRepository.upsertAll(List.of(auction1, auction2, auction3));
 
             // when: auction2만 quantity 변경
-            Auction auction2Changed = createAuction(3002L, 2L, 99L, 2000L, region, realmId);
+            Auction auction2Changed = createAuction(3002L, 2L, 99, 2000L, region, realmId);
             int updated = auctionWriteRepository.upsertAll(List.of(auction1, auction2Changed, auction3));
 
             // then
@@ -123,7 +123,7 @@ public class AuctionWriteRepositoryUpsertAllTest {
             // given
             int batchSize = 1000;
             List<Auction> auctions = IntStream.range(0, batchSize)
-                    .mapToObj(i -> createAuction(10000L + i, 1L + i, 10L, 1000L, region, realmId))
+                    .mapToObj(i -> createAuction(10000L + i, 1L + i, 10, 1000L, region, realmId))
                     .toList();
             // when
             int updated = auctionWriteRepository.upsertAll(auctions);
@@ -143,7 +143,7 @@ public class AuctionWriteRepositoryUpsertAllTest {
             Auction badAuction = Auction.builder()
                     .id(null)
                     .itemId(1L)
-                    .quantity(5L)
+                    .quantity(5)
                     .price(500L)
                     .region(region)
                     .realmId(realmId)
@@ -158,7 +158,7 @@ public class AuctionWriteRepositoryUpsertAllTest {
         @DisplayName("음수 수량을 저장하면 예외가 발생한다")
         void upsert_throws_exception_when_quantity_is_negative() {
             // given
-            Auction badAuction = createAuction(9001L, 1L, -10L, 1000L, region, realmId);
+            Auction badAuction = createAuction(9001L, 1L, -10, 1000L, region, realmId);
             // when, then
             assertThatThrownBy(() ->
                     auctionWriteRepository.upsertAll(List.of(badAuction))
@@ -169,8 +169,8 @@ public class AuctionWriteRepositoryUpsertAllTest {
         @DisplayName("가격이 0 이하이면 예외가 발생한다")
         void upsert_throws_exception_when_price_is_zero_or_negative() {
             // given
-            Auction zeroPrice = createAuction(9101L, 1L, 10L, 0L, region, realmId);
-            Auction negativePrice = createAuction(9102L, 1L, 10L, -100L, region, realmId);
+            Auction zeroPrice = createAuction(9101L, 1L, 10, 0L, region, realmId);
+            Auction negativePrice = createAuction(9102L, 1L, 10, -100L, region, realmId);
             // when, then
             assertThatThrownBy(() ->
                     auctionWriteRepository.upsertAll(List.of(zeroPrice))

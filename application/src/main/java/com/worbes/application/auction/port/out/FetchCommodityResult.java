@@ -5,7 +5,7 @@ import com.worbes.application.realm.model.RegionType;
 public record FetchCommodityResult(
         Long id,
         Long itemId,
-        Long quantity,
+        Integer quantity,
         Long unitPrice,
         RegionType region
 ) {
