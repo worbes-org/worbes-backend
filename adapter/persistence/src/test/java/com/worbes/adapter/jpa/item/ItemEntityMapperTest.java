@@ -26,7 +26,6 @@ class ItemEntityMapperTest {
                 .quality(QualityType.RARE)
                 .level(50)
                 .inventoryType(InventoryType.WEAPONMAINHAND)
-                .previewItem(Map.of("mock", "data"))
                 .iconUrl("http://image.url/icon.png")
                 .build();
 
@@ -42,7 +41,6 @@ class ItemEntityMapperTest {
         assertThat(item.getQuality()).isEqualTo(QualityType.RARE);
         assertThat(item.getLevel()).isEqualTo(50);
         assertThat(item.getInventoryType()).isEqualTo(InventoryType.WEAPONMAINHAND);
-        assertThat(item.getPreviewItem()).isEqualTo(Map.of("mock", "data"));
         assertThat(item.getIconUrl()).isEqualTo("http://image.url/icon.png");
     }
 
@@ -57,7 +55,6 @@ class ItemEntityMapperTest {
                 .quality(QualityType.EPIC)
                 .level(70)
                 .inventoryType(InventoryType.CHEST)
-                .previewItem(Map.of("model", "v1"))
                 .iconUrl("http://icon.url/axe.png")
                 .build();
 
@@ -73,7 +70,6 @@ class ItemEntityMapperTest {
         assertThat(entity.getQuality()).isEqualTo(QualityType.EPIC);
         assertThat(entity.getLevel()).isEqualTo(70);
         assertThat(entity.getInventoryType()).isEqualTo(InventoryType.CHEST);
-        assertThat(entity.getPreviewItem()).isEqualTo(Map.of("model", "v1"));
         assertThat(entity.getIconUrl()).isEqualTo("http://icon.url/axe.png");
     }
 }

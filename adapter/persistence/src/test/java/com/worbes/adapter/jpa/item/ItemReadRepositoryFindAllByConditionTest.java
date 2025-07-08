@@ -42,7 +42,6 @@ class ItemReadRepositoryFindAllByConditionTest {
                         .quality(QualityType.UNCOMMON)
                         .level(20)
                         .inventoryType(InventoryType.FEET)
-                        .previewItem(Map.of("url1", "url2"))
                         .iconUrl("url1")
                         .build(),
 
@@ -57,7 +56,6 @@ class ItemReadRepositoryFindAllByConditionTest {
                         .quality(QualityType.RARE)
                         .level(22)
                         .inventoryType(InventoryType.HAND)
-                        .previewItem(Map.of("url1", "url2"))
                         .iconUrl("url2")
                         .build(),
 
@@ -72,7 +70,6 @@ class ItemReadRepositoryFindAllByConditionTest {
                         .quality(QualityType.UNCOMMON)
                         .level(25)
                         .inventoryType(InventoryType.HEAD)
-                        .previewItem(Map.of("url1", "url2"))
                         .iconUrl("url3")
                         .build(),
 
@@ -87,7 +84,6 @@ class ItemReadRepositoryFindAllByConditionTest {
                         .quality(QualityType.RARE)
                         .level(30)
                         .inventoryType(InventoryType.CHEST)
-                        .previewItem(Map.of("url1", "url2"))
                         .iconUrl("url4")
                         .build()
         );

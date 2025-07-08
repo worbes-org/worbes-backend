@@ -17,7 +17,6 @@ public class ItemFactory {
                 .name(itemFetchResult.name())
                 .inventoryType(itemFetchResult.inventoryType())
                 .quality(itemFetchResult.quality())
-                .previewItem(itemFetchResult.previewItem())
                 .iconUrl(mediaFetchResult.iconUrl())
                 .build();
     }

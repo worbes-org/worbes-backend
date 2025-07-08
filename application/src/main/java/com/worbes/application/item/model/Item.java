@@ -18,7 +18,6 @@ public class Item {
     private final QualityType quality;
     private final Integer level;
     private final InventoryType inventoryType;
-    private final Object previewItem;
     private final String iconUrl;
     private final CraftingTierType craftingTier;
 
@@ -31,7 +30,6 @@ public class Item {
             QualityType quality,
             Integer level,
             InventoryType inventoryType,
-            Object previewItem,
             String iconUrl,
             CraftingTierType craftingTier
     ) {
@@ -42,7 +40,6 @@ public class Item {
         this.quality = quality;
         this.level = level;
         this.inventoryType = inventoryType;
-        this.previewItem = previewItem;
         this.iconUrl = iconUrl;
         this.craftingTier = craftingTier;
     }
