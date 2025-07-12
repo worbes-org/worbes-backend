@@ -6,17 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "auction_hourly_trend_view")
+@Table(name = "auction_hourly_trend")
 @Immutable
 public class AuctionTrendView {
 
     @Id
-    private LocalDateTime time;
+    private Instant time;
 
     @Column(name = "item_id")
     private Long itemId;
@@ -30,6 +30,9 @@ public class AuctionTrendView {
     @Column(name = "total_quantity")
     private Long totalQuantity;
 
-    @Column(name = "min_price")
-    private Long minPrice;
+    @Column(name = "lowest_price")
+    private Long lowestPrice;
+
+    @Column(name = "item_bonus")
+    private String itemBonus;
 }

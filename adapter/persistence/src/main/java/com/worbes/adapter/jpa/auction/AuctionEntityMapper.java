@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Primary;
 public interface AuctionEntityMapper {
 
     @Mapping(source = "auctionId", target = "id")
+    @Mapping(target = "itemBonus", expression = "java(entity.itemBonusToList())")
     Auction toDomain(AuctionEntity entity);
 
     @Mapping(source = "id", target = "auctionId")
+    @Mapping(target = "itemBonus", expression = "java(auction.itemBonusToString())")
     AuctionEntity toEntity(Auction auction);
 }

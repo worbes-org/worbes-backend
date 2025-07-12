@@ -17,7 +17,7 @@ class RealmEntityMapperTest {
 
     @Test
     @DisplayName("RealmEntity → Realm 매핑에 성공한다")
-    void givenRealmEntity_whenMappedToDomain_thenReturnRealm() {
+    void entityToDomain() {
         // Given
         RealmEntity entity = RealmEntity.builder()
                 .id(1L)
@@ -40,7 +40,7 @@ class RealmEntityMapperTest {
 
     @Test
     @DisplayName("Realm → RealmEntity 매핑에 성공한다")
-    void givenRealm_whenMappedToEntity_thenReturnRealmEntity() {
+    void domainToEntity() {
         // Given
         Realm domain = Realm.builder()
                 .id(2L)

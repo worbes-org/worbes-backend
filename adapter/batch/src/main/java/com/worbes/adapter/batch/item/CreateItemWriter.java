@@ -2,7 +2,7 @@ package com.worbes.adapter.batch.item;
 
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.CreateItemUseCase;
-import com.worbes.application.item.port.in.FetchItemUseCase;
+import com.worbes.application.item.port.in.FetchItemApiUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CreateItemWriter implements ItemWriter<Long> {
 
-    private final FetchItemUseCase fetchItemUseCase;
+    private final FetchItemApiUseCase fetchItemApiUseCase;
     private final CreateItemUseCase createItemUseCase;
 
     @Override
@@ -31,7 +31,7 @@ public class CreateItemWriter implements ItemWriter<Long> {
         if (chunk.isEmpty()) return;
         Set<Long> itemIds = new HashSet<>(chunk.getItems());
         try {
-            List<Item> items = fetchItemUseCase.fetchItemAsync(itemIds);
+            List<Item> items = fetchItemApiUseCase.fetchItemAsync(itemIds);
             Set<Long> fetchedIds = items.stream().map(Item::getId).collect(Collectors.toSet());
             Set<Long> failedIds = new HashSet<>(itemIds);
             failedIds.removeAll(fetchedIds);

@@ -3,7 +3,7 @@ package com.worbes.adapter.jpa.realm;
 import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.out.RealmWriteRepository;
+import com.worbes.application.realm.port.out.RealmCommandRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RealmWriteRepositorySaveAllRealmTest {
 
     @Autowired
-    private RealmWriteRepository realmWriteRepository;
+    private RealmCommandRepository realmCommandRepository;
 
     @Autowired
     private RealmJpaRepository realmJpaRepository;
@@ -47,7 +47,7 @@ class RealmWriteRepositorySaveAllRealmTest {
         void shouldSaveAllRealmsAndReturnSaved() {
             Realm realm1 = createRealm(1L, 101L, RegionType.KR, "hyjal");
             Realm realm2 = createRealm(2L, 101L, RegionType.KR, "azshara");
-            List<Realm> saved = realmWriteRepository.saveAll(Set.of(realm1, realm2));
+            List<Realm> saved = realmCommandRepository.saveAll(Set.of(realm1, realm2));
             assertThat(saved).hasSize(2);
             RealmEntity saved1 = realmJpaRepository.findById(1L).orElseThrow();
             RealmEntity saved2 = realmJpaRepository.findById(2L).orElseThrow();
@@ -66,7 +66,7 @@ class RealmWriteRepositorySaveAllRealmTest {
         void saveAll_withNullRegion_throwsException() {
             Realm realm = createRealm(1L, 100L, null, "slug1");
             assertThatThrownBy(() -> {
-                realmWriteRepository.saveAll(Set.of(realm));
+                realmCommandRepository.saveAll(Set.of(realm));
             }).isInstanceOf(DataIntegrityViolationException.class);
         }
 
@@ -88,7 +88,7 @@ class RealmWriteRepositorySaveAllRealmTest {
                     .name(Map.of())
                     .build();
             assertThatThrownBy(() -> {
-                realmWriteRepository.saveAll(Set.of(nullNameRealm, emptyNameRealm));
+                realmCommandRepository.saveAll(Set.of(nullNameRealm, emptyNameRealm));
             }).isInstanceOf(DataIntegrityViolationException.class);
         }
 
@@ -98,7 +98,7 @@ class RealmWriteRepositorySaveAllRealmTest {
             Realm realm1 = createRealm(1L, 100L, RegionType.KR, "slug1");
             Realm realm2 = createRealm(2L, 101L, RegionType.KR, "slug1"); // 동일 region, slug 중복
             assertThatThrownBy(() -> {
-                realmWriteRepository.saveAll(Set.of(realm1, realm2));
+                realmCommandRepository.saveAll(Set.of(realm1, realm2));
             }).isInstanceOf(DataIntegrityViolationException.class);
         }
     }

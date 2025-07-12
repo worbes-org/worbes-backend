@@ -1,7 +1,7 @@
 package com.worbes.adapter.jpa.realm;
 
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.out.RealmReadRepository;
+import com.worbes.application.realm.port.out.RealmQueryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RealmReadRepositoryFindDistinctConnectedRealmIdsByRegionTest {
 
     @Autowired
-    private RealmReadRepository realmReadRepository;
+    private RealmQueryRepository realmQueryRepository;
 
     @Autowired
     private RealmJpaRepository realmJpaRepository;
@@ -46,7 +46,7 @@ class RealmReadRepositoryFindDistinctConnectedRealmIdsByRegionTest {
             realmJpaRepository.save(createEntity(3L, 100L, RegionType.KR, "stormrage")); // 중복 connectedRealmId
 
             // when
-            List<Long> result = realmReadRepository.findDistinctConnectedRealmIdByRegion(RegionType.KR);
+            List<Long> result = realmQueryRepository.findDistinctConnectedRealmIdByRegion(RegionType.KR);
 
             // then
             assertThat(result).containsExactlyInAnyOrder(100L, 101L);

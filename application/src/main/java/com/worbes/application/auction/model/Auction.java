@@ -3,11 +3,16 @@ package com.worbes.application.auction.model;
 import com.worbes.application.realm.model.RegionType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Getter
 public class Auction implements Serializable {
@@ -18,20 +23,23 @@ public class Auction implements Serializable {
     private final Long id;
     private final Long itemId;
     private final Long realmId;
-    private final Integer quantity;
     private final Long price;
     private final RegionType region;
-    private final Instant endedAt;
+    private final List<Long> itemBonus;
+    @Setter
+    private Integer quantity;
+    @Setter
+    private Instant endedAt;
 
     @Builder
-    private Auction(
+    public Auction(
             Long id,
             Long itemId,
             Long realmId,
             Integer quantity,
             Long price,
             RegionType region,
-            Instant endedAt
+            List<Long> itemBonus
     ) {
         this.id = id;
         this.itemId = itemId;
@@ -39,7 +47,8 @@ public class Auction implements Serializable {
         this.quantity = quantity;
         this.price = price;
         this.region = region;
-        this.endedAt = endedAt;
+        this.endedAt = null;
+        this.itemBonus = Optional.ofNullable(itemBonus).orElse(Collections.emptyList());
     }
 
     @Override
@@ -52,5 +61,15 @@ public class Auction implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    public String itemBonusToString() {
+        if (itemBonus == null || itemBonus.isEmpty()) {
+            return null;
+        }
+        return itemBonus.stream()
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(":"));
     }
 }

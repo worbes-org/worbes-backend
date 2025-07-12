@@ -1,6 +1,6 @@
 package com.worbes.adapter.blizzard.data.auction;
 
-import com.worbes.application.auction.port.out.FetchAuctionResult;
+import com.worbes.application.auction.model.Auction;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class AuctionListResponseMapperTest {
 
     @Test
     @DisplayName("단일 AuctionResponse를 AuctionFetchResult로 매핑한다")
-    void shouldMapSingleResponseToDto() {
+    void shouldMapSingleResponseToDomain() {
         // given
         RegionType region = RegionType.KR;
         Long realmId = 101L;
@@ -23,24 +23,24 @@ class AuctionListResponseMapperTest {
         AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
         response.setId(123456789L);
         response.setItemId(98765L);
-        response.setQuantity(20L);
+        response.setQuantity(20);
         response.setBuyout(25000L);
 
         // when
-        FetchAuctionResult result = mapper.toDto(region, realmId, response);
+        Auction result = mapper.toDomain(region, realmId, response);
 
         // then
-        then(result.region()).isEqualTo(region);
-        then(result.realmId()).isEqualTo(realmId);
-        then(result.id()).isEqualTo(123456789L);
-        then(result.itemId()).isEqualTo(98765L);
-        then(result.quantity()).isEqualTo(20);
-        then(result.buyout()).isEqualTo(25000L);
+        then(result.getRegion()).isEqualTo(region);
+        then(result.getRealmId()).isEqualTo(realmId);
+        then(result.getId()).isEqualTo(123456789L);
+        then(result.getItemId()).isEqualTo(98765L);
+        then(result.getQuantity()).isEqualTo(20);
+        then(result.getPrice()).isEqualTo(25000L);
     }
 
     @Test
     @DisplayName("단일 AuctionResponse를 AuctionFetchResult로 매핑한다 (buyout 우선)")
-    void shouldMapSingleResponseToDto_buyout() {
+    void shouldMapSingleResponseToDomain_buyout() {
         // given
         RegionType region = RegionType.KR;
         Long realmId = 101L;
@@ -48,20 +48,20 @@ class AuctionListResponseMapperTest {
         AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
         response.setId(123456789L);
         response.setItemId(98765L);
-        response.setQuantity(20L);
+        response.setQuantity(20);
         response.setBuyout(25000L);
         response.setBid(10000L);
 
         // when
-        FetchAuctionResult result = mapper.toDto(region, realmId, response);
+        Auction result = mapper.toDomain(region, realmId, response);
 
         // then
-        then(result.region()).isEqualTo(region);
-        then(result.realmId()).isEqualTo(realmId);
-        then(result.id()).isEqualTo(123456789L);
-        then(result.itemId()).isEqualTo(98765L);
-        then(result.quantity()).isEqualTo(20);
-        then(result.buyout()).isEqualTo(25000L); // buyout 우선
+        then(result.getRegion()).isEqualTo(region);
+        then(result.getRealmId()).isEqualTo(realmId);
+        then(result.getId()).isEqualTo(123456789L);
+        then(result.getItemId()).isEqualTo(98765L);
+        then(result.getQuantity()).isEqualTo(20);
+        then(result.getPrice()).isEqualTo(25000L); // buyout 우선
     }
 
     @Test
@@ -74,19 +74,19 @@ class AuctionListResponseMapperTest {
         AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
         response.setId(222222L);
         response.setItemId(33333L);
-        response.setQuantity(5L);
+        response.setQuantity(5);
         response.setBuyout(null);
         response.setBid(5555L);
 
         // when
-        FetchAuctionResult result = mapper.toDto(region, realmId, response);
+        Auction result = mapper.toDomain(region, realmId, response);
 
         // then
-        then(result.region()).isEqualTo(region);
-        then(result.realmId()).isEqualTo(realmId);
-        then(result.id()).isEqualTo(222222L);
-        then(result.itemId()).isEqualTo(33333L);
-        then(result.quantity()).isEqualTo(5);
-        then(result.buyout()).isEqualTo(5555L); // buyout이 null이면 bid 사용
+        then(result.getRegion()).isEqualTo(region);
+        then(result.getRealmId()).isEqualTo(realmId);
+        then(result.getId()).isEqualTo(222222L);
+        then(result.getItemId()).isEqualTo(33333L);
+        then(result.getQuantity()).isEqualTo(5);
+        then(result.getPrice()).isEqualTo(5555L); // buyout이 null이면 bid 사용
     }
 }

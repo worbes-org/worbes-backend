@@ -16,12 +16,12 @@ public class ItemResponse {
     private Map<String, String> name;
     private QualityType quality;
     private InventoryType inventoryType;
-    private Long itemClassId;
-    private Long itemSubclassId;
+    private Long classId;
+    private Long subclassId;
     private Integer level;
 
-    @JsonProperty("preview_item")
-    private Object previewItem;
+    @JsonProperty("is_stackable")
+    private Boolean isStackable;
 
     @JsonProperty("quality")
     private void unpackNestedQuality(Map<String, Object> quality) {
@@ -30,12 +30,12 @@ public class ItemResponse {
 
     @JsonProperty("item_class")
     private void unpackNestedItemClass(Map<String, Object> itemClass) {
-        this.itemClassId = ((Number) itemClass.get("id")).longValue();
+        this.classId = ((Number) itemClass.get("id")).longValue();
     }
 
     @JsonProperty("item_subclass")
     private void unpackNestedItemSubclass(Map<String, Object> itemSubclass) {
-        this.itemSubclassId = ((Number) itemSubclass.get("id")).longValue();
+        this.subclassId = ((Number) itemSubclass.get("id")).longValue();
     }
 
     @JsonProperty("inventory_type")

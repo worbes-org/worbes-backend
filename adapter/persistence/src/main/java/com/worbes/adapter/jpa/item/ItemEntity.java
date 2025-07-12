@@ -6,10 +6,7 @@ import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.QualityType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -17,6 +14,7 @@ import java.util.Map;
 @Table(name = "item")
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemEntity extends BaseEntity {
 
@@ -27,11 +25,11 @@ public class ItemEntity extends BaseEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     private Map<String, String> name;
 
-    @Column(nullable = false, name = "item_class_id")
-    private Long itemClassId;
+    @Column(nullable = false, name = "class_id")
+    private Long classId;
 
-    @Column(nullable = false, name = "item_subclass_id")
-    private Long itemSubclassId;
+    @Column(nullable = false, name = "subclass_id")
+    private Long subclassId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -44,32 +42,42 @@ public class ItemEntity extends BaseEntity {
     @Column(nullable = false, length = 20, name = "inventory_type")
     private InventoryType inventoryType;
 
-    @Column(nullable = false, name = "icon_url")
-    private String iconUrl;
+    @Column(nullable = false, name = "icon")
+    private String icon;
 
     @Column(name = "crafting_tier")
     private CraftingTierType craftingTier;
+
+    @Column(name = "is_stackable", nullable = false)
+    private Boolean isStackable;
+
+    @Column(name = "expansion_id")
+    private Long expansionId;
 
     @Builder
     private ItemEntity(
             Long id,
             Map<String, String> name,
-            Long itemClassId,
-            Long itemSubclassId,
+            Long classId,
+            Long subclassId,
             QualityType quality,
             Integer level,
             InventoryType inventoryType,
-            String iconUrl,
-            CraftingTierType craftingTier
+            String icon,
+            CraftingTierType craftingTier,
+            Boolean isStackable,
+            Long expansionId
     ) {
         this.id = id;
         this.name = name;
-        this.itemClassId = itemClassId;
-        this.itemSubclassId = itemSubclassId;
+        this.classId = classId;
+        this.subclassId = subclassId;
         this.quality = quality;
         this.level = level;
         this.inventoryType = inventoryType;
-        this.iconUrl = iconUrl;
+        this.icon = icon;
         this.craftingTier = craftingTier;
+        this.isStackable = isStackable;
+        this.expansionId = expansionId;
     }
 }

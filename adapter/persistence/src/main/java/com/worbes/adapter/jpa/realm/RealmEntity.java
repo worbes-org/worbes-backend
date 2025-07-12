@@ -10,14 +10,14 @@ import org.hibernate.annotations.Type;
 import java.util.Map;
 import java.util.Objects;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "realm",
         uniqueConstraints = @UniqueConstraint(name = "uq_region_slug", columnNames = {"region", "slug"})
 )
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RealmEntity extends BaseEntity {
 
     @Id
@@ -38,7 +38,13 @@ public class RealmEntity extends BaseEntity {
     private String slug;
 
     @Builder
-    private RealmEntity(Long id, Long connectedRealmId, RegionType region, Map<String, String> name, String slug) {
+    private RealmEntity(
+            Long id,
+            Long connectedRealmId,
+            RegionType region,
+            Map<String, String> name,
+            String slug
+    ) {
         this.id = id;
         this.connectedRealmId = connectedRealmId;
         this.region = region;

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 import static org.assertj.core.api.BDDAssertions.then;
 
 class AuctionEntityMapperTest {
@@ -23,6 +25,7 @@ class AuctionEntityMapperTest {
                 .quantity(10)
                 .price(5000L)
                 .region(RegionType.KR)
+                .itemBonus("1:2:3")
                 .build();
 
         // When
@@ -35,6 +38,7 @@ class AuctionEntityMapperTest {
         then(result.getQuantity()).isEqualTo(10L);
         then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
+        then(result.getItemBonus()).containsExactlyElementsOf(List.of(1L, 2L, 3L));
     }
 
     @Test
@@ -48,6 +52,7 @@ class AuctionEntityMapperTest {
                 .quantity(10)
                 .price(5000L)
                 .region(RegionType.KR)
+                .itemBonus(List.of(1L, 2L, 3L))
                 .build();
 
         // When
@@ -60,6 +65,7 @@ class AuctionEntityMapperTest {
         then(result.getQuantity()).isEqualTo(10L);
         then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
+        then(result.getItemBonus()).isEqualTo("1:2:3");
         then(result.getEndedAt()).isNull();
         then(result.getId()).isNull(); // DB 생성 ID는 null이어야 함
     }

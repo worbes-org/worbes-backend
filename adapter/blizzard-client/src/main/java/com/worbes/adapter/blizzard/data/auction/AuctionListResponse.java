@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +34,22 @@ public class AuctionListResponse {
 
         private Long bid;
 
+        private List<Long> itemBonuses = new ArrayList<>();
+
         @JsonProperty("item")
         private void unpackNestedItem(Map<String, Object> item) {
             if (item != null) {
                 this.itemId = ((Number) item.get("id")).longValue();
+                Object rawBonusLists = item.get("bonus_lists");
+                if (rawBonusLists instanceof List<?> list) {
+                    this.itemBonuses.addAll(
+                            list.stream()
+                                    .filter(Number.class::isInstance)
+                                    .map(Number.class::cast)
+                                    .map(Number::longValue)
+                                    .toList()
+                    );
+                }
             }
         }
     }

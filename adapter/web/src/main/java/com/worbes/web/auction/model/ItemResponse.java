@@ -1,6 +1,6 @@
 package com.worbes.web.auction.model;
 
-import com.worbes.application.item.model.CraftingTierType;
+import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.model.QualityType;
 
@@ -10,10 +10,20 @@ public record ItemResponse(
         Long id,
         Map<String, String> name,
         QualityType quality,
-        String iconUrl,
-        CraftingTierType craftingTier
+        InventoryType inventoryType,
+        String icon,
+        Integer craftingTier,
+        String bonuses
 ) {
-    public ItemResponse(Item item) {
-        this(item.getId(), item.getName(), item.getQuality(), item.getIconUrl(), item.getCraftingTier());
+    public ItemResponse(Item item, String bonuses) {
+        this(
+                item.getId(),
+                item.getName(),
+                item.getQuality(),
+                item.getInventoryType(),
+                item.getIcon(),
+                item.getCraftingTierValue(),
+                bonuses
+        );
     }
 }

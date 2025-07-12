@@ -17,7 +17,7 @@ public class Realm {
     private final String slug;
 
     @Builder
-    private Realm(Long id, Long connectedRealmId, RegionType region, Map<String, String> name, String slug) {
+    public Realm(Long id, Long connectedRealmId, RegionType region, Map<String, String> name, String slug) {
         this.id = id;
         this.connectedRealmId = connectedRealmId;
         this.region = region;

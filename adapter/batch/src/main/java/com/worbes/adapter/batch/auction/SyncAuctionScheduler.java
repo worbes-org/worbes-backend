@@ -77,7 +77,7 @@ public class SyncAuctionScheduler {
     }
 
     private void launchAuctionSyncJob(RegionType region) {
-        List<Long> connectedRealmIds = getConnectedRealmUseCase.getConnectedRealmId(region);
+        List<Long> connectedRealmIds = getConnectedRealmUseCase.getAllConnectedRealmId(region);
         connectedRealmIds.stream()
                 .map(id -> createJobParameters(region, id))
                 .forEach(this::runJobLauncher);

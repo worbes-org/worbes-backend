@@ -1,6 +1,6 @@
 package com.worbes.adapter.blizzard.data.auction;
 
-import com.worbes.application.auction.port.out.FetchCommodityResult;
+import com.worbes.application.auction.model.Auction;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,24 +14,24 @@ class CommodityListResponseMapperTest {
 
     @Test
     @DisplayName("CommodityResponse를 FetchCommodityResult로 매핑한다")
-    void shouldMapSingleResponseToDto() {
+    void shouldMapSingleResponseToDomain() {
         // given
         RegionType region = RegionType.KR;
 
         CommodityListResponse.CommodityResponse response = new CommodityListResponse.CommodityResponse();
         response.setId(111222333L);
         response.setItemId(98765L);
-        response.setQuantity(50L);
+        response.setQuantity(50);
         response.setUnitPrice(12000L);
 
         // when
-        FetchCommodityResult result = mapper.toDto(region, response);
+        Auction result = mapper.toDomain(region, response);
 
         // then
-        then(result.region()).isEqualTo(region);
-        then(result.id()).isEqualTo(111222333L);
-        then(result.itemId()).isEqualTo(98765L);
-        then(result.quantity()).isEqualTo(50L);
-        then(result.unitPrice()).isEqualTo(12000L);
+        then(result.getRegion()).isEqualTo(region);
+        then(result.getId()).isEqualTo(111222333L);
+        then(result.getItemId()).isEqualTo(98765L);
+        then(result.getQuantity()).isEqualTo(50);
+        then(result.getPrice()).isEqualTo(12000L);
     }
 }

@@ -16,17 +16,17 @@ class ItemEntityMapperTest {
     private final ItemEntityMapper mapper = Mappers.getMapper(ItemEntityMapper.class);
 
     @Test
-    void toDomain_매핑이_정상적으로_수행된다() {
+    void testEntityToDomain() {
         // given
         ItemEntity entity = ItemEntity.builder()
                 .id(1L)
                 .name(Map.of(LocaleCode.KO_KR.getValue(), "검", LocaleCode.EN_US.getValue(), "Sword"))
-                .itemClassId(2L)
-                .itemSubclassId(3L)
+                .classId(2L)
+                .subclassId(3L)
                 .quality(QualityType.RARE)
                 .level(50)
                 .inventoryType(InventoryType.WEAPONMAINHAND)
-                .iconUrl("http://image.url/icon.png")
+                .icon("icon")
                 .build();
 
         // when
@@ -36,26 +36,26 @@ class ItemEntityMapperTest {
         assertThat(item).isNotNull();
         assertThat(item.getId()).isEqualTo(1L);
         assertThat(item.getName()).containsEntry(LocaleCode.KO_KR.getValue(), "검");
-        assertThat(item.getItemClassId()).isEqualTo(2L);
-        assertThat(item.getItemSubclassId()).isEqualTo(3L);
+        assertThat(item.getClassId()).isEqualTo(2L);
+        assertThat(item.getSubclassId()).isEqualTo(3L);
         assertThat(item.getQuality()).isEqualTo(QualityType.RARE);
         assertThat(item.getLevel()).isEqualTo(50);
         assertThat(item.getInventoryType()).isEqualTo(InventoryType.WEAPONMAINHAND);
-        assertThat(item.getIconUrl()).isEqualTo("http://image.url/icon.png");
+        assertThat(item.getIcon()).isEqualTo("icon");
     }
 
     @Test
-    void toEntity_매핑이_정상적으로_수행된다() {
+    void testDomainToEntity() {
         // given
         Item item = Item.builder()
                 .id(10L)
                 .name(Map.of(LocaleCode.EN_US.getValue(), "Axe"))
-                .itemClassId(5L)
-                .itemSubclassId(6L)
+                .classId(5L)
+                .subclassId(6L)
                 .quality(QualityType.EPIC)
                 .level(70)
                 .inventoryType(InventoryType.CHEST)
-                .iconUrl("http://icon.url/axe.png")
+                .icon("axe")
                 .build();
 
         // when
@@ -65,11 +65,11 @@ class ItemEntityMapperTest {
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isEqualTo(10L);
         assertThat(entity.getName()).containsEntry(LocaleCode.EN_US.getValue(), "Axe");
-        assertThat(entity.getItemClassId()).isEqualTo(5L);
-        assertThat(entity.getItemSubclassId()).isEqualTo(6L);
+        assertThat(entity.getClassId()).isEqualTo(5L);
+        assertThat(entity.getSubclassId()).isEqualTo(6L);
         assertThat(entity.getQuality()).isEqualTo(QualityType.EPIC);
         assertThat(entity.getLevel()).isEqualTo(70);
         assertThat(entity.getInventoryType()).isEqualTo(InventoryType.CHEST);
-        assertThat(entity.getIconUrl()).isEqualTo("http://icon.url/axe.png");
+        assertThat(entity.getIcon()).isEqualTo("axe");
     }
 }

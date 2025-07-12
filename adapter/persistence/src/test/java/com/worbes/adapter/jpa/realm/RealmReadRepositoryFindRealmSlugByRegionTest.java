@@ -1,7 +1,7 @@
 package com.worbes.adapter.jpa.realm;
 
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.out.RealmReadRepository;
+import com.worbes.application.realm.port.out.RealmQueryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RealmReadRepositoryFindRealmSlugByRegionTest {
 
     @Autowired
-    private RealmReadRepository realmReadRepository;
+    private RealmQueryRepository realmQueryRepository;
 
     @Autowired
     private RealmJpaRepository realmJpaRepository;
@@ -42,7 +42,7 @@ class RealmReadRepositoryFindRealmSlugByRegionTest {
         void findSlugByRegion_returnsOnlyMatchingRegion() {
             realmJpaRepository.save(createEntity(1L, 100L, RegionType.KR, "hyjal"));
             realmJpaRepository.save(createEntity(2L, 101L, RegionType.US, "illidan"));
-            Set<String> result = realmReadRepository.findSlugByRegion(RegionType.KR);
+            Set<String> result = realmQueryRepository.findSlugByRegion(RegionType.KR);
             assertThat(result).containsExactly("hyjal");
         }
     }
@@ -55,8 +55,8 @@ class RealmReadRepositoryFindRealmSlugByRegionTest {
         void sameSlugDifferentRegion() {
             realmJpaRepository.save(createEntity(1L, 100L, RegionType.KR, "hyjal"));
             realmJpaRepository.save(createEntity(2L, 101L, RegionType.US, "hyjal"));
-            Set<String> krResult = realmReadRepository.findSlugByRegion(RegionType.KR);
-            Set<String> usResult = realmReadRepository.findSlugByRegion(RegionType.US);
+            Set<String> krResult = realmQueryRepository.findSlugByRegion(RegionType.KR);
+            Set<String> usResult = realmQueryRepository.findSlugByRegion(RegionType.US);
             assertThat(krResult).containsExactly("hyjal");
             assertThat(usResult).containsExactly("hyjal");
         }
@@ -69,7 +69,7 @@ class RealmReadRepositoryFindRealmSlugByRegionTest {
         @DisplayName("해당 region에 realm이 없으면 빈 Set을 반환한다")
         void findSlugByRegion_whenNoRealms_thenReturnsEmptySet() {
             realmJpaRepository.save(createEntity(1L, 100L, RegionType.US, "illidan"));
-            Set<String> result = realmReadRepository.findSlugByRegion(RegionType.KR);
+            Set<String> result = realmQueryRepository.findSlugByRegion(RegionType.KR);
             assertThat(result).isEmpty();
         }
     }

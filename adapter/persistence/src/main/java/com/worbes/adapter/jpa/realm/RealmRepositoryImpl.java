@@ -2,8 +2,8 @@ package com.worbes.adapter.jpa.realm;
 
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.out.RealmReadRepository;
-import com.worbes.application.realm.port.out.RealmWriteRepository;
+import com.worbes.application.realm.port.out.RealmQueryRepository;
+import com.worbes.application.realm.port.out.RealmCommandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
-public class RealmRepositoryImpl implements RealmReadRepository, RealmWriteRepository {
+public class RealmRepositoryImpl implements RealmQueryRepository, RealmCommandRepository {
 
     private final RealmJpaRepository jpaRepository;
     private final RealmEntityMapper mapper;

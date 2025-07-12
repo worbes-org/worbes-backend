@@ -6,5 +6,5 @@ import com.worbes.application.realm.model.RegionType;
 import java.util.List;
 
 public interface GetRealmUseCase {
-    List<Realm> get(RegionType region);
+    List<Realm> getAll(RegionType region);
 }

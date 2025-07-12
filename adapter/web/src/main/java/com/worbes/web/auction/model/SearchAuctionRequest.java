@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Size;
 public record SearchAuctionRequest(
         @NotNull(message = "region must not be null") RegionType region,
         @NotNull(message = "reamId must not be null") Long realmId,
-        Long itemClassId,
-        @NotBlank @Size(max = 100) String itemName,
-        Long itemSubclassId
+        Long classId,
+        @NotBlank @Size(max = 100) String name,
+        Long subclassId
 ) {
 }

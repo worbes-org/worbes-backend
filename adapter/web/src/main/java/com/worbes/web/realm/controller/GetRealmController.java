@@ -28,7 +28,7 @@ public class GetRealmController {
 
     @GetMapping
     public ApiResponse<List<GetRealmResponse>> get(@Valid GetRealmRequest request) {
-        List<Realm> realms = getRealmUseCase.get(request.region());
+        List<Realm> realms = getRealmUseCase.getAll(request.region());
         List<GetRealmResponse> responses = realms.stream()
                 .map(GetRealmResponse::new)
                 .toList();

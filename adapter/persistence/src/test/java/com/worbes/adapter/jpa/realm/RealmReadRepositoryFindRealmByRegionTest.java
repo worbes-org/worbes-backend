@@ -2,7 +2,7 @@ package com.worbes.adapter.jpa.realm;
 
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.out.RealmReadRepository;
+import com.worbes.application.realm.port.out.RealmQueryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RealmReadRepositoryFindRealmByRegionTest {
 
     @Autowired
-    private RealmReadRepository realmReadRepository;
+    private RealmQueryRepository realmQueryRepository;
 
     @Autowired
     private RealmJpaRepository realmJpaRepository;
@@ -50,8 +50,8 @@ class RealmReadRepositoryFindRealmByRegionTest {
             realmJpaRepository.saveAll(List.of(realm1, realm2, realm3));
 
             // when
-            List<Realm> result1 = realmReadRepository.findByRegion(kr);
-            List<Realm> result2 = realmReadRepository.findByRegion(us);
+            List<Realm> result1 = realmQueryRepository.findByRegion(kr);
+            List<Realm> result2 = realmQueryRepository.findByRegion(us);
 
             // then
             assertThat(result1).hasSize(2);
@@ -74,7 +74,7 @@ class RealmReadRepositoryFindRealmByRegionTest {
         void findByRegion_returnsEmptyWhenNone() {
             // given: 아무 데이터도 저장하지 않음
             // when
-            List<Realm> result = realmReadRepository.findByRegion(RegionType.KR);
+            List<Realm> result = realmQueryRepository.findByRegion(RegionType.KR);
             // then
             assertThat(result).isEmpty();
         }
@@ -85,8 +85,8 @@ class RealmReadRepositoryFindRealmByRegionTest {
             RealmEntity krRealm = createEntity(1L, "azshara", 1001L, RegionType.KR, Map.of("ko_KR", "아즈샤라"));
             RealmEntity usRealm = createEntity(2L, "azshara", 1001L, RegionType.US, Map.of("en_US", "Azshara"));
             realmJpaRepository.saveAll(List.of(krRealm, usRealm));
-            List<Realm> krResult = realmReadRepository.findByRegion(RegionType.KR);
-            List<Realm> usResult = realmReadRepository.findByRegion(RegionType.US);
+            List<Realm> krResult = realmQueryRepository.findByRegion(RegionType.KR);
+            List<Realm> usResult = realmQueryRepository.findByRegion(RegionType.US);
             assertThat(krResult).hasSize(1);
             assertThat(krResult.get(0).getRegion()).isEqualTo(RegionType.KR);
             assertThat(usResult).hasSize(1);

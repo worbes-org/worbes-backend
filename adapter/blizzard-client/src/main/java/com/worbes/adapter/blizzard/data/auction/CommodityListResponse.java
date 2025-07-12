@@ -2,6 +2,8 @@ package com.worbes.adapter.blizzard.data.auction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -16,10 +18,19 @@ public class CommodityListResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CommodityResponse {
-        private Long id;
-        private Long itemId;
-        private Long quantity;
 
+        @NotNull
+        private Long id;
+
+        @NotNull
+        private Long itemId;
+
+        @NotNull
+        @Min(1)
+        private Integer quantity;
+
+        @NotNull
+        @Min(100)
         @JsonProperty("unit_price")
         private Long unitPrice;
 

@@ -47,7 +47,7 @@ class SyncAuctionSchedulerTest {
         // given
         RegionType regionType = RegionType.KR;
         List<Long> realmIds = new ArrayList<>(List.of(101L, 102L));
-        given(getConnectedRealmUseCase.getConnectedRealmId(regionType)).willReturn(realmIds);
+        given(getConnectedRealmUseCase.getAllConnectedRealmId(regionType)).willReturn(realmIds);
 
         // when
         scheduler.runAuctionSyncJob();

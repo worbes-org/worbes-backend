@@ -1,1 +1,1 @@
-TRUNCATE table realm;
+TRUNCATE table app_test.public.realm;

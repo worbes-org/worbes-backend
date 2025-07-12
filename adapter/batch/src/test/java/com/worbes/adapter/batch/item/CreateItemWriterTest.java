@@ -2,7 +2,7 @@ package com.worbes.adapter.batch.item;
 
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.CreateItemUseCase;
-import com.worbes.application.item.port.in.FetchItemUseCase;
+import com.worbes.application.item.port.in.FetchItemApiUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
 
 class CreateItemWriterTest {
 
-    private final FetchItemUseCase fetchItemUseCase = mock(FetchItemUseCase.class);
+    private final FetchItemApiUseCase fetchItemApiUseCase = mock(FetchItemApiUseCase.class);
     private final CreateItemUseCase createItemUseCase = mock(CreateItemUseCase.class);
-    private final CreateItemWriter createItemWriter = new CreateItemWriter(fetchItemUseCase, createItemUseCase);
+    private final CreateItemWriter createItemWriter = new CreateItemWriter(fetchItemApiUseCase, createItemUseCase);
 
     @Nested
     @DisplayName("정상 케이스")
@@ -36,12 +36,12 @@ class CreateItemWriterTest {
                     Item.builder().id(2L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemUseCase.fetchItemAsync(ids)).willReturn(items);
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemUseCase).should().fetchItemAsync(ids);
+            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
             then(createItemUseCase).should().saveAll(items);
         }
     }
@@ -59,12 +59,12 @@ class CreateItemWriterTest {
                     Item.builder().id(2L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemUseCase.fetchItemAsync(expectedIds)).willReturn(items);
+            given(fetchItemApiUseCase.fetchItemAsync(expectedIds)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(chunkList);
 
             createItemWriter.write(chunk);
 
-            then(fetchItemUseCase).should().fetchItemAsync(expectedIds);
+            then(fetchItemApiUseCase).should().fetchItemAsync(expectedIds);
             then(createItemUseCase).should().saveAll(items);
         }
 
@@ -73,7 +73,7 @@ class CreateItemWriterTest {
         void shouldDoNothingWhenChunkIsEmpty() throws Exception {
             Chunk<Long> chunk = new Chunk<>(Collections.emptyList());
             createItemWriter.write(chunk);
-            then(fetchItemUseCase).shouldHaveNoInteractions();
+            then(fetchItemApiUseCase).shouldHaveNoInteractions();
             then(createItemUseCase).shouldHaveNoInteractions();
         }
     }
@@ -89,12 +89,12 @@ class CreateItemWriterTest {
                     Item.builder().id(1L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemUseCase.fetchItemAsync(ids)).willReturn(items);
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemUseCase).should().fetchItemAsync(ids);
+            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
             then(createItemUseCase).should().saveAll(items);
             // 실패 ID(2L)는 로그로만 남으므로, 별도 검증은 생략
         }
@@ -103,12 +103,12 @@ class CreateItemWriterTest {
         @DisplayName("fetch된 아이템이 없으면 saveAll이 호출되지 않고 경고 로그만 남는다")
         void shouldWarnWhenNoItemsFetched() throws Exception {
             Set<Long> ids = Set.of(1L, 2L);
-            given(fetchItemUseCase.fetchItemAsync(ids)).willReturn(Collections.emptyList());
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(Collections.emptyList());
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemUseCase).should().fetchItemAsync(ids);
+            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
             then(createItemUseCase).should(never()).saveAll(any());
         }
 
@@ -116,7 +116,7 @@ class CreateItemWriterTest {
         @DisplayName("fetchItemAsync에서 InterruptedException이 발생하면 인터럽트 플래그를 복구하고 예외를 전파한다")
         void shouldPropagateInterruptedException() throws Exception {
             Set<Long> ids = Set.of(1L);
-            given(fetchItemUseCase.fetchItemAsync(ids)).willThrow(new InterruptedException("interrupted!"));
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new InterruptedException("interrupted!"));
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             assertThatThrownBy(() -> createItemWriter.write(chunk))
@@ -129,14 +129,14 @@ class CreateItemWriterTest {
         void shouldSkipOnExecutionOrTimeoutException() throws Exception {
             Set<Long> ids = Set.of(1L);
             Chunk<Long> chunk = spy(new Chunk<>(new ArrayList<>(ids)));
-            given(fetchItemUseCase.fetchItemAsync(ids)).willThrow(new ExecutionException("fail!", null));
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new ExecutionException("fail!", null));
 
             createItemWriter.write(chunk);
             verify(chunk).skip(any(ExecutionException.class));
 
             // TimeoutException도 동일하게 검증
-            reset(fetchItemUseCase, createItemUseCase, chunk);
-            given(fetchItemUseCase.fetchItemAsync(ids)).willThrow(new TimeoutException("timeout!"));
+            reset(fetchItemApiUseCase, createItemUseCase, chunk);
+            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new TimeoutException("timeout!"));
             createItemWriter.write(chunk);
             verify(chunk).skip(any(TimeoutException.class));
         }

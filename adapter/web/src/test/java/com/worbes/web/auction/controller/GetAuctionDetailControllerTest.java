@@ -3,8 +3,8 @@ package com.worbes.web.auction.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.auction.model.AuctionDetail;
+import com.worbes.application.auction.model.AuctionTrendPoint;
 import com.worbes.application.auction.port.in.GetAuctionDetailUseCase;
-import com.worbes.application.auction.port.out.AuctionTrend;
 import com.worbes.application.item.model.CraftingTierType;
 import com.worbes.application.item.model.InventoryType;
 import com.worbes.application.item.model.Item;
@@ -70,7 +70,7 @@ class GetAuctionDetailControllerTest {
                     .region(RegionType.KR)
                     .endedAt(null)
                     .build();
-            AuctionTrend trend = new AuctionTrend(LocalDateTime.of(2024, 1, 1, 0, 0), 5, 1000L);
+            AuctionTrendPoint trend = new AuctionTrendPoint(LocalDateTime.of(2024, 1, 1, 0, 0), 5, 1000L);
             AuctionDetail auctionDetail = new AuctionDetail(item, List.of(auction), List.of(trend));
             given(getAuctionDetailUseCase.getDetail(eq(1L), eq(RegionType.KR), eq(2116L))).willReturn(auctionDetail);
 

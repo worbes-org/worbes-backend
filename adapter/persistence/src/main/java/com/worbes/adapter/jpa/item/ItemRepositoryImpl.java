@@ -1,11 +1,10 @@
 package com.worbes.adapter.jpa.item;
 
 import com.worbes.application.item.model.Item;
-import com.worbes.application.item.port.in.SearchItemCondition;
-import com.worbes.application.item.port.out.ItemReadRepository;
-import com.worbes.application.item.port.out.ItemWriteRepository;
+import com.worbes.application.item.port.out.ItemCommandRepository;
+import com.worbes.application.item.port.out.ItemQueryRepository;
+import com.worbes.application.item.port.out.ItemSearchCondition;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,10 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ItemRepositoryImpl implements ItemWriteRepository, ItemReadRepository {
+public class ItemRepositoryImpl implements ItemCommandRepository, ItemQueryRepository {
 
     private final ItemJpaRepository jpaRepository;
     private final EntityManager entityManager;
@@ -36,18 +36,18 @@ public class ItemRepositoryImpl implements ItemWriteRepository, ItemReadReposito
     //TODO:  name 컬럼에 GIN/GIN+trgm 인덱스 등 추가 고려 필요
     @SuppressWarnings("unchecked")
     @Override
-    public List<Item> findAllByCondition(SearchItemCondition condition) {
+    public List<Item> findByCondition(ItemSearchCondition condition) {
         StringBuilder sql = new StringBuilder("SELECT * FROM item WHERE 1=1");
         Map<String, Object> parameters = new HashMap<>();
 
-        if (condition.itemClassId() != null) {
-            sql.append(" AND item_class_id = :itemClassId");
-            parameters.put("itemClassId", condition.itemClassId());
+        if (condition.classId() != null) {
+            sql.append(" AND class_id = :classId");
+            parameters.put("classId", condition.classId());
         }
 
-        if (condition.itemSubclassId() != null) {
-            sql.append(" AND item_subclass_id = :itemSubclassId");
-            parameters.put("itemSubclassId", condition.itemSubclassId());
+        if (condition.subclassId() != null) {
+            sql.append(" AND subclass_id = :subclassId");
+            parameters.put("subclassId", condition.subclassId());
         }
 
         if (condition.name() != null && !condition.name().isBlank()) {
@@ -65,9 +65,8 @@ public class ItemRepositoryImpl implements ItemWriteRepository, ItemReadReposito
     }
 
     @Override
-    public Item findById(Long itemId) {
+    public Optional<Item> findById(Long itemId) {
         return jpaRepository.findById(itemId)
-                .map(mapper::toDomain)
-                .orElseThrow(EntityNotFoundException::new);
+                .map(mapper::toDomain);
     }
 }

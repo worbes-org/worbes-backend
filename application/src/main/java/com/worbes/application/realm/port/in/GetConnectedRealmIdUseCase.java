@@ -5,5 +5,5 @@ import com.worbes.application.realm.model.RegionType;
 import java.util.List;
 
 public interface GetConnectedRealmIdUseCase {
-    List<Long> getConnectedRealmId(RegionType region);
+    List<Long> getAllConnectedRealmId(RegionType region);
 }
