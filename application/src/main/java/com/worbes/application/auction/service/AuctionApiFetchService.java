@@ -16,22 +16,22 @@ public class AuctionApiFetchService implements FetchAuctionUseCase {
     private final AuctionApiFetcher auctionApiFetcher;
 
     @Override
-    public List<Auction> fetchAuctions(RegionType region, Long realmId) {
+    public List<Auction> fetch(RegionType region, Long realmId) {
         if (region == null || realmId == null) {
             throw new IllegalArgumentException("Region and Realm ID must not be null");
         }
 
-        return auctionApiFetcher.fetchAuctions(region, realmId).stream()
+        return auctionApiFetcher.fetch(region, realmId).stream()
                 .toList();
     }
 
     @Override
-    public List<Auction> fetchCommodities(RegionType region) {
+    public List<Auction> fetch(RegionType region) {
         if (region == null) {
             throw new IllegalArgumentException("Region must not be null");
         }
 
-        return auctionApiFetcher.fetchCommodities(region).stream()
+        return auctionApiFetcher.fetch(region).stream()
                 .toList();
     }
 }

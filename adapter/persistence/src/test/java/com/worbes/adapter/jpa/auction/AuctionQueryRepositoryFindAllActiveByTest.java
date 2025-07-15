@@ -28,7 +28,7 @@ class AuctionQueryRepositoryFindAllActiveByTest {
 
     private static AuctionEntity createAuction(Long auctionId, Long itemId, int quantity, long price, RegionType region, Long realmId, java.time.Instant endedAt) {
         AuctionEntity entity = AuctionEntity.builder()
-                .auctionId(auctionId)
+                .id(auctionId)
                 .itemId(itemId)
                 .quantity(quantity)
                 .price(price)

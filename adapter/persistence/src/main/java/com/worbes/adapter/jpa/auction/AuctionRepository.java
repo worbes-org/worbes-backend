@@ -35,39 +35,36 @@ public class AuctionRepository implements AuctionCommandRepository, AuctionQuery
 
         String sql = """
                 INSERT INTO auction (
-                    auction_id,
+                    id,
                     item_id,
                     quantity,
                     price,
                     region,
                     realm_id,
-                    created_at,
-                    item_bonus
+                    created_at
                 )
                 VALUES (
-                    :auctionId,
+                    :id,
                     :itemId,
                     :quantity,
                     :price,
                     :region,
                     :realmId,
-                    NOW(),
-                    :itemBonus
+                    NOW()
                 )
-                ON CONFLICT (auction_id) DO UPDATE SET
+                ON CONFLICT (id) DO UPDATE SET
                     quantity = EXCLUDED.quantity
                 WHERE auction.quantity != EXCLUDED.quantity
                 """;
 
         MapSqlParameterSource[] params = entities.stream()
                 .map(entity -> new MapSqlParameterSource()
-                        .addValue("auctionId", entity.getAuctionId())
+                        .addValue("id", entity.getId())
                         .addValue("itemId", entity.getItemId())
                         .addValue("quantity", entity.getQuantity())
                         .addValue("price", entity.getPrice())
                         .addValue("region", entity.getRegion().name())
                         .addValue("realmId", entity.getRealmId())
-                        .addValue("itemBonus", entity.getItemBonus())
                 )
                 .toArray(MapSqlParameterSource[]::new);
 
@@ -83,8 +80,8 @@ public class AuctionRepository implements AuctionCommandRepository, AuctionQuery
                 .set(a.endedAt, Instant.now())
                 .where(
                         a.region.eq(region),
-                        createRealmCondition(a, realmId),
-                        a.auctionId.in(auctionIds)
+                        a.id.in(auctionIds),
+                        createRealmCondition(a, realmId)
                 )
                 .execute();
     }
@@ -95,7 +92,6 @@ public class AuctionRepository implements AuctionCommandRepository, AuctionQuery
         Long itemId = condition.itemId();
         RegionType region = condition.region();
         Long realmId = condition.realmId();
-        String itemBonus = condition.itemBonus();
 
         List<AuctionEntity> entities = queryFactory
                 .selectFrom(auction)
@@ -103,8 +99,7 @@ public class AuctionRepository implements AuctionCommandRepository, AuctionQuery
                         auction.endedAt.isNull(),
                         auction.itemId.eq(itemId),
                         auction.region.eq(region),
-                        createRealmCondition(auction, realmId),
-                        createItemBonusCondition(auction, itemBonus)
+                        createRealmCondition(auction, realmId)
                 )
                 .orderBy(auction.price.asc().nullsLast())
                 .fetch();
@@ -119,12 +114,5 @@ public class AuctionRepository implements AuctionCommandRepository, AuctionQuery
             return auction.realmId.isNull();
         }
         return auction.realmId.eq(realmId).or(auction.realmId.isNull());
-    }
-
-    private BooleanExpression createItemBonusCondition(QAuctionEntity auction, String itemBonus) {
-        if (itemBonus == null || itemBonus.isEmpty()) {
-            return auction.itemBonus.isNull();
-        }
-        return auction.itemBonus.eq(itemBonus);
     }
 }

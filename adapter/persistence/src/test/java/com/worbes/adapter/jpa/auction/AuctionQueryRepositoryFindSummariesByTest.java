@@ -38,7 +38,7 @@ class AuctionQueryRepositoryFindSummariesByTest {
     // 테스트용 경매 엔티티 생성 메서드
     private static AuctionEntity createAuction(Long auctionId, Long itemId, int quantity, long price, RegionType region, Long realmId) {
         AuctionEntity entity = AuctionEntity.builder()
-                .auctionId(auctionId)
+                .id(auctionId)
                 .itemId(itemId)
                 .quantity(quantity)
                 .price(price)

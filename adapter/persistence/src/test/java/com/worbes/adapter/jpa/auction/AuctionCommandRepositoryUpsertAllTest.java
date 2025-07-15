@@ -60,8 +60,8 @@ public class AuctionCommandRepositoryUpsertAllTest {
 
             // then: auction1만 update, auction2는 update 없음
             List<AuctionEntity> all = auctionJpaRepository.findAll();
-            AuctionEntity updatedAuction1 = all.stream().filter(a -> a.getAuctionId().equals(1001L)).findFirst().orElseThrow();
-            AuctionEntity updatedAuction2 = all.stream().filter(a -> a.getAuctionId().equals(1002L)).findFirst().orElseThrow();
+            AuctionEntity updatedAuction1 = all.stream().filter(a -> a.getId().equals(1001L)).findFirst().orElseThrow();
+            AuctionEntity updatedAuction2 = all.stream().filter(a -> a.getId().equals(1002L)).findFirst().orElseThrow();
             assertThat(updated).isEqualTo(1);
             assertThat(updatedAuction1.getQuantity()).isEqualTo(99L);
             assertThat(updatedAuction2.getQuantity()).isEqualTo(20L);
@@ -99,7 +99,7 @@ public class AuctionCommandRepositoryUpsertAllTest {
             // then
             assertThat(updated).isEqualTo(1);
             AuctionEntity updatedAuction2 = auctionJpaRepository.findAll().stream()
-                    .filter(a -> a.getAuctionId().equals(3002L)).findFirst().orElseThrow();
+                    .filter(a -> a.getId().equals(3002L)).findFirst().orElseThrow();
             assertThat(updatedAuction2.getQuantity()).isEqualTo(99L);
         }
     }

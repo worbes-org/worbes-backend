@@ -35,7 +35,7 @@ public class AuctionCommandRepositoryUpdateEndedAtByTest {
 
     private AuctionEntity createAuction(Long auctionId, RegionType region, Long realmId) {
         return AuctionEntity.builder()
-                .auctionId(auctionId)
+                .id(auctionId)
                 .itemId(1L)
                 .quantity(1)
                 .price(100L)

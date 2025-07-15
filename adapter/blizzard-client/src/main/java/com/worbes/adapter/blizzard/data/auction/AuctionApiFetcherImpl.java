@@ -23,7 +23,7 @@ public class AuctionApiFetcherImpl implements AuctionApiFetcher {
     private final BlizzardResponseValidator validator;
 
     @Override
-    public List<Auction> fetchAuctions(RegionType region, Long realmId) {
+    public List<Auction> fetch(RegionType region, Long realmId) {
         URI uri = uriFactory.auctionUri(region, realmId);
         AuctionListResponse result = apiClient.fetch(uri, AuctionListResponse.class);
 
@@ -34,7 +34,7 @@ public class AuctionApiFetcherImpl implements AuctionApiFetcher {
     }
 
     @Override
-    public List<Auction> fetchCommodities(RegionType region) {
+    public List<Auction> fetch(RegionType region) {
         URI uri = uriFactory.commodityUri(region);
         CommodityListResponse result = apiClient.fetch(uri, CommodityListResponse.class);
 

@@ -49,8 +49,8 @@ public class FetchAuctionTasklet implements Tasklet {
     private List<Auction> fetchAuctionSnapshot(String region, Long realmId) {
         RegionType regionType = RegionType.valueOf(region);
         if (realmId == null) {
-            return fetchAuctionUseCase.fetchCommodities(regionType);
+            return fetchAuctionUseCase.fetch(regionType);
         }
-        return fetchAuctionUseCase.fetchAuctions(regionType, realmId);
+        return fetchAuctionUseCase.fetch(regionType, realmId);
     }
 }

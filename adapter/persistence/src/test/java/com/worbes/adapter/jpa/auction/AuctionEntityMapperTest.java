@@ -19,13 +19,12 @@ class AuctionEntityMapperTest {
     void it_converts_entity_to_domain() {
         // Given
         AuctionEntity entity = AuctionEntity.builder()
-                .auctionId(1001L)
+                .id(1001L)
                 .itemId(200L)
                 .realmId(300L)
                 .quantity(10)
                 .price(5000L)
                 .region(RegionType.KR)
-                .itemBonus("1:2:3")
                 .build();
 
         // When
@@ -38,7 +37,6 @@ class AuctionEntityMapperTest {
         then(result.getQuantity()).isEqualTo(10L);
         then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
-        then(result.getItemBonus()).containsExactlyElementsOf(List.of(1L, 2L, 3L));
     }
 
     @Test
@@ -59,14 +57,12 @@ class AuctionEntityMapperTest {
         AuctionEntity result = mapper.toEntity(auction);
 
         // Then
-        then(result.getAuctionId()).isEqualTo(1001L);
+        then(result.getId()).isEqualTo(1001L);
         then(result.getItemId()).isEqualTo(200L);
         then(result.getRealmId()).isEqualTo(300L);
         then(result.getQuantity()).isEqualTo(10L);
         then(result.getPrice()).isEqualTo(5000L);
         then(result.getRegion()).isEqualTo(RegionType.KR);
-        then(result.getItemBonus()).isEqualTo("1:2:3");
         then(result.getEndedAt()).isNull();
-        then(result.getId()).isNull(); // DB 생성 ID는 null이어야 함
     }
 }

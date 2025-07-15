@@ -56,13 +56,12 @@ public class AuctionSummaryRepository implements AuctionSummaryQueryRepository {
                         a.itemId,
                         a.price.min(),
                         totalQuantity,
-                        a.itemBonus,
                         b.level.max(),
                         b.baseLevel.max()
                 ))
                 .from(a)
                 .join(i).on(a.itemId.eq(i.id))
-                .leftJoin(ab).on(ab.auctionId.eq(a.auctionId))
+                .leftJoin(ab).on(ab.auctionId.eq(a.id))
                 .leftJoin(b).on(b.id.eq(ab.itemBonusId))
                 .where(
                         a.region.eq(region),
@@ -71,7 +70,7 @@ public class AuctionSummaryRepository implements AuctionSummaryQueryRepository {
                         createRealmCondition(a, realmId),
                         b.baseLevel.coalesce(i.level).add(b.level.coalesce(0)).goe(0)
                 )
-                .groupBy(a.itemId, a.itemBonus)
+                .groupBy(a.itemId)
                 .orderBy(a.price.min().desc())
                 .offset(offset)
                 .limit(pageSize + 1)

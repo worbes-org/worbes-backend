@@ -119,7 +119,7 @@ public class SyncAuctionJobConfig {
     ) {
         SqlPagingQueryProviderFactoryBean provider = new SqlPagingQueryProviderFactoryBean();
         provider.setDataSource(dataSource);
-        provider.setSelectClause("SELECT auction_id");
+        provider.setSelectClause("SELECT id");
         provider.setFromClause("FROM auction");
         String whereClause = "WHERE region = :region AND ended_at IS NULL";
         if (realmId == null) {
@@ -129,7 +129,7 @@ public class SyncAuctionJobConfig {
         }
 
         provider.setWhereClause(whereClause);
-        provider.setSortKey("auction_id");
+        provider.setSortKey("id");
 
         return provider;
     }
