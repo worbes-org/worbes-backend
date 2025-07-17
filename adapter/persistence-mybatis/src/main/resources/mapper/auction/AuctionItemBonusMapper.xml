@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.worbes.adapter.mybatis.auction.AuctionItemBonusMapper">
+
+    <insert id="insertAuctionItemBonuses">
+        INSERT INTO auction_item_bonus (auction_id, item_bonus_id)
+        VALUES
+        <foreach collection="bonuses" item="bonus" separator=",">
+            (#{bonus.auctionId}, #{bonus.itemBonusId})
+        </foreach>
+        ON CONFLICT (auction_id, item_bonus_id) DO NOTHING
+    </insert>
+
+</mapper>

@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,8 @@ import java.util.Optional;
 import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
 
 @Slf4j
+@Component
+@StepScope
 @RequiredArgsConstructor
 public class FetchAuctionTasklet implements Tasklet {
 
@@ -29,11 +33,12 @@ public class FetchAuctionTasklet implements Tasklet {
         JobExecution jobExecution = chunkContext.getStepContext().getStepExecution().getJobExecution();
         JobParameters jobParameters = jobExecution.getJobParameters();
 
-        String region = Optional.ofNullable(jobParameters.getString(REGION.getKey()))
+        RegionType region = Optional.ofNullable(jobParameters.getString(REGION.getKey()))
+                .map(RegionType::valueOf)
                 .orElseThrow(() -> new IllegalArgumentException("Region not found"));
         Long realmId = jobParameters.getLong(REALM_ID.getKey(), null);
 
-        List<Auction> snapshot = fetchAuctionSnapshot(region, realmId);
+        List<Auction> snapshot = fetchAuctionUseCase.execute(region, realmId);
         if (snapshot.isEmpty()) {
             throw new IllegalStateException("경매 스냅샷이 비어 있습니다.");
         }
@@ -44,13 +49,5 @@ public class FetchAuctionTasklet implements Tasklet {
         jobContext.put(AUCTION_COUNT.getKey(), snapshot.size());
 
         return RepeatStatus.FINISHED;
-    }
-
-    private List<Auction> fetchAuctionSnapshot(String region, Long realmId) {
-        RegionType regionType = RegionType.valueOf(region);
-        if (realmId == null) {
-            return fetchAuctionUseCase.fetch(regionType);
-        }
-        return fetchAuctionUseCase.fetch(regionType, realmId);
     }
 }

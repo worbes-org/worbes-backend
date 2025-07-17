@@ -6,7 +6,5 @@ import com.worbes.application.realm.model.RegionType;
 import java.util.List;
 
 public interface FetchAuctionUseCase {
-    List<Auction> fetch(RegionType region, Long realmId);
-
-    List<Auction> fetch(RegionType region);
+    List<Auction> execute(RegionType region, Long realmId);
 }

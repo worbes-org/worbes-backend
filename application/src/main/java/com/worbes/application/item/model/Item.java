@@ -2,9 +2,11 @@ package com.worbes.application.item.model;
 
 import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.common.model.LocalizedName;
+import com.worbes.application.item.port.out.FetchExtraItemInfoResult;
+import com.worbes.application.item.port.out.FetchItemApiResult;
+import com.worbes.application.item.port.out.FindItemResult;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,12 +22,10 @@ public class Item {
     private final QualityType quality;
     private final Integer level;
     private final InventoryType inventoryType;
-    private final CraftingTierType craftingTier;
     private final Boolean isStackable;
-    @Setter
-    private String icon;
-    @Setter
-    private Long expansionId;
+    private final CraftingTierType craftingTier;
+    private final String icon;
+    private final Integer expansionId;
 
     @Builder
     private Item(
@@ -39,7 +39,7 @@ public class Item {
             String icon,
             CraftingTierType craftingTier,
             Boolean isStackable,
-            Long expansionId
+            Integer expansionId
     ) {
         this.id = id;
         this.name = LocalizedName.fromRaw(name);
@@ -52,6 +52,48 @@ public class Item {
         this.craftingTier = craftingTier;
         this.isStackable = isStackable;
         this.expansionId = expansionId;
+    }
+
+    public static Item from(FetchItemApiResult item, FetchExtraItemInfoResult extra) {
+        QualityType qualityType = Optional.of(item.quality()).map(QualityType::valueOf).get();
+        InventoryType inventoryType = Optional.of(item.inventoryType()).map(InventoryType::valueOf).get();
+        CraftingTierType craftingTierType = Optional.ofNullable(extra.craftingQualityTier())
+                .map(CraftingTierType::fromValue)
+                .orElse(null);
+        return Item.builder()
+                .id(item.id())
+                .name(item.name())
+                .classId(item.classId())
+                .subclassId(item.subclassId())
+                .quality(qualityType)
+                .level(item.level())
+                .inventoryType(inventoryType)
+                .isStackable(item.isStackable())
+                .icon(extra.icon())
+                .craftingTier(craftingTierType)
+                .expansionId(extra.expansion())
+                .build();
+    }
+
+    public static Item from(FindItemResult result) {
+        QualityType qualityType = Optional.of(result.quality()).map(QualityType::fromValue).get();
+        InventoryType inventoryType = Optional.of(result.inventoryType()).map(InventoryType::valueOf).get();
+        CraftingTierType craftingTierType = Optional.ofNullable(result.craftingTier())
+                .map(CraftingTierType::fromValue)
+                .orElse(null);
+        return Item.builder()
+                .id(result.id())
+                .name(result.name())
+                .classId(result.classId())
+                .subclassId(result.subclassId())
+                .quality(qualityType)
+                .level(result.level())
+                .inventoryType(inventoryType)
+                .isStackable(result.isStackable())
+                .icon(result.icon())
+                .craftingTier(craftingTierType)
+                .expansionId(result.expansionId())
+                .build();
     }
 
     @Override
@@ -78,5 +120,14 @@ public class Item {
         return Optional.ofNullable(craftingTier)
                 .map(CraftingTierType::getValue)
                 .orElse(null);
+    }
+
+    public Integer getItemLevel() {
+        return this.level;
+    }
+
+    public Integer getItemLevel(Integer baseLevel, Integer bonusLevel) {
+        return Optional.ofNullable(baseLevel).orElse(this.level) +
+                Optional.ofNullable(bonusLevel).orElse(0);
     }
 }

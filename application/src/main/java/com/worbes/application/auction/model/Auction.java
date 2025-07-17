@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Getter
 public class Auction implements Serializable {
@@ -61,15 +60,5 @@ public class Auction implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    public String itemBonusToString() {
-        if (itemBonus == null || itemBonus.isEmpty()) {
-            return null;
-        }
-        return itemBonus.stream()
-                .sorted()
-                .map(String::valueOf)
-                .collect(Collectors.joining(":"));
     }
 }

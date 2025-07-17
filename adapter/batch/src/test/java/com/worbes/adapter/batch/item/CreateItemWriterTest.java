@@ -36,13 +36,13 @@ class CreateItemWriterTest {
                     Item.builder().id(2L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(items);
+            given(fetchItemApiUseCase.execute(ids)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
-            then(createItemUseCase).should().saveAll(items);
+            then(fetchItemApiUseCase).should().execute(ids);
+            then(createItemUseCase).should().execute(items);
         }
     }
 
@@ -59,13 +59,13 @@ class CreateItemWriterTest {
                     Item.builder().id(2L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemApiUseCase.fetchItemAsync(expectedIds)).willReturn(items);
+            given(fetchItemApiUseCase.execute(expectedIds)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(chunkList);
 
             createItemWriter.write(chunk);
 
-            then(fetchItemApiUseCase).should().fetchItemAsync(expectedIds);
-            then(createItemUseCase).should().saveAll(items);
+            then(fetchItemApiUseCase).should().execute(expectedIds);
+            then(createItemUseCase).should().execute(items);
         }
 
         @Test
@@ -89,13 +89,13 @@ class CreateItemWriterTest {
                     Item.builder().id(1L).build(),
                     Item.builder().id(3L).build()
             );
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(items);
+            given(fetchItemApiUseCase.execute(ids)).willReturn(items);
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
-            then(createItemUseCase).should().saveAll(items);
+            then(fetchItemApiUseCase).should().execute(ids);
+            then(createItemUseCase).should().execute(items);
             // 실패 ID(2L)는 로그로만 남으므로, 별도 검증은 생략
         }
 
@@ -103,20 +103,20 @@ class CreateItemWriterTest {
         @DisplayName("fetch된 아이템이 없으면 saveAll이 호출되지 않고 경고 로그만 남는다")
         void shouldWarnWhenNoItemsFetched() throws Exception {
             Set<Long> ids = Set.of(1L, 2L);
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willReturn(Collections.emptyList());
+            given(fetchItemApiUseCase.execute(ids)).willReturn(Collections.emptyList());
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             createItemWriter.write(chunk);
 
-            then(fetchItemApiUseCase).should().fetchItemAsync(ids);
-            then(createItemUseCase).should(never()).saveAll(any());
+            then(fetchItemApiUseCase).should().execute(ids);
+            then(createItemUseCase).should(never()).execute(any());
         }
 
         @Test
         @DisplayName("fetchItemAsync에서 InterruptedException이 발생하면 인터럽트 플래그를 복구하고 예외를 전파한다")
         void shouldPropagateInterruptedException() throws Exception {
             Set<Long> ids = Set.of(1L);
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new InterruptedException("interrupted!"));
+            given(fetchItemApiUseCase.execute(ids)).willThrow(new InterruptedException("interrupted!"));
             Chunk<Long> chunk = new Chunk<>(new ArrayList<>(ids));
 
             assertThatThrownBy(() -> createItemWriter.write(chunk))
@@ -129,14 +129,14 @@ class CreateItemWriterTest {
         void shouldSkipOnExecutionOrTimeoutException() throws Exception {
             Set<Long> ids = Set.of(1L);
             Chunk<Long> chunk = spy(new Chunk<>(new ArrayList<>(ids)));
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new ExecutionException("fail!", null));
+            given(fetchItemApiUseCase.execute(ids)).willThrow(new ExecutionException("fail!", null));
 
             createItemWriter.write(chunk);
             verify(chunk).skip(any(ExecutionException.class));
 
             // TimeoutException도 동일하게 검증
             reset(fetchItemApiUseCase, createItemUseCase, chunk);
-            given(fetchItemApiUseCase.fetchItemAsync(ids)).willThrow(new TimeoutException("timeout!"));
+            given(fetchItemApiUseCase.execute(ids)).willThrow(new TimeoutException("timeout!"));
             createItemWriter.write(chunk);
             verify(chunk).skip(any(TimeoutException.class));
         }

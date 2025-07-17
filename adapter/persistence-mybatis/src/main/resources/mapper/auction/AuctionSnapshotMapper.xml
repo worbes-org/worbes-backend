@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.worbes.adapter.mybatis.auction.AuctionSnapshotMapper">
+
+    <insert id="insertRealmSpecific">
+        INSERT INTO auction_snapshot (item_id,
+                                      time,
+                                      realm_id,
+                                      region,
+                                      lowest_price,
+                                      total_quantity,
+                                      bonus_list,
+                                      bonus_level,
+                                      base_level,
+                                      suffix)
+        SELECT item_id,
+               #{time},
+               realm_id,
+               #{region},
+               lowest_price,
+               total_quantity,
+               bonus_list,
+               bonus_level,
+               base_level,
+               suffix
+        FROM (WITH auction_with_bonus AS (SELECT a.id,
+                                                 a.item_id,
+                                                 a.price,
+                                                 a.quantity,
+                                                 a.realm_id,
+                                                 a.region,
+                                                 STRING_AGG(DISTINCT ab.item_bonus_id::text, ':'
+                                                            ORDER BY ab.item_bonus_id::text) AS bonus_list,
+                                                 MAX(ib.level)                               AS level,
+                                                 MAX(ib.base_level)                          AS base_level,
+                                                 MAX(ib.suffix)                              AS suffix
+                                          FROM auction a
+                                                   LEFT JOIN auction_item_bonus ab ON ab.auction_id = a.id
+                                                   LEFT JOIN item_bonus ib ON ib.id = ab.item_bonus_id
+                                          WHERE a.realm_id = #{realmId}
+                                            AND a.region = #{region}
+                                            AND a.ended_at IS NULL
+                                          GROUP BY a.id, a.item_id, a.price, a.quantity, a.realm_id, a.region)
+              SELECT item_id,
+                     realm_id,
+                     region,
+                     MIN(price)      AS lowest_price,
+                     SUM(quantity)   AS total_quantity,
+                     bonus_list,
+                     MAX(level)      AS bonus_level,
+                     MAX(base_level) AS base_level,
+                     MAX(suffix)     AS suffix
+              FROM auction_with_bonus
+              GROUP BY item_id, bonus_list, realm_id, region) AS snapshot_data
+    </insert>
+
+    <insert id="insertRegionWide">
+        INSERT INTO auction_snapshot (item_id,
+                                      time,
+                                      realm_id,
+                                      region,
+                                      lowest_price,
+                                      total_quantity,
+                                      bonus_list,
+                                      bonus_level,
+                                      base_level,
+                                      suffix)
+        SELECT a.item_id,
+               #{time},
+               NULL,
+               #{region},
+               MIN(a.price),
+               SUM(a.quantity),
+               NULL,
+               NULL,
+               NULL,
+               NULL
+        FROM auction a
+        WHERE a.realm_id IS NULL
+          AND a.region = #{region}
+          AND a.ended_at IS NULL
+        GROUP BY a.item_id, a.region
+    </insert>
+
+</mapper>

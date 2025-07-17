@@ -5,5 +5,5 @@ import com.worbes.application.realm.model.RegionType;
 import java.util.Set;
 
 public interface CloseAuctionUseCase {
-    Long closeAll(RegionType region, Long realmId, Set<Long> auctionIds);
+    long execute(RegionType region, Long realmId, Set<Long> auctionIds);
 }

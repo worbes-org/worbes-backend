@@ -4,7 +4,10 @@ import java.time.Instant;
 
 public record AuctionTrendPoint(
         Instant time,
-        Integer totalQuantity,
-        Long lowestPrice
+        Long lowestPrice,
+        Integer totalQuantity
 ) {
+    public AuctionTrendPoint(AuctionSnapshot snapshot) {
+        this(snapshot.getTime(), snapshot.getLowestPrice(), snapshot.getTotalQuantity());
+    }
 }

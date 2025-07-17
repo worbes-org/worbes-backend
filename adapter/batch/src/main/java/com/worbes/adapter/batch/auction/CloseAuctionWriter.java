@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -18,6 +20,8 @@ import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REALM_ID;
 import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REGION;
 
 @Slf4j
+@Component
+@StepScope
 @RequiredArgsConstructor
 public class CloseAuctionWriter implements ItemWriter<Long>, StepExecutionListener {
 
@@ -40,7 +44,7 @@ public class CloseAuctionWriter implements ItemWriter<Long>, StepExecutionListen
         if (chunk.isEmpty()) return;
         Set<Long> toCloseAuctionIds = new HashSet<>(chunk.getItems());
         try {
-            closeAuctionUseCase.closeAll(region, realmId, toCloseAuctionIds);
+            closeAuctionUseCase.execute(region, realmId, toCloseAuctionIds);
         } catch (Exception e) {
             log.error("Failed to close auctions: region={}, realmId={}, ids={}, error={}", region, realmId, toCloseAuctionIds, e.getMessage(), e);
             throw e;

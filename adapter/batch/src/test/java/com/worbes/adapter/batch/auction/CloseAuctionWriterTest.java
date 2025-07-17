@@ -74,7 +74,7 @@ class CloseAuctionWriterTest {
 
             // then
             then(closeAuctionUseCase).should()
-                    .closeAll(region, realmId, auctionIds);
+                    .execute(region, realmId, auctionIds);
         }
     }
 
@@ -86,7 +86,7 @@ class CloseAuctionWriterTest {
         void shouldNotCallCloseAllWhenChunkIsEmpty() {
             closeAuctionWriter.beforeStep(getStepExecution());
             closeAuctionWriter.write(new Chunk<>(Collections.emptyList()));
-            then(closeAuctionUseCase).should(never()).closeAll(any(), any(), any());
+            then(closeAuctionUseCase).should(never()).execute(any(), any(), any());
         }
 
         @Test
@@ -95,7 +95,7 @@ class CloseAuctionWriterTest {
             List<Long> chunk = Arrays.asList(1L, 2L, 2L, 3L, 1L);
             closeAuctionWriter.beforeStep(getStepExecution());
             closeAuctionWriter.write(new Chunk<>(chunk));
-            then(closeAuctionUseCase).should().closeAll(region, realmId, Set.of(1L, 2L, 3L));
+            then(closeAuctionUseCase).should().execute(region, realmId, Set.of(1L, 2L, 3L));
         }
     }
 
@@ -121,7 +121,7 @@ class CloseAuctionWriterTest {
             List<Long> chunk = new ArrayList<>(auctionIds);
             closeAuctionWriter.beforeStep(getStepExecution());
             doThrow(new RuntimeException("fail!"))
-                    .when(closeAuctionUseCase).closeAll(region, realmId, auctionIds);
+                    .when(closeAuctionUseCase).execute(region, realmId, auctionIds);
             assertThatThrownBy(() -> closeAuctionWriter.write(new Chunk<>(chunk)))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("fail!");

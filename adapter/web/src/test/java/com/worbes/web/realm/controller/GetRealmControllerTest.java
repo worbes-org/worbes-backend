@@ -1,5 +1,6 @@
 package com.worbes.web.realm.controller;
 
+import com.worbes.adapter.web.realm.controller.GetRealmController;
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.port.in.GetRealmUseCase;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +34,7 @@ class GetRealmControllerTest {
     @DisplayName("유효한 region 파라미터로 GET /api/v1/realms 호출 시 200 OK와 다국어 이름을 포함한 결과를 반환한다")
     void returnsOkWithValidRegionParameter() throws Exception {
         // given
-        given(getRealmUseCase.getAll(any()))
+        given(getRealmUseCase.execute(any()))
                 .willReturn(List.of(Realm.builder()
                                 .id(1L)
                                 .connectedRealmId(2116L)
@@ -64,7 +65,7 @@ class GetRealmControllerTest {
     @DisplayName("여러 Realm 결과를 반환할 때 200 OK와 리스트를 반환한다")
     void returnsOkWithMultipleResults() throws Exception {
         // given
-        given(getRealmUseCase.getAll(any()))
+        given(getRealmUseCase.execute(any()))
                 .willReturn(List.of(
                         Realm.builder()
                                 .id(1L)

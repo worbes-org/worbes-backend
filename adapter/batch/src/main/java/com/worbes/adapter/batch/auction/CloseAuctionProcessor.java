@@ -3,8 +3,10 @@ package com.worbes.adapter.batch.auction;
 import com.worbes.application.auction.model.Auction;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 
 import static com.worbes.adapter.batch.auction.SyncAuctionParameters.AUCTION_SNAPSHOT;
 
+@Component
+@StepScope
 public class CloseAuctionProcessor implements ItemProcessor<Long, Long>, StepExecutionListener {
 
     private Set<Long> newAuctionIds;

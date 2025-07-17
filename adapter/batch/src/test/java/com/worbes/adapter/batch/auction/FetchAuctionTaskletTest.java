@@ -77,7 +77,7 @@ class FetchAuctionTaskletTest {
         @DisplayName("realmId가 있으면 fetchAuctions가 호출되고 결과가 저장된다")
         void shouldFetchAuctionsAndStoreInExecutionContext() throws Exception {
             List<Auction> expected = List.of(mock(Auction.class), mock(Auction.class));
-            given(fetchAuctionUseCase.fetch(region, realmId)).willReturn(expected);
+            given(fetchAuctionUseCase.execute(region, realmId)).willReturn(expected);
 
             StepExecution stepExecution = getDefaultStepExecution();
             StepContribution stepContribution = new StepContribution(stepExecution);
@@ -88,14 +88,14 @@ class FetchAuctionTaskletTest {
             assertThat(repeatStatus).isEqualTo(RepeatStatus.FINISHED);
             assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_SNAPSHOT.getKey())).isEqualTo(expected);
             assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_COUNT.getKey())).isEqualTo(expected.size());
-            then(fetchAuctionUseCase).should(times(1)).fetch(region, realmId);
+            then(fetchAuctionUseCase).should(times(1)).execute(region, realmId);
         }
 
         @Test
         @DisplayName("realmId가 null이면 fetchCommodities가 호출된다")
         void shouldFetchCommoditiesWhenRealmIdIsNull() throws Exception {
             List<Auction> expected = List.of(mock(Auction.class));
-            given(fetchAuctionUseCase.fetch(region)).willReturn(expected);
+            given(fetchAuctionUseCase.execute(region)).willReturn(expected);
             JobParameters jobParameters = new JobParametersBuilder()
                     .addString(REGION.getKey(), region.name())
                     .addLocalDateTime(AUCTION_DATE.getKey(), LocalDateTime.now())
@@ -109,7 +109,7 @@ class FetchAuctionTaskletTest {
             assertThat(repeatStatus).isEqualTo(RepeatStatus.FINISHED);
             assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_SNAPSHOT.getKey())).isEqualTo(expected);
             assertThat(stepExecution.getJobExecution().getExecutionContext().get(AUCTION_COUNT.getKey())).isEqualTo(expected.size());
-            then(fetchAuctionUseCase).should(times(1)).fetch(region);
+            then(fetchAuctionUseCase).should(times(1)).execute(region);
         }
     }
 
@@ -119,7 +119,7 @@ class FetchAuctionTaskletTest {
         @Test
         @DisplayName("경매 결과가 비어있으면 예외가 발생한다")
         void shouldThrowWhenResultIsEmpty() {
-            given(fetchAuctionUseCase.fetch(region, realmId)).willReturn(Collections.emptyList());
+            given(fetchAuctionUseCase.execute(region, realmId)).willReturn(Collections.emptyList());
             StepExecution stepExecution = getDefaultStepExecution();
             StepContribution stepContribution = new StepContribution(stepExecution);
             ChunkContext chunkContext = new ChunkContext(new StepContext(stepExecution));
@@ -151,7 +151,7 @@ class FetchAuctionTaskletTest {
         @Test
         @DisplayName("fetchAuctionUseCase에서 예외 발생 시 예외가 전파된다")
         void shouldPropagateExceptionWhenFetchAuctionFails() {
-            given(fetchAuctionUseCase.fetch(region, realmId)).willThrow(new RuntimeException("fail!"));
+            given(fetchAuctionUseCase.execute(region, realmId)).willThrow(new RuntimeException("fail!"));
             StepExecution stepExecution = getDefaultStepExecution();
             StepContribution stepContribution = new StepContribution(stepExecution);
             ChunkContext chunkContext = new ChunkContext(new StepContext(stepExecution));
