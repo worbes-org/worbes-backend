@@ -19,9 +19,8 @@ public class SearchItemService implements SearchItemUseCase {
 
     @Override
     public List<Item> execute(SearchItemQuery query) {
-        return findItemPort.findItemsBySearchQuery(query)
+        return findItemPort.findBy(query)
                 .stream()
-                .map(Item::from)
                 .toList();
     }
 }

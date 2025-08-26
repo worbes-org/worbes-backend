@@ -7,8 +7,7 @@ plugins {
 
 dependencies {
     implementation project(':application')
-    implementation project(':adapter:persistence-jpa')
-    implementation project(':adapter:persistence-mybatis')
+    implementation project(':adapter:persistence')
     implementation project(':adapter:client-blizzard')
     implementation project(':adapter:batch')
 

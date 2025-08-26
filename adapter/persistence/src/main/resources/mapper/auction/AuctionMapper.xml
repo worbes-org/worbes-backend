@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.worbes.adapter.persistence.mybatis.auction.AuctionMybatisMapper">
+
+    <insert id="saveAll">
+        INSERT INTO auction (
+        id,
+        item_id,
+        quantity,
+        price,
+        region,
+        realm_id,
+        item_bonus,
+        created_at
+        )
+        VALUES
+        <foreach collection="auctions" item="a" separator=",">
+            (
+            #{a.id},
+            #{a.itemId},
+            #{a.quantity},
+            #{a.price},
+            #{a.region},
+            #{a.realmId},
+            #{a.itemBonus},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <select id="findBy">
+        SELECT id,
+        item_id as itemId,
+        quantity,
+        price,
+        region,
+        realm_id as realmId,
+        item_bonus as itemBonus
+        FROM auction
+        WHERE item_id = #{query.itemId}
+        AND region = #{query.region}
+        AND (realm_id = #{query.realmId} OR realm_id IS NULL)
+        <if test="query.itemBonus != null">
+            AND item_bonus @>
+            #{query.itemBonus, typeHandler=com.worbes.adapter.persistence.mybatis.handler.JsonbListTypeHandler}
+            AND jsonb_array_length(item_bonus) =
+            jsonb_array_length(#{query.itemBonus, typeHandler=com.worbes.adapter.persistence.mybatis.handler.JsonbListTypeHandler})
+        </if>
+        ORDER BY item_id DESC NULLS LAST
+    </select>
+</mapper>

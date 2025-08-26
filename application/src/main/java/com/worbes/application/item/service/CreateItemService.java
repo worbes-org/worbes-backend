@@ -3,7 +3,6 @@ package com.worbes.application.item.service;
 import com.worbes.application.item.exception.ItemApiFetchException;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.in.CreateItemUseCase;
-import com.worbes.application.item.port.out.FetchExtraItemInfoPort;
 import com.worbes.application.item.port.out.FetchItemApiPort;
 import com.worbes.application.item.port.out.SaveItemPort;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +24,12 @@ import java.util.concurrent.CompletionException;
 public class CreateItemService implements CreateItemUseCase {
 
     private final FetchItemApiPort fetchItemApiPort;
-    private final FetchExtraItemInfoPort fetchExtraItemInfoPort;
     private final SaveItemPort saveItemPort;
 
     public void execute(Set<Long> itemIds) {
         List<CompletableFuture<Item>> futures = new ArrayList<>();
         for (Long itemId : itemIds) {
             CompletableFuture<Item> future = fetchItemApiPort.fetchAsync(itemId)
-                    .thenCombine(fetchExtraItemInfoPort.fetchAsync(itemId), Item::from)
                     .exceptionally(this::handleException);
             futures.add(future);
         }

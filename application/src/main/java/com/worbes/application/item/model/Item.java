@@ -2,10 +2,6 @@ package com.worbes.application.item.model;
 
 import com.worbes.application.common.model.LocaleCode;
 import com.worbes.application.common.model.LocalizedName;
-import com.worbes.application.item.port.out.FetchExtraItemInfoResult;
-import com.worbes.application.item.port.out.FetchItemApiResult;
-import com.worbes.application.item.port.out.FindItemResult;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
@@ -26,74 +22,25 @@ public class Item {
     private final CraftingTierType craftingTier;
     private final String icon;
     private final Integer expansionId;
+    private final Long displayId;
 
-    @Builder
-    private Item(
-            Long id,
-            Map<String, String> name,
-            Long classId,
-            Long subclassId,
-            QualityType quality,
-            Integer level,
-            InventoryType inventoryType,
-            String icon,
-            CraftingTierType craftingTier,
-            Boolean isStackable,
-            Integer expansionId
-    ) {
-        this.id = id;
-        this.name = LocalizedName.fromRaw(name);
-        this.classId = classId;
-        this.subclassId = subclassId;
-        this.quality = quality;
-        this.level = level;
-        this.inventoryType = inventoryType;
-        this.icon = icon;
-        this.craftingTier = craftingTier;
-        this.isStackable = isStackable;
-        this.expansionId = expansionId;
+    private Item(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.classId = builder.classId;
+        this.subclassId = builder.subclassId;
+        this.quality = builder.quality;
+        this.level = builder.level;
+        this.inventoryType = builder.inventoryType;
+        this.isStackable = builder.isStackable;
+        this.craftingTier = builder.craftingTier;
+        this.icon = builder.icon;
+        this.expansionId = builder.expansionId;
+        this.displayId = builder.displayId;
     }
 
-    public static Item from(FetchItemApiResult item, FetchExtraItemInfoResult extra) {
-        QualityType qualityType = Optional.of(item.quality()).map(QualityType::valueOf).get();
-        InventoryType inventoryType = Optional.of(item.inventoryType()).map(InventoryType::valueOf).get();
-        CraftingTierType craftingTierType = Optional.ofNullable(extra.craftingQualityTier())
-                .map(CraftingTierType::fromValue)
-                .orElse(null);
-        return Item.builder()
-                .id(item.id())
-                .name(item.name())
-                .classId(item.classId())
-                .subclassId(item.subclassId())
-                .quality(qualityType)
-                .level(item.level())
-                .inventoryType(inventoryType)
-                .isStackable(item.isStackable())
-                .icon(extra.icon())
-                .craftingTier(craftingTierType)
-                .expansionId(extra.expansion())
-                .build();
-    }
-
-    public static Item from(FindItemResult result) {
-        QualityType qualityType = Optional.of(result.quality()).map(QualityType::fromValue).get();
-        InventoryType inventoryType = Optional.of(result.inventoryType()).map(InventoryType::valueOf).get();
-        CraftingTierType craftingTierType = Optional.ofNullable(result.craftingTier())
-                .map(CraftingTierType::fromValue)
-                .orElse(null);
-        return Item.builder()
-                .id(result.id())
-                .name(result.name())
-                .classId(result.classId())
-                .subclassId(result.subclassId())
-                .quality(qualityType)
-                .level(result.level())
-                .inventoryType(inventoryType)
-                .isStackable(result.isStackable())
-                .icon(result.icon())
-                .craftingTier(craftingTierType)
-                .expansionId(result.expansionId())
-                .build();
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -122,12 +69,120 @@ public class Item {
                 .orElse(null);
     }
 
-    public Integer getItemLevel() {
-        return this.level;
-    }
+    public static class Builder {
+        private Long id;
+        private LocalizedName name;
+        private Long classId;
+        private Long subclassId;
+        private QualityType quality;
+        private Integer level;
+        private InventoryType inventoryType;
+        private Boolean isStackable;
+        private CraftingTierType craftingTier;
+        private String icon;
+        private Integer expansionId;
+        private Long displayId;
 
-    public Integer getItemLevel(Integer baseLevel, Integer bonusLevel) {
-        return Optional.ofNullable(baseLevel).orElse(this.level) +
-                Optional.ofNullable(bonusLevel).orElse(0);
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(Map<String, String> name) {
+            this.name = LocalizedName.fromRaw(name);
+            return this;
+        }
+
+        public Builder name(LocalizedName name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder classId(Long classId) {
+            this.classId = classId;
+            return this;
+        }
+
+        public Builder subclassId(Long subclassId) {
+            this.subclassId = subclassId;
+            return this;
+        }
+
+        public Builder quality(Integer quality) {
+            this.quality = QualityType.fromValue(quality);
+            return this;
+        }
+
+        public Builder quality(String quality) {
+            this.quality = QualityType.valueOf(quality);
+            return this;
+        }
+
+        public Builder quality(QualityType quality) {
+            this.quality = quality;
+            return this;
+        }
+
+        public Builder level(Integer level) {
+            this.level = level;
+            return this;
+        }
+
+        public Builder inventoryType(String inventoryType) {
+            this.inventoryType = InventoryType.valueOf(inventoryType);
+            return this;
+        }
+
+        public Builder inventoryType(InventoryType inventoryType) {
+            this.inventoryType = inventoryType;
+            return this;
+        }
+
+        public Builder isStackable(Boolean isStackable) {
+            this.isStackable = isStackable;
+            return this;
+        }
+
+        public Builder craftingTier(Integer craftingTier) {
+            this.craftingTier = Optional.ofNullable(craftingTier)
+                    .map(CraftingTierType::fromValue)
+                    .orElse(null);
+            return this;
+        }
+
+        public Builder craftingTier(CraftingTierType craftingTier) {
+            this.craftingTier = craftingTier;
+            return this;
+        }
+
+        public Builder icon(String icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public Builder expansionId(Integer expansionId) {
+            this.expansionId = expansionId;
+            return this;
+        }
+
+        public Builder displayId(Long displayId) {
+            this.displayId = displayId;
+            return this;
+        }
+
+        public Item build() {
+            Objects.requireNonNull(id, "Item ID cannot be null");
+            Objects.requireNonNull(name, "Item name cannot be null");
+            Objects.requireNonNull(classId, "Class ID cannot be null");
+            Objects.requireNonNull(subclassId, "Subclass ID cannot be null");
+            Objects.requireNonNull(quality, "Item quality cannot be null");
+            Objects.requireNonNull(level, "Item level cannot be null");
+            Objects.requireNonNull(inventoryType, "Item InventoryType cannot be null");
+            Objects.requireNonNull(icon, "Item Icon cannot be null");
+            Objects.requireNonNull(isStackable, "Item isStackable cannot be null");
+            Objects.requireNonNull(expansionId, "Item ExpansionId cannot be null");
+
+            return new Item(this);
+        }
     }
 }

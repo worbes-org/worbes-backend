@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameter.*;
 
 @Slf4j
 @Component

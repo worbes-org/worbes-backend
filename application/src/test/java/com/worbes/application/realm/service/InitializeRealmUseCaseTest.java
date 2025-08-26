@@ -2,14 +2,13 @@ package com.worbes.application.realm.service;
 
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
-import com.worbes.application.realm.port.in.InitializeRealmUseCase;
 import com.worbes.application.realm.port.out.FetchRealmApiPort;
 import com.worbes.application.realm.port.out.FindRealmPort;
 import com.worbes.application.realm.port.out.SaveRealmPort;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -36,16 +35,8 @@ class InitializeRealmUseCaseTest {
     @Mock
     private FetchRealmApiPort fetchRealmApiPort;
 
-    private InitializeRealmUseCase initializeRealmUseCase;
-
-    @BeforeEach
-    void setUp() {
-        initializeRealmUseCase = new InitializeRealmService(
-                saveRealmPort,
-                findRealmPort,
-                fetchRealmApiPort
-        );
-    }
+    @InjectMocks
+    private InitializeRealmService initializeRealmUseCase;
 
     @Test
     @DisplayName("(정상) 누락된 Realm이 있을 때 정상적으로 저장 및 반환한다.")
@@ -54,20 +45,13 @@ class InitializeRealmUseCaseTest {
         RegionType region = RegionType.KR;
         Set<String> fetchedSlugs = Set.of("slug1", "slug2");
         Set<String> existingSlugs = Set.of("slug1");
-        Set<String> missingSlugs = Set.of("slug2");
-        Realm realm = Realm.builder()
-                .id(1L)
-                .connectedRealmId(100L)
-                .region(region)
-                .name(Map.of("ko_KR", "테스트"))
-                .slug("slug2")
-                .build();
+        Realm realm = new Realm(1L, 100L, region, Map.of("ko_KR", "테스트"), "slug2");
         List<Realm> fetchedRealms = List.of(realm);
         List<Realm> savedRealms = List.of(realm);
 
         given(fetchRealmApiPort.fetchRealmIndex(region)).willReturn(fetchedSlugs);
         given(findRealmPort.findSlugByRegion(region)).willReturn(existingSlugs);
-        given(fetchRealmApiPort.fetchAllRealmsAsync(region, missingSlugs)).willReturn(CompletableFuture.completedFuture(fetchedRealms));
+        given(fetchRealmApiPort.fetchAsync(region, "slug2")).willReturn(CompletableFuture.completedFuture(realm));
         given(saveRealmPort.saveAll(new HashSet<>(fetchedRealms))).willReturn(savedRealms);
 
         // when
@@ -105,7 +89,7 @@ class InitializeRealmUseCaseTest {
         Set<String> missingSlugs = Set.of("slug2");
         given(fetchRealmApiPort.fetchRealmIndex(region)).willReturn(fetchedSlugs);
         given(findRealmPort.findSlugByRegion(region)).willReturn(existingSlugs);
-        given(fetchRealmApiPort.fetchAllRealmsAsync(region, missingSlugs)).willReturn(CompletableFuture.failedFuture(new RuntimeException("API 실패")));
+        given(fetchRealmApiPort.fetchAsync(region, "slug2")).willReturn(CompletableFuture.failedFuture(new RuntimeException("API 실패")));
 
         // when & then
         assertThrows(RuntimeException.class, () -> {

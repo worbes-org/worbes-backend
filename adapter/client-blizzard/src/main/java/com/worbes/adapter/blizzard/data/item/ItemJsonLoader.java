@@ -2,8 +2,6 @@ package com.worbes.adapter.blizzard.data.item;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worbes.application.item.port.out.FetchExtraItemInfoPort;
-import com.worbes.application.item.port.out.FetchExtraItemInfoResult;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,24 +16,26 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ItemJsonLoader implements FetchExtraItemInfoPort {
+public class ItemJsonLoader {
 
     private final ObjectMapper objectMapper;
-    private Map<Long, FetchExtraItemInfoResult> extraItemInfoResults;
+    private Map<Long, ItemWowHeadApiResponse> responses;
 
     @PostConstruct
     public void init() {
         try {
-            File file = new ClassPathResource("/json/items.json").getFile();
-            TypeReference<Map<Long, FetchExtraItemInfoResult>> typeRef = new TypeReference<>() {
+            File bound = new ClassPathResource("/json/items.bound.json").getFile();
+            File unbound = new ClassPathResource("/json/items.unbound.json").getFile();
+            TypeReference<Map<Long, ItemWowHeadApiResponse>> typeRef = new TypeReference<>() {
             };
-            extraItemInfoResults = objectMapper.readValue(file, typeRef);
+            responses = objectMapper.readValue(bound, typeRef);
+            responses.putAll(objectMapper.readValue(unbound, typeRef));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public CompletableFuture<FetchExtraItemInfoResult> fetchAsync(Long id) {
-        return CompletableFuture.supplyAsync(() -> extraItemInfoResults.get(id));
+    public CompletableFuture<ItemWowHeadApiResponse> fetchAsync(Long id) {
+        return CompletableFuture.supplyAsync(() -> responses.get(id));
     }
 }

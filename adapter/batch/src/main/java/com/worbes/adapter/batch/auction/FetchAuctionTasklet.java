@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameter.*;
 
 @Slf4j
 @Component

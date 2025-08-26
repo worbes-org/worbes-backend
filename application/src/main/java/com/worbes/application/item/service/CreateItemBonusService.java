@@ -1,5 +1,7 @@
 package com.worbes.application.item.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.application.item.model.ItemBonus;
@@ -38,5 +40,14 @@ public class CreateItemBonusService implements CreateItemBonusUseCase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record ItemBonusDto(
+            Long id,
+            String name,
+            Integer level,
+            @JsonProperty("base_level") Integer baseLevel
+    ) {
     }
 }

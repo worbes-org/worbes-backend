@@ -5,8 +5,8 @@ import com.worbes.adapter.blizzard.client.BlizzardApiException;
 import com.worbes.adapter.blizzard.data.shared.BlizzardApiUriFactory;
 import com.worbes.adapter.blizzard.data.shared.BlizzardResponseValidator;
 import com.worbes.application.item.exception.ItemApiFetchException;
+import com.worbes.application.item.model.Item;
 import com.worbes.application.item.port.out.FetchItemApiPort;
-import com.worbes.application.item.port.out.FetchItemApiResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,17 +20,17 @@ import java.util.concurrent.CompletableFuture;
 public class FetchItemApiAdapter implements FetchItemApiPort {
 
     private final BlizzardApiClient apiClient;
-    private final ItemResponseMapper responseMapper;
     private final BlizzardApiUriFactory uriFactory;
+    private final ItemJsonLoader itemJsonLoader;
     private final BlizzardResponseValidator validator;
 
     @Override
-    public CompletableFuture<FetchItemApiResult> fetchAsync(Long id) {
+    public CompletableFuture<Item> fetchAsync(Long id) {
         URI uri = uriFactory.itemUri(id);
 
-        return apiClient.fetchAsync(uri, ItemResponse.class)
-                .thenApply(responseMapper::toDomain)
+        return apiClient.fetchAsync(uri, ItemBlizzardApiResponse.class)
                 .thenApply(validator::validate)
+                .thenCombine(itemJsonLoader.fetchAsync(id), this::convertToDomain)
                 .exceptionally(throwable -> {
                     if (throwable instanceof BlizzardApiException e) {
                         log.error("❌ Item API 호출 실패 | itemId={} | status={} | message={} | cause={}",
@@ -41,5 +41,22 @@ public class FetchItemApiAdapter implements FetchItemApiPort {
                             id, throwable.getMessage(), throwable.getClass().getSimpleName(), throwable);
                     throw new ItemApiFetchException(throwable.getMessage(), throwable.getCause(), id);
                 });
+    }
+
+    private Item convertToDomain(ItemBlizzardApiResponse blizzard, ItemWowHeadApiResponse wowHead) {
+        return Item.builder()
+                .id(blizzard.id())
+                .name(blizzard.name())
+                .level(blizzard.level())
+                .classId(blizzard.classId())
+                .subclassId(blizzard.subclassId())
+                .quality(blizzard.qualityType())
+                .isStackable(blizzard.isStackable())
+                .inventoryType(blizzard.inventoryTypeValue())
+                .icon(wowHead.icon())
+                .expansionId(wowHead.expansion())
+                .craftingTier(wowHead.craftingQualityTier())
+                .displayId(wowHead.display())
+                .build();
     }
 }

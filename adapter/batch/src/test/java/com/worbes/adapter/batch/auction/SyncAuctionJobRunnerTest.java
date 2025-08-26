@@ -17,8 +17,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REALM_ID;
-import static com.worbes.adapter.batch.auction.SyncAuctionParameters.REGION;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameter.REALM_ID;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameter.REGION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +50,7 @@ class SyncAuctionJobRunnerTest {
         given(getConnectedRealmUseCase.execute(regionType)).willReturn(realmIds);
 
         // when
-        scheduler.run();
+        scheduler.run(regionType);
 
         // then
         then(asyncJobLauncher).should(times(3)).run(eq(job), any(JobParameters.class));
@@ -87,7 +87,7 @@ class SyncAuctionJobRunnerTest {
                 .given(asyncJobLauncher).run(any(Job.class), any(JobParameters.class));
 
         // when & then
-        assertThatThrownBy(() -> scheduler.run())
+        assertThatThrownBy(() -> scheduler.run(RegionType.KR))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Job already running");
     }

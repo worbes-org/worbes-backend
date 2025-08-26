@@ -2,9 +2,11 @@ package com.worbes.adapter.blizzard.data.realm;
 
 import com.worbes.adapter.blizzard.client.BlizzardApiClient;
 import com.worbes.adapter.blizzard.data.shared.BlizzardApiUriFactory;
+import com.worbes.adapter.blizzard.data.shared.BlizzardResponseValidator;
 import com.worbes.application.realm.model.Realm;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,19 +15,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class FetchRealmApiPortAdapterTest {
-
-    private final RegionType region = RegionType.KR;
 
     @Mock
     private BlizzardApiClient apiClient;
@@ -34,74 +34,99 @@ class FetchRealmApiPortAdapterTest {
     private BlizzardApiUriFactory uriFactory;
 
     @Mock
-    private RealmResponseMapper realmResponseMapper;
+    private BlizzardResponseValidator validator;
 
     @InjectMocks
-    private FetchRealmApiPortAdapter realmFetcher;
+    private FetchRealmApiPortAdapter adapter;
 
-    @Test
-    @DisplayName("fetchRealmIndex는 realmIndexUri 호출 후 슬러그 목록을 반환한다")
-    void shouldFetchRealmIndex() {
-        URI uri = URI.create("https://api.test/realms/index");
-        RealmIndexResponse response = mock(RealmIndexResponse.class);
-        RealmIndexResponse.Realm realm1 = mock(RealmIndexResponse.Realm.class);
-        RealmIndexResponse.Realm realm2 = mock(RealmIndexResponse.Realm.class);
+    @Nested
+    @DisplayName("fetchRealmIndex 테스트")
+    class FetchRealmIndexTest {
 
-        given(uriFactory.realmIndexUri(region)).willReturn(uri);
-        given(apiClient.fetch(uri, RealmIndexResponse.class)).willReturn(response);
-        given(response.getRealms()).willReturn(List.of(realm1, realm2));
-        given(realm1.getSlug()).willReturn("slug1");
-        given(realm2.getSlug()).willReturn("slug2");
+        @Test
+        @DisplayName("정상 케이스 - Slug 리스트 반환")
+        void fetchRealmIndex_shouldReturnSlugSet() {
+            RegionType region = RegionType.US;
+            URI uri = URI.create("http://example.com/realms");
+            RealmResponse r1 = new RealmResponse(1L, Map.of("en_US", "Realm1"), Map.of("href", "http://url/101"), "realm1", false);
+            RealmResponse r2 = new RealmResponse(2L, Map.of("en_US", "Realm2"), Map.of("href", "http://url/102"), "realm2", false);
 
-        Set<String> slugs = realmFetcher.fetchRealmIndex(region);
+            RealmIndexResponse indexResponse = new RealmIndexResponse(List.of(r1, r2));
 
-        then(uriFactory).should().realmIndexUri(region);
-        then(apiClient).should().fetch(uri, RealmIndexResponse.class);
-        assertThat(slugs).containsExactlyInAnyOrder("slug1", "slug2");
+            given(uriFactory.realmIndexUri(region)).willReturn(uri);
+            given(apiClient.fetch(uri, RealmIndexResponse.class)).willReturn(indexResponse);
+            given(validator.validate(r1)).willReturn(r1);
+            given(validator.validate(r2)).willReturn(r2);
+
+            Set<String> result = adapter.fetchRealmIndex(region);
+
+            assertThat(result).containsExactlyInAnyOrder("realm1", "realm2");
+            then(uriFactory).should().realmIndexUri(region);
+            then(apiClient).should().fetch(uri, RealmIndexResponse.class);
+            then(validator).should().validate(r1);
+            then(validator).should().validate(r2);
+        }
+
+        @Test
+        @DisplayName("빈 리스트 반환 케이스")
+        void fetchRealmIndex_emptyList_shouldReturnEmptySet() {
+            RegionType region = RegionType.US;
+            URI uri = URI.create("http://example.com/realms");
+            RealmIndexResponse indexResponse = new RealmIndexResponse(List.of());
+
+            given(uriFactory.realmIndexUri(region)).willReturn(uri);
+            given(apiClient.fetch(uri, RealmIndexResponse.class)).willReturn(indexResponse);
+
+            Set<String> result = adapter.fetchRealmIndex(region);
+
+            assertThat(result).isEmpty();
+        }
     }
 
-    @Test
-    @DisplayName("fetchAllRealmsAsync는 비동기로 각 슬러그별 realm 데이터를 받아 필터링 및 매핑하여 결과 리스트를 반환한다")
-    void shouldFetchAllRealmsAsync() throws Exception {
-        Set<String> slugs = Set.of("slug1", "slug2");
+    @Nested
+    @DisplayName("fetchAsync 테스트")
+    class FetchAsyncTest {
 
-        URI uri1 = URI.create("https://api.test/realms/slug1");
-        URI uri2 = URI.create("https://api.test/realms/slug2");
+        @Test
+        @DisplayName("정상 케이스 - CompletableFuture가 Realm 반환")
+        void fetchAsync_shouldReturnRealm() throws Exception {
+            RegionType region = RegionType.US;
+            String slug = "test-slug";
+            URI uri = URI.create("http://example.com/realms/test-slug");
 
-        RealmResponse response1 = mock(RealmResponse.class);
-        RealmResponse response2 = mock(RealmResponse.class);
+            RealmResponse response = new RealmResponse(1L, Map.of("en_US", "Realm1"), Map.of("href", "http://url/101"), "realm1", false);
+            Realm expectedRealm = new Realm(1L, 101L, region, Map.of("en_US", "Realm1"), "realm1");
 
-        Realm dto1 = mock(Realm.class, "dto1");
-        Realm dto2 = mock(Realm.class, "dto2");
+            given(uriFactory.realmUri(region, slug)).willReturn(uri);
+            given(apiClient.fetchAsync(uri, RealmResponse.class)).willReturn(CompletableFuture.completedFuture(response));
+            given(validator.validate(response)).willReturn(response);
 
-        // URI factory mock
-        given(uriFactory.realmUri(region, "slug1")).willReturn(uri1);
-        given(uriFactory.realmUri(region, "slug2")).willReturn(uri2);
+            CompletableFuture<Realm> future = adapter.fetchAsync(region, slug);
+            Realm result = future.get();
 
-        // apiClient.fetchAsync returns completed futures
-        given(apiClient.fetchAsync(uri1, RealmResponse.class)).willReturn(CompletableFuture.completedFuture(response1));
-        given(apiClient.fetchAsync(uri2, RealmResponse.class)).willReturn(CompletableFuture.completedFuture(response2));
+            assertThat(result).isEqualTo(expectedRealm);
+            then(uriFactory).should().realmUri(region, slug);
+            then(apiClient).should().fetchAsync(uri, RealmResponse.class);
+            then(validator).should().validate(response);
+        }
 
-        // response1, response2 isTournament 상태 설정
-        given(response1.isTournament()).willReturn(false);
-        given(response2.isTournament()).willReturn(true);  // 하나는 토너먼트라 필터링 대상
+        @Test
+        @DisplayName("apiClient.fetchAsync 예외 케이스")
+        void fetchAsync_apiException_shouldThrowException() {
+            RegionType region = RegionType.US;
+            String slug = "test-slug";
+            URI uri = URI.create("http://example.com/realms/test-slug");
 
-        // 매핑 결과
-        given(realmResponseMapper.toDomain(response1, region)).willReturn(dto1);
-        // response2는 필터링돼서 매핑 안 됨
+            given(uriFactory.realmUri(region, slug)).willReturn(uri);
+            given(apiClient.fetchAsync(uri, RealmResponse.class)).willReturn(
+                    CompletableFuture.failedFuture(new RuntimeException("unknown"))
+            );
 
-        CompletableFuture<List<Realm>> future = realmFetcher.fetchAllRealmsAsync(region, slugs);
-        List<Realm> results = future.get();  // 테스트용으로 동기화
+            CompletableFuture<Realm> future = adapter.fetchAsync(region, slug);
 
-        then(uriFactory).should().realmUri(region, "slug1");
-        then(uriFactory).should().realmUri(region, "slug2");
-
-        then(apiClient).should().fetchAsync(uri1, RealmResponse.class);
-        then(apiClient).should().fetchAsync(uri2, RealmResponse.class);
-
-        then(realmResponseMapper).should().toDomain(response1, region);
-        then(realmResponseMapper).should(never()).toDomain(response2, region);
-
-        assertThat(results).containsExactly(dto1);
+            assertThatThrownBy(future::join)
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("unknown");
+        }
     }
 }

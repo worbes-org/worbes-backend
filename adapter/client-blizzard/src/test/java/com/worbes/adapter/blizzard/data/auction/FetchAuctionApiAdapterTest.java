@@ -6,6 +6,7 @@ import com.worbes.adapter.blizzard.data.shared.BlizzardResponseValidator;
 import com.worbes.application.auction.model.Auction;
 import com.worbes.application.realm.model.RegionType;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,116 +17,157 @@ import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class FetchAuctionApiAdapterTest {
 
-    private final RegionType region = RegionType.KR;
+    @Mock
+    BlizzardApiClient apiClient;
 
     @Mock
-    private BlizzardApiClient apiClient;
+    BlizzardApiUriFactory uriFactory;
 
     @Mock
-    private AuctionListResponseMapper auctionListResponseMapper;
-
-    @Mock
-    private CommodityListResponseMapper commodityListResponseMapper;
-
-    @Mock
-    private BlizzardResponseValidator blizzardResponseValidator;
-
-    @Mock
-    private BlizzardApiUriFactory uriFactory;
+    BlizzardResponseValidator validator;
 
     @InjectMocks
-    private FetchAuctionApiAdapter auctionFetcher;
+    FetchAuctionApiAdapter apiAdapter;
 
-    @Test
-    @DisplayName("경매장 URL을 생성하여 데이터를 fetch하고 매핑한다")
-    void shouldFetchAuctionsWithRealmId() {
-        Long realmId = 1234L;
-        URI expectedUri = URI.create("https://some.api/auction");
-        AuctionListResponse mockResponse = mock(AuctionListResponse.class);
-        AuctionListResponse.AuctionResponse auction1 = createAuctionResponse(1L, 100L, 10, 500L);
-        AuctionListResponse.AuctionResponse auction2 = createAuctionResponse(2L, 200L, 20, 1000L);
+    RegionType region = RegionType.KR;
+    Long realmId = 1234L;
+    URI auctionUri = URI.create("http://auction");
+    URI commodityUri = URI.create("http://commodity");
 
-        given(uriFactory.auctionUri(region, realmId)).willReturn(expectedUri);
-        given(apiClient.fetch(expectedUri, AuctionListResponse.class)).willReturn(mockResponse);
-        given(mockResponse.getAuctions()).willReturn(List.of(auction1, auction2));
-        given(blizzardResponseValidator.validate(auction1)).willReturn(auction1);
-        given(blizzardResponseValidator.validate(auction2)).willReturn(auction2);
+    @Nested
+    @DisplayName("Realm 경매장 조회 (realmId != null)")
+    class RealmAuctionTest {
 
-        Auction auctionDto1 = mock(Auction.class, "auctionDto1");
-        Auction auctionDto2 = mock(Auction.class, "auctionDto2");
-        given(auctionListResponseMapper.toDomain(region, realmId, auction1)).willReturn(auctionDto1);
-        given(auctionListResponseMapper.toDomain(region, realmId, auction2)).willReturn(auctionDto2);
+        @Test
+        @DisplayName("정상 케이스")
+        void fetchAuctionApi_success() {
+            AuctionItemResponse itemResponse = new AuctionItemResponse(111L, List.of(1L, 2L));
 
-        // when
-        List<Auction> results = auctionFetcher.fetchAuctions(region, realmId);
+            AuctionListResponse.AuctionResponse auctionResponse = new AuctionListResponse.AuctionResponse(
+                    1000L,
+                    10,
+                    5000L,
+                    4000L,
+                    itemResponse
+            );
 
-        // then
-        then(uriFactory).should().auctionUri(region, realmId);
-        then(apiClient).should().fetch(expectedUri, AuctionListResponse.class);
-        then(auctionListResponseMapper).should(times(2)).toDomain(eq(region), eq(realmId), any());
-        assertThat(results).containsExactly(auctionDto1, auctionDto2);
+            AuctionListResponse response = new AuctionListResponse(List.of(auctionResponse));
+
+            given(uriFactory.auctionUri(region, realmId)).willReturn(auctionUri);
+            given(apiClient.fetch(auctionUri, AuctionListResponse.class)).willReturn(response);
+            given(validator.validate(auctionResponse)).willReturn(auctionResponse);
+
+            List<Auction> result = apiAdapter.fetch(region, realmId);
+
+            assertThat(result).hasSize(1);
+            Auction auction = result.get(0);
+            assertThat(auction.getId()).isEqualTo(1000L);
+            assertThat(auction.getItemId()).isEqualTo(111L);
+            assertThat(auction.getItemBonus()).containsExactly(1L, 2L);
+            assertThat(auction.getPrice()).isEqualTo(5000L);
+            assertThat(auction.getQuantity()).isEqualTo(10);
+            assertThat(auction.getRegion()).isEqualTo(region);
+            assertThat(auction.getRealmId()).isEqualTo(realmId);
+
+            then(uriFactory).should().auctionUri(region, realmId);
+            then(apiClient).should().fetch(auctionUri, AuctionListResponse.class);
+            then(validator).should().validate(auctionResponse);
+        }
+
+        @Test
+        @DisplayName("경계 케이스 - 빈 리스트")
+        void fetchAuctionApi_empty() {
+            AuctionListResponse response = new AuctionListResponse(List.of());
+
+            given(uriFactory.auctionUri(region, realmId)).willReturn(auctionUri);
+            given(apiClient.fetch(auctionUri, AuctionListResponse.class)).willReturn(response);
+
+            List<Auction> result = apiAdapter.fetch(region, realmId);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("예외 케이스 - apiClient.fetch 예외 전파")
+        void fetchAuctionApi_exception() {
+            given(uriFactory.auctionUri(region, realmId)).willReturn(auctionUri);
+            given(apiClient.fetch(auctionUri, AuctionListResponse.class))
+                    .willThrow(new RuntimeException("API error"));
+
+            assertThatThrownBy(() -> apiAdapter.fetch(region, realmId))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("API error");
+        }
     }
 
-    @Test
-    @DisplayName("RegionType에 따른 CommodityList를 FetchCommodityResult 리스트로 변환한다")
-    void shouldFetchAndMapCommodities() {
-        // given
-        RegionType region = RegionType.KR;
-        URI fakeUri = URI.create("https://test.com/commodity");
-        Long id = 1001L;
-        Long itemId = 5555L;
-        Integer quantity = 30;
-        Long unitPrice = 12000L;
+    @Nested
+    @DisplayName("Commodity 경매장 조회 (realmId == null)")
+    class CommodityAuctionTest {
 
-        given(uriFactory.commodityUri(region)).willReturn(fakeUri);
+        @Test
+        @DisplayName("정상 케이스")
+        void fetchCommodityApi_success() {
+            AuctionItemResponse itemResponse = new AuctionItemResponse(222L, null);
 
-        CommodityListResponse.CommodityResponse commodityResponse = new CommodityListResponse.CommodityResponse();
-        commodityResponse.setId(id);
-        commodityResponse.setItemId(itemId);
-        commodityResponse.setQuantity(quantity);
-        commodityResponse.setUnitPrice(unitPrice);
+            CommodityListResponse.CommodityResponse commodityResponse = new CommodityListResponse.CommodityResponse(
+                    2000L,
+                    30,
+                    1500L,
+                    itemResponse
+            );
 
-        CommodityListResponse commodityListResponse = new CommodityListResponse();
-        commodityListResponse.setAuctions(List.of(commodityResponse));
+            CommodityListResponse response = new CommodityListResponse(List.of(commodityResponse));
 
-        given(apiClient.fetch(fakeUri, CommodityListResponse.class)).willReturn(commodityListResponse);
+            given(uriFactory.commodityUri(region)).willReturn(commodityUri);
+            given(apiClient.fetch(commodityUri, CommodityListResponse.class)).willReturn(response);
+            given(validator.validate(commodityResponse)).willReturn(commodityResponse);
 
-        given(blizzardResponseValidator.validate(commodityResponse)).willReturn(commodityResponse);
+            List<Auction> result = apiAdapter.fetch(region, null);
 
-        Auction expectedResult = mock(Auction.class);
-        given(commodityListResponseMapper.toDomain(region, commodityResponse)).willReturn(expectedResult);
+            assertThat(result).hasSize(1);
+            Auction auction = result.get(0);
+            assertThat(auction.getId()).isEqualTo(2000L);
+            assertThat(auction.getItemId()).isEqualTo(222L);
+            assertThat(auction.getPrice()).isEqualTo(1500L);
+            assertThat(auction.getQuantity()).isEqualTo(30);
+            assertThat(auction.getRegion()).isEqualTo(region);
+            assertThat(auction.getRealmId()).isNull();
 
-        // when
-        List<Auction> results = auctionFetcher.fetchCommodities(region);
+            then(uriFactory).should().commodityUri(region);
+            then(apiClient).should().fetch(commodityUri, CommodityListResponse.class);
+            then(validator).should().validate(commodityResponse);
+        }
 
-        // then
-        assertThat(results).hasSize(1);
-        Auction result = results.get(0);
-        // 추가적으로 Auction의 필드에 대한 검증이 필요하다면, mock 설정 및 검증을 추가하세요.
+        @Test
+        @DisplayName("경계 케이스 - 빈 리스트")
+        void fetchCommodityApi_empty() {
+            CommodityListResponse response = new CommodityListResponse(List.of());
 
-        // verify (optional)
-        then(uriFactory).should().commodityUri(region);
-        then(apiClient).should().fetch(fakeUri, CommodityListResponse.class);
-        then(commodityListResponseMapper).should().toDomain(region, commodityResponse);
-    }
+            given(uriFactory.commodityUri(region)).willReturn(commodityUri);
+            given(apiClient.fetch(commodityUri, CommodityListResponse.class)).willReturn(response);
 
-    private AuctionListResponse.AuctionResponse createAuctionResponse(Long id, Long itemId, Integer quantity, Long price) {
-        AuctionListResponse.AuctionResponse response = new AuctionListResponse.AuctionResponse();
-        response.setId(id);
-        response.setItemId(itemId);
-        response.setQuantity(quantity);
-        response.setBuyout(price);
+            List<Auction> result = apiAdapter.fetch(region, null);
 
-        return response;
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("예외 케이스 - apiClient.fetch 예외 전파")
+        void fetchCommodityApi_exception() {
+            given(uriFactory.commodityUri(region)).willReturn(commodityUri);
+            given(apiClient.fetch(commodityUri, CommodityListResponse.class))
+                    .willThrow(new RuntimeException("API error"));
+
+            assertThatThrownBy(() -> apiAdapter.fetch(region, null))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("API error");
+        }
     }
 }

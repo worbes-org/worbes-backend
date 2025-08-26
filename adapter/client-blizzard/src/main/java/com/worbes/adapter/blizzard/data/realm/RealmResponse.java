@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record RealmResponse(
@@ -25,7 +26,7 @@ public record RealmResponse(
         this(
                 id,
                 name,
-                connectedRealm != null ? connectedRealm.get("href") : null,
+                Optional.ofNullable(connectedRealm).map(m -> m.get("href")).orElse(null),
                 slug,
                 isTournament
         );

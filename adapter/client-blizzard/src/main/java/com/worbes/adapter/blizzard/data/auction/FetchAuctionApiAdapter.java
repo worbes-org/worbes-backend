@@ -17,8 +17,6 @@ import java.util.List;
 public class FetchAuctionApiAdapter implements FetchAuctionApiPort {
 
     private final BlizzardApiClient apiClient;
-    private final AuctionListResponseMapper auctionListResponseMapper;
-    private final CommodityListResponseMapper commodityListResponseMapper;
     private final BlizzardApiUriFactory uriFactory;
     private final BlizzardResponseValidator validator;
 
@@ -36,7 +34,17 @@ public class FetchAuctionApiAdapter implements FetchAuctionApiPort {
 
         return result.auctions().stream()
                 .map(validator::validate)
-                .map(response -> auctionListResponseMapper.toDomain(region, realmId, response))
+                .map(response -> Auction.builder()
+                        .id(response.id())
+                        .itemId(response.item().id())
+                        .itemBonus(response.item().bonusList())
+                        .buyout(response.buyout())
+                        .bid(response.bid())
+                        .quantity(response.quantity())
+                        .region(region)
+                        .realmId(realmId)
+                        .build()
+                )
                 .toList();
     }
 
@@ -46,7 +54,14 @@ public class FetchAuctionApiAdapter implements FetchAuctionApiPort {
 
         return result.auctions().stream()
                 .map(validator::validate)
-                .map(response -> commodityListResponseMapper.toDomain(region, response))
+                .map(response -> Auction.builder()
+                        .id(response.id())
+                        .itemId(response.item().id())
+                        .unitPrice(response.unitPrice())
+                        .quantity(response.quantity())
+                        .region(region)
+                        .build()
+                )
                 .toList();
     }
 }

@@ -21,6 +21,6 @@ public class CreateAuctionSnapshotService implements CreateAuctionSnapshotUseCas
             throw new IllegalArgumentException("region , time must not be null.");
         }
 
-        return saveAuctionSnapshotPort.save(region, realmId, time);
+        return saveAuctionSnapshotPort.saveAll(region, realmId, time);
     }
 }

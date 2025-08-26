@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.worbes.adapter.batch.auction.SyncAuctionParameters.*;
+import static com.worbes.adapter.batch.auction.SyncAuctionParameter.*;
 
 @Slf4j
 @Component

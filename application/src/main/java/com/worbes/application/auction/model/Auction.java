@@ -1,19 +1,16 @@
 package com.worbes.application.auction.model;
 
 import com.worbes.application.realm.model.RegionType;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Getter
+@AllArgsConstructor
 public class Auction implements Serializable {
 
     @Serial
@@ -25,29 +22,20 @@ public class Auction implements Serializable {
     private final Long price;
     private final RegionType region;
     private final List<Long> itemBonus;
-    @Setter
-    private Integer quantity;
-    @Setter
-    private Instant endedAt;
+    private final Integer quantity;
 
-    @Builder
-    public Auction(
-            Long id,
-            Long itemId,
-            Long realmId,
-            Integer quantity,
-            Long price,
-            RegionType region,
-            List<Long> itemBonus
-    ) {
-        this.id = id;
-        this.itemId = itemId;
-        this.realmId = realmId;
-        this.quantity = quantity;
-        this.price = price;
-        this.region = region;
-        this.endedAt = null;
-        this.itemBonus = Optional.ofNullable(itemBonus).orElse(Collections.emptyList());
+    private Auction(Builder builder) {
+        this.id = builder.id;
+        this.itemId = builder.itemId;
+        this.realmId = builder.realmId;
+        this.price = builder.price;
+        this.region = builder.region;
+        this.itemBonus = builder.itemBonus;
+        this.quantity = builder.quantity;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -60,5 +48,72 @@ public class Auction implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    public static class Builder {
+        private Long id;
+        private Long itemId;
+        private Long realmId;
+        private Long price;
+        private RegionType region;
+        private List<Long> itemBonus;
+        private Integer quantity;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder itemId(Long itemId) {
+            this.itemId = itemId;
+            return this;
+        }
+
+        public Builder realmId(Long realmId) {
+            this.realmId = realmId;
+            return this;
+        }
+
+        public Builder unitPrice(Long unitPrice) {
+            this.price = unitPrice;
+            return this;
+        }
+
+        public Builder buyout(Long buyout) {
+            this.price = buyout;
+            return this;
+        }
+
+        public Builder bid(Long bid) {
+            if (this.price == null) {
+                this.price = bid;
+            }
+            return this;
+        }
+
+        public Builder region(RegionType region) {
+            this.region = region;
+            return this;
+        }
+
+        public Builder itemBonus(List<Long> itemBonus) {
+            this.itemBonus = itemBonus;
+            return this;
+        }
+
+        public Builder quantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public Auction build() {
+            Objects.requireNonNull(id, "Auction ID cannot be null");
+            Objects.requireNonNull(itemId, "Item ID cannot be null");
+            Objects.requireNonNull(price, "Price cannot be null");
+            Objects.requireNonNull(region, "Region cannot be null");
+            Objects.requireNonNull(quantity, "Quantity cannot be null");
+
+            return new Auction(this);
+        }
     }
 }

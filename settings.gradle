@@ -2,8 +2,7 @@ rootProject.name = 'worbes'
 include 'application'
 
 include ':adapter:client-blizzard'
-include ':adapter:persistence-jpa'
-include ':adapter:persistence-mybatis'
+include ':adapter:persistence'
 include ':adapter:batch'
 include ':adapter:web'
 
