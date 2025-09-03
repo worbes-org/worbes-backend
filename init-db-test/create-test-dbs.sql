@@ -1,0 +1,2 @@
+CREATE DATABASE app_test;
+CREATE DATABASE batch_test;

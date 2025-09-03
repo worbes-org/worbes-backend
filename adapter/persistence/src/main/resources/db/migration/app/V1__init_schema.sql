@@ -17,9 +17,12 @@ create table if not exists public.auction
     realm_id   bigint,
     created_at timestamptz(0)
 );
+
+CREATE INDEX IF NOT EXISTS idx_auction_region_realm_item
+    on auction (region, realm_id, item_id);
+
 alter table public.auction
     owner to "worbes-admin";
-
 -- item 테이블
 create table if not exists public.item
 (
@@ -47,9 +50,11 @@ create table if not exists public.item
     updated_at     timestamp(0)
 );
 
+CREATE INDEX IF NOT EXISTS idx_item_class_subclass
+    ON item (class_id, subclass_id);
+
 alter table public.item
     owner to "worbes-admin";
-
 -- realm 테이블
 create table if not exists public.realm
 (
@@ -99,6 +104,9 @@ CREATE TABLE if not exists auction_snapshot
 );
 alter table auction_snapshot
     owner to "worbes-admin";
+
+CREATE INDEX IF NOT EXISTS idx_snapshot_latest
+    on auction_snapshot (region, realm_id, item_id, time desc);
 ---
 CREATE OR REPLACE VIEW auction_snapshot_with_item_view AS
 SELECT ash.id,

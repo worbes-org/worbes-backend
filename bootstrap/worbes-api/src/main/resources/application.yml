@@ -1,19 +1,19 @@
 spring:
   profiles:
-    active: local
+    active: api
     group:
-      local:
-        - local_db
+      api:
+        - db
         - jpa
         - mybatis
 ---
 spring:
   config:
     activate:
-      on-profile: local_db
+      on-profile: db
   datasource:
     app:
-      url: jdbc:postgresql://localhost:5432/app_local
+      url: ${SPRING_DATASOURCE_URL}
       username: ${POSTGRES_USER}
       password: ${POSTGRES_PASSWORD}
       driver-class-name: org.postgresql.Driver

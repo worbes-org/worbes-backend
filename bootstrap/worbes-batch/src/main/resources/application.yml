@@ -1,9 +1,9 @@
 spring:
   profiles:
-    active: local
+    active: worbes-batch
     group:
-      local:
-        - local_db
+      worbes-batch:
+        - db
         - jpa
         - batch
         - blizzard
@@ -12,10 +12,10 @@ spring:
 spring:
   config:
     activate:
-      on-profile: local_db
+      on-profile: db
   datasource:
     app:
-      url: jdbc:postgresql://localhost:5432/app_local
+      url: ${SPRING_DATASOURCE_URL}
       username: ${POSTGRES_USER}
       password: ${POSTGRES_PASSWORD}
       driver-class-name: org.postgresql.Driver
@@ -58,7 +58,7 @@ spring:
       on-profile: batch
   datasource:
     batch:
-      url: jdbc:postgresql://localhost:5432/batch_local
+      url: ${SPRING_BATCH_DATASOURCE_URL}
       username: ${POSTGRES_USER}
       password: ${POSTGRES_PASSWORD}
       driver-class-name: org.postgresql.Driver

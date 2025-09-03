@@ -6,12 +6,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worbes.application.item.model.ItemBonus;
 import com.worbes.application.item.port.in.CreateItemBonusUseCase;
+import com.worbes.application.item.port.out.ReadItemBonusPort;
 import com.worbes.application.item.port.out.SaveItemBonusPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +20,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CreateItemBonusService implements CreateItemBonusUseCase {
 
+    private final ReadItemBonusPort readItemBonusPort;
     private final SaveItemBonusPort saveItemBonusPort;
     private final ObjectMapper objectMapper;
 
     @Override
     public void execute(String filePath) {
-        try {
-            File file = new ClassPathResource(filePath).getFile();
+        if (readItemBonusPort.count() > 0) return;
+        try (var bonusStream = new ClassPathResource(filePath).getInputStream()) {
             TypeReference<Map<String, ItemBonusDto>> typeRef = new TypeReference<>() {
             };
-            Map<String, ItemBonusDto> map = objectMapper.readValue(file, typeRef);
+            Map<String, ItemBonusDto> map = objectMapper.readValue(bonusStream, typeRef);
 
             List<ItemBonus> itemBonuses = map.values().stream()
                     .map(b -> new ItemBonus(b.id(), b.name(), b.level(), b.baseLevel()))

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -24,12 +23,15 @@ public class ItemJsonLoader {
     @PostConstruct
     public void init() {
         try {
-            File bound = new ClassPathResource("/json/items.bound.json").getFile();
-            File unbound = new ClassPathResource("/json/items.unbound.json").getFile();
             TypeReference<Map<Long, ItemWowHeadApiResponse>> typeRef = new TypeReference<>() {
             };
-            responses = objectMapper.readValue(bound, typeRef);
-            responses.putAll(objectMapper.readValue(unbound, typeRef));
+
+            try (var boundStream = new ClassPathResource("json/items.bound.json").getInputStream();
+                 var unboundStream = new ClassPathResource("json/items.unbound.json").getInputStream()) {
+
+                responses = objectMapper.readValue(boundStream, typeRef);
+                responses.putAll(objectMapper.readValue(unboundStream, typeRef));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

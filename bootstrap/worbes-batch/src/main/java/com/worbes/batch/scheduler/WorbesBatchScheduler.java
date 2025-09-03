@@ -16,12 +16,12 @@ public class WorbesBatchScheduler {
     private final CreateItemJobRunner createItemJobRunner;
 
     @EventListener(ApplicationReadyEvent.class)
-//    @Scheduled(cron = "0 0 * * * *")
+    //    @Scheduled(cron = "0 0 * * * *")
     public void runSyncAuctionJob() {
         syncAuctionJobRunner.run(RegionType.KR);
     }
 
-    //    @EventListener(ApplicationReadyEvent.class)
+    //    @Scheduled(cron = "0 0 3 * * *")
     public void runCreateItemJob() {
         createItemJobRunner.run();
     }
