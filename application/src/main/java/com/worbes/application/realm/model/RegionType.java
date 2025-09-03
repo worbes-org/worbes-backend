@@ -16,4 +16,12 @@ public enum RegionType implements Serializable {
         this.value = value;
     }
 
+    public static RegionType fromValue(String value) {
+        for (RegionType region : values()) {
+            if (region.value.equalsIgnoreCase(value)) {
+                return region;
+            }
+        }
+        throw new IllegalArgumentException("Invalid region: " + value);
+    }
 }

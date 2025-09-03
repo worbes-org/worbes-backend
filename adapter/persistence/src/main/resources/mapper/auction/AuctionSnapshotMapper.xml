@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.worbes.adapter.persistence.mybatis.auction.AuctionSnapshotMapper">
+
+    <insert id="insertRealmSpecific">
+        INSERT INTO auction_snapshot (item_id,
+                                      time,
+                                      realm_id,
+                                      region,
+                                      lowest_price,
+                                      total_quantity,
+                                      item_bonus)
+
+        SELECT item_id,
+               #{time},
+               realm_id,
+               region,
+               MIN(price),
+               SUM(quantity),
+               item_bonus
+        FROM auction a
+        WHERE a.realm_id = #{realmId}
+          AND a.region = #{region}
+        GROUP BY item_id, item_bonus, realm_id, region
+    </insert>
+
+    <insert id="insertRegionWide">
+        INSERT INTO auction_snapshot (item_id,
+                                      time,
+                                      realm_id,
+                                      region,
+                                      lowest_price,
+                                      total_quantity,
+                                      item_bonus)
+        SELECT a.item_id,
+               #{time},
+               NULL,
+               #{region},
+               MIN(a.price),
+               SUM(a.quantity),
+               NULL
+        FROM auction a
+        WHERE a.realm_id IS NULL
+          AND a.region = #{region}
+        GROUP BY a.item_id, a.region
+    </insert>
+
+    <select id="findTrendsBy">
+        SELECT
+        ash.id,
+        ash.item_id AS itemId,
+        ash.item_bonus AS itemBonus,
+        ash.time AS time,
+        ash.lowest_price AS lowestPrice,
+        ash.total_quantity AS totalQuantity
+        FROM auction_snapshot ash
+        WHERE ash.item_id = #{query.itemId}
+        AND (realm_id IS NULL OR realm_id = #{query.realmId})
+        AND ash.region = #{query.region}
+        AND ash.time >= (CURRENT_TIMESTAMP - (#{query.daysAgo} || ' days')::interval)
+        <if test="query.itemBonus != null">
+            AND item_bonus @>
+            #{query.itemBonus, typeHandler=com.worbes.adapter.persistence.mybatis.handler.JsonbListTypeHandler}
+            AND jsonb_array_length(item_bonus) =
+            jsonb_array_length(#{query.itemBonus, typeHandler=com.worbes.adapter.persistence.mybatis.handler.JsonbListTypeHandler})
+        </if>
+        ORDER BY ash.time DESC
+    </select>
+
+</mapper>

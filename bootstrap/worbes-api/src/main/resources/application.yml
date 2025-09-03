@@ -1,0 +1,46 @@
+spring:
+  profiles:
+    active: api
+    group:
+      api:
+        - db
+        - jpa
+        - mybatis
+---
+spring:
+  config:
+    activate:
+      on-profile: db
+  datasource:
+    app:
+      url: ${SPRING_DATASOURCE_URL}
+      username: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      driver-class-name: org.postgresql.Driver
+---
+spring:
+  config:
+    activate:
+      on-profile: jpa
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        order_updates: true
+        format_sql: true
+        jdbc:
+          batch_size: 1000
+          #use_sql_comments: true
+          #generate_statistics: true
+        hbm2ddl:
+          auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+---
+spring:
+  config:
+    activate:
+      on-profile: mybatis
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

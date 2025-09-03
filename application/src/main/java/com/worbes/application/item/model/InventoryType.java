@@ -1,5 +1,8 @@
 package com.worbes.application.item.model;
 
+import lombok.Getter;
+
+@Getter
 public enum InventoryType {
     NON_EQUIP,
     HEAD,

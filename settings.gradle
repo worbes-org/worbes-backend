@@ -1,9 +1,11 @@
 rootProject.name = 'worbes'
 include 'application'
 
-include ':adapter:blizzard-client'
+include ':adapter:client-blizzard'
 include ':adapter:persistence'
 include ':adapter:batch'
+include ':adapter:web'
 
-include ':bootstrap:scheduler'
+include ':bootstrap:worbes-batch'
+include ':bootstrap:worbes-api'
 
