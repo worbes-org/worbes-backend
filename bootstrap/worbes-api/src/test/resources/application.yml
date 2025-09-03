@@ -3,9 +3,9 @@ spring:
     active: api_test
   datasource:
     app:
-      url: jdbc:postgresql://localhost:5432/app_test
-      username: ${POSTGRES_USER}
-      password: ${POSTGRES_PASSWORD}
+      url: jdbc:postgresql://localhost:5432/postgres
+      username: postgres
+      password: 1234
       driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true

@@ -1,7 +1,7 @@
 TRUNCATE
-    app_test.public.auction,
-    app_test.public.auction_snapshot,
-    app_test.public.item_bonus,
-    app_test.public.item,
-    app_test.public.realm
+    auction,
+    auction_snapshot,
+    item_bonus,
+    item,
+    realm
     RESTART IDENTITY CASCADE;
