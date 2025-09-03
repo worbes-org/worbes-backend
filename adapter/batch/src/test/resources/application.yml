@@ -3,7 +3,7 @@ spring:
     active: batch_test
   datasource:
     batch:
-      url: ${SPRING_BATCH_DATASOURCE_URL}
+      url: jdbc:postgresql://localhost:5432/batch_test
       username: ${POSTGRES_USER}
       password: ${POSTGRES_PASSWORD}
       driver-class-name: org.postgresql.Driver
