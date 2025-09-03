@@ -13,13 +13,12 @@ jobs:
         env:
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        volumes:
-          - ./init-db-test:/docker-entrypoint-initdb.d
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
