@@ -21,8 +21,6 @@ create table if not exists public.auction
 CREATE INDEX IF NOT EXISTS idx_auction_region_realm_item
     on auction (region, realm_id, item_id);
 
-alter table public.auction
-    owner to "worbes-admin";
 -- item 테이블
 create table if not exists public.item
 (
@@ -53,8 +51,6 @@ create table if not exists public.item
 CREATE INDEX IF NOT EXISTS idx_item_class_subclass
     ON item (class_id, subclass_id);
 
-alter table public.item
-    owner to "worbes-admin";
 -- realm 테이블
 create table if not exists public.realm
 (
@@ -72,9 +68,6 @@ create table if not exists public.realm
         unique (region, slug)
 );
 
-alter table public.realm
-    owner to "worbes-admin";
-
 ---
 CREATE TABLE if not exists item_bonus
 (
@@ -85,8 +78,7 @@ CREATE TABLE if not exists item_bonus
     created_at timestamp(0),
     updated_at timestamp(0)
 );
-alter table public.item_bonus
-    owner to "worbes-admin";
+
 ---
 CREATE TABLE if not exists auction_snapshot
 (
@@ -102,8 +94,6 @@ CREATE TABLE if not exists auction_snapshot
 --     CONSTRAINT fk_auction_snapshot_item_id
 --         FOREIGN KEY (item_id) REFERENCES item (id)
 );
-alter table auction_snapshot
-    owner to "worbes-admin";
 
 CREATE INDEX IF NOT EXISTS idx_snapshot_latest
     on auction_snapshot (region, realm_id, item_id, time desc);
