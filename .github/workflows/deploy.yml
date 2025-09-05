@@ -59,11 +59,11 @@ jobs:
       - name: Use Remote Context
         run: docker context use remote
 
-      # 8️⃣ init-db SQL 복사 (원격 서버 호스트 디렉토리)
-      - name: Copy init-db SQL to remote server
+      # 8️⃣ init-db SQL 복사 수정
+      - name: Copy init-db SQL using rsync
         run: |
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.PORT }} -o StrictHostKeyChecking=no \
-            ./init-db/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/worbes/dev/init-db/
+          rsync -avz -e "ssh -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no" \
+            ./init-db/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/worbes/dev/init-db/
 
       # 9️⃣ Docker Compose pull
       - name: Docker compose pull
