@@ -65,6 +65,7 @@ jobs:
           rsync -avz -e "ssh -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no" \
             ./init-db/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/srv/worbes/init-db/
 
+
       # 9️⃣ Docker Compose pull
       - name: Docker compose pull
         run: docker compose pull
