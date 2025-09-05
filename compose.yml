@@ -29,5 +29,5 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - /home/worbes/dev/data:/var/lib/postgresql/data
-      - /home/worbes/dev/init-db:/docker-entrypoint-initdb.d
+      - /srv/worbes/data:/var/lib/postgresql/data
+      - /srv/worbes/init-db:/docker-entrypoint-initdb.d
