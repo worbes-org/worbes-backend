@@ -278,46 +278,6 @@ erDiagram
 
 - [📄 API 명세서](./docs/api-spec.md)
 
-## API Examples
-
-아래 예시는 대표적인 조회 흐름을 보여줍니다. 상세 스펙은 하단 링크를 참고하세요.
-
-1) 아이템 트렌드 조회
-
-```bash
-curl "http://localhost:8080/api/auctions/trend?region=EU&realm=tauri&itemId=19019&days=7"
-```
-
-2) 아이템 검색
-
-```bash
-curl "http://localhost:8080/api/items/search?q=thunderfury&region=EU&realm=tauri&size=20"
-```
-
-3) 서버(Realm) 목록 조회
-
-```bash
-curl "http://localhost:8080/api/realms?region=EU"
-```
-
-## Observability / Operations
-
-- 로그: 구조화 로그(요청 ID/realm/itemId 포함), 레벨 가이드(Info/Warn/Error)
-- 메트릭: 배치 처리 건수/지연, API P95, 리트라이 성공률, 토큰 갱신 횟수
-- 리트라이/캐시: 지수 백오프, 토큰 캐시 TTL, 회로 차단기(필요 시)
-- 헬스체크: `/actuator/health`
-- 문서화: OpenAPI/Swagger(활성화 시 `/swagger-ui`)
-
-## Tests
-
-- 테스트 전략: 유즈케이스(도메인) 중심 단위 테스트 + 어댑터 통합 테스트
-- 커버리지 리포트: JaCoCo
-
-```bash
-./gradlew test jacocoTestReport
-# 보고서: build/reports/jacoco/test/html/index.html
-```
-
 ## Tech Stack & Rationale
 
 - Spring Boot, Spring Batch, JPA, MyBatis, Flyway, PostgreSQL
