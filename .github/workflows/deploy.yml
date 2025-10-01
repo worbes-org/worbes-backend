@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - dev
+    paths-ignore:
+      - 'readme.md'
+      - 'docs/**'
+      - 'http/**'
 
 jobs:
   Deploy:
