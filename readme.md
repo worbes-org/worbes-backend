@@ -4,8 +4,6 @@
 
 ## TOC
 
----
-
 - [Impact](#impact)
 - [Demo](#demo)
 - [Problem–Solution–Result](#problemsolutionresult)
@@ -27,16 +25,12 @@
 
 ## Impact
 
----
-
 - 일일 동기화 규모: 1.0M 레코드/일(최근 7일 평균)
 - 주요 API 지연: P95 430ms(트렌드 조회, 최근 1분 부하)
 - 배치 안정성: 실패율 0.3%(최근 14일)
 - 데이터 범위: KR 18개 Realm, 14일 이력
 
 ## Problem–Solution–Result
-
----
 
 1) 실시간 조회 vs 이력 분석 충돌
 
@@ -58,8 +52,6 @@
 
 ## Versions
 
----
-
 Worbes는 GitHub Releases를 통해 버전을 관리하며, 현재 사이트의 버전은 Releases 페이지에서 확인할 수 있습니다.
 
 ### Numbering
@@ -76,8 +68,6 @@ Worbes는 GitHub Releases를 통해 버전을 관리하며, 현재 사이트의 
     - Application-Adapter 분리, Gradle 멀티 모듈 구조 적용
 
 ## Roadmap
-
----
 
 향후 Worbes에 추가될 기능 및 개선 사항입니다. 순서나 일정은 유동적이며, 완료 시 업데이트됩니다.
 
@@ -108,8 +98,6 @@ Worbes는 GitHub Releases를 통해 버전을 관리하며, 현재 사이트의 
 - 코드 리팩터링 및 모듈 의존성 개선
 
 ## Architecture
-
----
 
 ### Overview
 
@@ -226,8 +214,6 @@ UseCase는 Blizzard Client Adapter를 사용해 외부 Blizzard API에서 최신
 
 ## DB
 
----
-
 ```mermaid
 erDiagram
     ITEM ||--o{ AUCTION: "item_id"
@@ -245,8 +231,6 @@ erDiagram
 - 가장 많이 발생하는 쿼리(특정 서버의 특정 아이템 최신가 조회)에 맞춰 **인덱스를 최적화**.
 - Trade-off: 정규화를 통해 무결성을 강화하는 대신, 일부 필드는 JSONB로 저장하여 **확장성과 다국어 지원**을 선택.
 
----
-
 ### 테이블 요약
 
 | 테이블                    | 용도           | 설계 의도                                                                                    |
@@ -256,8 +240,6 @@ erDiagram
 | **`item`**             | 아이템 메타데이터    | 이름은 다국어 지원을 위해 JSONB로 저장. 클래스/서브클래스는 정형 스키마로 유지하여 조회 효율성 확보.                             |
 | **`item_bonus`**       | 아이템 보너스 속성   | 수천 개의 보너스 ID와 가변적 구조를 별도 테이블로 분리. `auction_snapshot`와 조인하여 확장 가능.                        |
 | **`realm`**            | 서버(Realm) 정보 | 동일 서버명이 지역마다 중복될 수 있어 `(region, slug)` 유니크 제약조건으로 전역 충돌 방지.                              |
-
----
 
 ### 설계 과정에서 고려한 문제와 해결
 
@@ -296,11 +278,7 @@ erDiagram
 
 - [📄 API 명세서](./docs/api-spec.md)
 
----
-
 ## API Examples
-
----
 
 아래 예시는 대표적인 조회 흐름을 보여줍니다. 상세 스펙은 하단 링크를 참고하세요.
 
@@ -324,8 +302,6 @@ curl "http://localhost:8080/api/realms?region=EU"
 
 ## Observability / Operations
 
----
-
 - 로그: 구조화 로그(요청 ID/realm/itemId 포함), 레벨 가이드(Info/Warn/Error)
 - 메트릭: 배치 처리 건수/지연, API P95, 리트라이 성공률, 토큰 갱신 횟수
 - 리트라이/캐시: 지수 백오프, 토큰 캐시 TTL, 회로 차단기(필요 시)
@@ -333,8 +309,6 @@ curl "http://localhost:8080/api/realms?region=EU"
 - 문서화: OpenAPI/Swagger(활성화 시 `/swagger-ui`)
 
 ## Tests
-
----
 
 - 테스트 전략: 유즈케이스(도메인) 중심 단위 테스트 + 어댑터 통합 테스트
 - 커버리지 리포트: JaCoCo
@@ -345,8 +319,6 @@ curl "http://localhost:8080/api/realms?region=EU"
 ```
 
 ## Tech Stack & Rationale
-
----
 
 - Spring Boot, Spring Batch, JPA, MyBatis, Flyway, PostgreSQL
 - JPA vs MyBatis 사용 기준

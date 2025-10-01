@@ -8,8 +8,6 @@ Worbes 프로젝트에서 제공하는 API 스펙입니다.
 - 서버(Realm) 조회 API
 - 모든 요청/응답은 JSON 형식
 
----
-
 # 1. Auction Search API
 
 ## 개요
@@ -58,18 +56,21 @@ Worbes 프로젝트에서 제공하는 API 스펙입니다.
     "pageSize": 100,
     "offset": 0,
     "paged": true,
-    "unpaged": false},
+    "unpaged": false
+  },
   "size": 100,
   "number": 0,
-  "sort": { "empty": true, "sorted": false, "unsorted": true },
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
   "first": true,
   "last": false,
   "numberOfElements": 1,
   "empty": false
-  }
+}
 ```
-
----
 
 # 2. Auction Detail API
 
@@ -150,8 +151,6 @@ Worbes 프로젝트에서 제공하는 API 스펙입니다.
 | `stats.trends.time`           | Instant            | 시점                             |
 | `stats.trends.lowest_price`   | Long               | 해당 시점 최저가                      |
 | `stats.trends.total_quantity` | Integer            | 해당 시점 총 수량                     |
-
----
 
 # 3. Realm List API
 
