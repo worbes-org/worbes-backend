@@ -1,2 +1,0 @@
-CREATE DATABASE app_dev;
-CREATE DATABASE batch_dev;
