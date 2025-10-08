@@ -26,7 +26,6 @@
 ## Impact
 
 - 일일 동기화 규모: 1.0M 레코드/일(최근 7일 평균)
-- 주요 API 지연: P95 430ms(트렌드 조회, 최근 1분 부하)
 - 배치 안정성: 실패율 0.3%(최근 14일)
 - 데이터 범위: KR 18개 Realm, 14일 이력
 
@@ -278,13 +277,12 @@ erDiagram
 
 - [📄 API 명세서](./docs/api-spec.md)
 
-## Tech Stack & Rationale
+## Tech Stack
 
 - Spring Boot, Spring Batch, JPA, MyBatis, Flyway, PostgreSQL
 - JPA vs MyBatis 사용 기준
     - JPA: 단순 CRUD, 엔티티 중심 트랜잭션, 캐시 이점 활용
     - MyBatis: 복잡 조회, 대량 처리/튜닝이 필요한 SQL, DB 특화 기능 활용
-- 멀티 모듈/헥사고날: `application`과 `adapter` 경계로 교체 용이성 확보
 
 
 

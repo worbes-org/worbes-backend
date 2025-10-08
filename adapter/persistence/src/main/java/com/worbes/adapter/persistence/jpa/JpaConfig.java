@@ -4,7 +4,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -23,8 +22,8 @@ import javax.sql.DataSource;
 @EnableJpaAuditing
 @EnableJpaRepositories(
         basePackages = "com.worbes.adapter.persistence.jpa",
-        entityManagerFactoryRef = "appEntityManagerFactory",
-        transactionManagerRef = "appTransactionManager"
+        entityManagerFactoryRef = "entityManagerFactory",
+        transactionManagerRef = "transactionManager"
 )
 @EnableConfigurationProperties(JpaProperties.class)
 @RequiredArgsConstructor
@@ -33,20 +32,19 @@ public class JpaConfig {
     private final JpaProperties jpaProperties;
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean appEntityManagerFactory(
-            @Qualifier("appDataSource") DataSource dataSource,
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource,
             EntityManagerFactoryBuilder builder
     ) {
         return builder.dataSource(dataSource)
                 .packages("com.worbes.adapter.persistence.jpa")
-                .persistenceUnit("app")
                 .properties(jpaProperties.getProperties())
                 .build();
     }
 
     @Primary
     @Bean
-    public PlatformTransactionManager appTransactionManager(EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
