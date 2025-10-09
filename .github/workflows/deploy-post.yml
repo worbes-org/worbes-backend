@@ -9,9 +9,13 @@ on:
 
 jobs:
   deploy:
+    environment: dev
     runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Create .env file
         run: echo "${{ secrets.APP_ENV }}" > .env
 
@@ -37,3 +41,7 @@ jobs:
 
       - name: Docker compose up
         run: docker compose up -d
+
+      - name: Clean up runner workspace
+        if: always()
+        run: rm -rf $GITHUB_WORKSPACE/*
