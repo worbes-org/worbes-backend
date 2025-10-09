@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - dev
-
+    paths-ignore:
+      - 'readme.md'
+      - 'docs/**'
+      - 'http/**'
+      - '**.md'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
