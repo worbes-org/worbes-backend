@@ -1,6 +1,8 @@
 HELP.md
+.env
 .gradle
 build/
+**/bin/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -16,3 +18,7 @@ out/
 
 ### VSCODE ###
 .vscode
+webapp
+
+### Cursor ###
+.cursor

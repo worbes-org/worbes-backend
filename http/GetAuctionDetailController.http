@@ -1,0 +1,12 @@
+### 재료 아이템 검색
+GET http://localhost:8080/api/v1/auctions/210930?region=KR&realmId=205
+Accept: application/json
+
+### 장비 아이템 검색
+GET http://localhost:8080/api/v1/auctions/224114?region=KR&realmId=205
+Accept: application/json
+
+### 장비 아이템 아이템 보너스로 검색
+GET http://localhost:8080/api/v1/auctions/224114?region=KR&realmId=205&itemBonus=10827:10830:9632
+Accept: application/json
+

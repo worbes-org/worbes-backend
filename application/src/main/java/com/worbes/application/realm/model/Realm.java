@@ -1,7 +1,6 @@
 package com.worbes.application.realm.model;
 
 import com.worbes.application.common.model.LocalizedName;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
@@ -16,8 +15,13 @@ public class Realm {
     private final LocalizedName name;
     private final String slug;
 
-    @Builder
-    private Realm(Long id, Long connectedRealmId, RegionType region, Map<String, String> name, String slug) {
+    public Realm(
+            Long id,
+            Long connectedRealmId,
+            RegionType region,
+            Map<String, String> name,
+            String slug
+    ) {
         this.id = id;
         this.connectedRealmId = connectedRealmId;
         this.region = region;

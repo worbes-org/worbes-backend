@@ -1,0 +1,74 @@
+spring:
+  profiles:
+    active: worbes-batch
+    group:
+      worbes-batch:
+        - db
+        - jpa
+        - batch
+        - blizzard
+        - mybatis
+---
+spring:
+  config:
+    activate:
+      on-profile: db
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false
+---
+spring:
+  config:
+    activate:
+      on-profile: jpa
+  jpa:
+    show-sql: false # JPA/Hibernate가 실행하는 SQL 쿼리를 콘솔에 출력
+    properties:
+      hibernate:
+        order_updates: true
+        format_sql: true # 쿼리를 보기 좋게 정렬
+        jdbc:
+          batch_size: 1000
+          #use_sql_comments: true # (선택) SQL에 주석 표시
+          #generate_statistics: true #배치 적용 됐는지 확인할 수 있는 통계 제공 옵션
+        hbm2ddl:
+          auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+---
+spring:
+  config:
+    activate:
+      on-profile: blizzard
+  cache:
+    caffeine:
+      spec: expireAfterWrite=86399s
+blizzard:
+  api:
+    token-url: https://oauth.battle.net/token
+    id: ${BLIZZARD_CLIENT_ID}
+    secret: ${BLIZZARD_CLIENT_SECRET}
+    token-key: "worbes:blizzard:access-token"
+---
+spring:
+  config:
+    activate:
+      on-profile: batch
+  batch:
+    job:
+      enabled: false
+---
+spring:
+  config:
+    activate:
+      on-profile: mybatis
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.worbes.adapter.persistence.mybatis.handler

@@ -1,0 +1,13 @@
+services:
+  worbes-api:
+    container_name: worbes-api
+    image: aprileaf/worbes-api:latest
+    ports:
+      - 8080:8080
+    env_file: .env
+
+  worbes-batch:
+    container_name: worbes-batch
+    image: aprileaf/worbes-batch:latest
+    env_file: .env
+
