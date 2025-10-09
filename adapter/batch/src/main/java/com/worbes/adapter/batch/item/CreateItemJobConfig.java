@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 @Configuration
-public class BatchCreateItemJobConfig {
+public class CreateItemJobConfig {
 
     @Bean
     public Job createItemJob(

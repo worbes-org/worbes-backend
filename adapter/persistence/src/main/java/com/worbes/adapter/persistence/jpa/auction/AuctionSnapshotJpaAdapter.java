@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.worbes.adapter.persistence.jpa.item.QItemEntity;
 import com.worbes.application.auction.model.AuctionSnapshot;
 import com.worbes.application.auction.port.in.SearchAuctionSummaryQuery;
+import com.worbes.application.auction.port.out.DeleteAuctionSnapshotPort;
 import com.worbes.application.auction.port.out.FindAuctionSnapshotPort;
 import com.worbes.application.item.model.Item;
 import com.worbes.application.realm.model.RegionType;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class AuctionSnapshotJpaAdapter implements FindAuctionSnapshotPort {
+public class AuctionSnapshotJpaAdapter implements FindAuctionSnapshotPort, DeleteAuctionSnapshotPort {
 
     private static final int MIN_ITEM_LEVEL = 1;
     private static final int MAX_ITEM_LEVEL = 999;
@@ -76,5 +77,22 @@ public class AuctionSnapshotJpaAdapter implements FindAuctionSnapshotPort {
         return fetched.stream()
                 .map(AuctionSnapshotWithItemView::toDomain)
                 .toList();
+    }
+
+    /**
+     * 한 달(30일) 이전 snapshot 데이터를 삭제합니다.
+     *
+     * @return 삭제된 행 수
+     */
+    public long deleteOlderThanOneMonth() {
+        final long DAYS_30 = 30L * 24 * 60 * 60; // 30일을 초 단위로 상수화
+        Instant cutoff = Instant.now().minusSeconds(DAYS_30);
+
+        QAuctionSnapshotEntity auctionSnapshot = QAuctionSnapshotEntity.auctionSnapshotEntity;
+
+        return queryFactory
+                .delete(auctionSnapshot)
+                .where(auctionSnapshot.time.lt(cutoff))
+                .execute();
     }
 }

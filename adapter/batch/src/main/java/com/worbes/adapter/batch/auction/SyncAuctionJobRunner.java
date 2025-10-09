@@ -26,16 +26,16 @@ public class SyncAuctionJobRunner {
 
     private final GetConnectedRealmIdUseCase getConnectedRealmUseCase;
     private final Job job;
-    private final JobLauncher asyncJobLauncher;
+    private final JobLauncher jobLauncher;
 
     public SyncAuctionJobRunner(
             GetConnectedRealmIdUseCase getConnectedRealmUseCase,
             @Qualifier("auctionSyncJob") Job job,
-            JobLauncher asyncJobLauncher
+            JobLauncher jobLauncher
     ) {
         this.getConnectedRealmUseCase = getConnectedRealmUseCase;
         this.job = job;
-        this.asyncJobLauncher = asyncJobLauncher;
+        this.jobLauncher = jobLauncher;
     }
 
     public void run(RegionType region) {
@@ -45,7 +45,7 @@ public class SyncAuctionJobRunner {
 
     private void run(JobParameters params) {
         try {
-            asyncJobLauncher.run(job, params);
+            jobLauncher.run(job, params);
         } catch (JobExecutionAlreadyRunningException |
                  JobRestartException |
                  JobInstanceAlreadyCompleteException |

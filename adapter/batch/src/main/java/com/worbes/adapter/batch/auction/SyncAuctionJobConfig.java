@@ -18,7 +18,7 @@ public class SyncAuctionJobConfig {
     @Bean
     public Job auctionSyncJob(
             JobRepository jobRepository,
-            @Qualifier("fetchAuctionStep") Step fetchStep,
+            @Qualifier("deleteAuctionSnapshotStep") Step fetchStep,
             @Qualifier("deleteAuctionStep") Step deleteStep,
             @Qualifier("createAuctionStep") Step createStep,
             @Qualifier("createAuctionSnapshotStep") Step createSnapshotStep
