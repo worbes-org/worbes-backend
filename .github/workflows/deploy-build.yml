@@ -3,7 +3,7 @@ name: Deploy Worbes Build
 on:
   push:
     branches:
-      - dev
+      - main
     paths-ignore:
       - 'readme.md'
       - 'docs/**'
