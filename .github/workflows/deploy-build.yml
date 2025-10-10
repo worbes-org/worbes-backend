@@ -3,8 +3,12 @@ name: Deploy Worbes Build
 on:
   push:
     branches:
-      - dev
-
+      - main
+    paths-ignore:
+      - 'readme.md'
+      - 'docs/**'
+      - 'http/**'
+      - '**.md'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
