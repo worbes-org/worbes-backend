@@ -50,10 +50,10 @@ jobs:
         run: docker compose pull
 
       - name: Docker compose up
-        run: docker compose --env-file ${{ runner.temp }}/.env up -d
+        run: docker compose up -d
 
       - name: Clean up runner workspace
         if: always()
         run: |
-          cd $GITHUB_WORKSPACE/..
-          rm -rf $GITHUB_WORKSPACE
+          shopt -s dotglob
+          rm -rf $GITHUB_WORKSPACE/*
