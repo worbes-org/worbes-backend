@@ -5,7 +5,7 @@ on:
     workflows: [ "Deploy Worbes Build" ]
     types: [ completed ]
     branches:
-      - dev
+      - main
 
 jobs:
   deploy:
