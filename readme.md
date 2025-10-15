@@ -35,19 +35,16 @@
 
 - 문제: 최신 조회 성능과 장기 이력 분석 요구가 상충
 - 해결: 실시간 `auction` / 이력 `auction_snapshot` 테이블 분리, 복합 인덱스 최적화
-- 결과: <채워주세요 예: 최신가 조회 P95 1.9x 개선, 쓰기 비용은 청크 커밋으로 상쇄>
 
 2) 외부 API 토큰 만료/실패 처리
 
 - 문제: Blizzard 토큰 만료/레이트리밋으로 간헐 실패
 - 해결: 토큰 캐시+자동 갱신, 지수 백오프 리트라이, 실패 시 안전한 재시도 전략
-- 결과: <채워주세요 예: 재시도 후 성공률 99.6%, 사용자 영향 최소화>
 
 3) 대량 적재와 읽기 분리
 
 - 문제: 대량 적재 시 읽기 지연 증가
 - 해결: 배치 청크/커밋 간격 튜닝, 인덱스 설계, JPA+MyBatis 선택적 사용
-- 결과: <채워주세요 예: 적재 처리량 3.1x, API P95 35% 개선>
 
 ## Versions
 
@@ -181,8 +178,6 @@ sequenceDiagram
 UseCase는 Persistence Adapter를 통해 DB에서 트렌드 데이터를 조회하고, 도메인 객체(AuctionTrendStatistics)로 평균/중앙값 등 통계를 계산합니다.
 최종적으로 GetAuctionTrendResult 응답 모델로 변환되어 클라이언트에 반환됩니다.
 
-👉 비즈니스 로직은 UseCase에 집중되고, 인프라 의존성은 Adapter로 분리된 구조를 보여줍니다.
-
 2. **경매 배치 저장 유즈케이스**
 
 ```mermaid
@@ -208,8 +203,6 @@ sequenceDiagram
 스케줄러에 의해 Batch Module이 실행되면, Batch Adapter를 통해 SyncAuctionUseCase가 호출됩니다.
 UseCase는 Blizzard Client Adapter를 사용해 외부 Blizzard API에서 최신 경매 데이터를 가져오고, 이를 Persistence Adapter를 통해 DB에 저장합니다.
 저장 완료 후 결과가 상위 모듈로 전달되어 동기화 Job의 성공/실패 여부를 보고합니다.
-
-👉 Batch 처리에서도 핵심 비즈니스 로직은 UseCase가 담당하고, 외부 API 호출·DB 저장은 Adapter로 위임되는 구조임을 보여줍니다.
 
 ## DB
 
