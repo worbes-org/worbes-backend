@@ -28,7 +28,7 @@ jobs:
       - name: Check if remote docker context exists
         id: check-context
         run: |
-          if docker context inspect remote >/dev/null 2>&1; then
+          if docker context inspect remote > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -51,6 +51,9 @@ jobs:
 
       - name: Docker compose up
         run: docker compose up -d
+
+      - name: Remove unused Docker images
+        run: docker image prune -af
 
       - name: Clean up runner workspace
         if: always()
