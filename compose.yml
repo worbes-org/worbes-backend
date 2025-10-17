@@ -1,13 +1,23 @@
 services:
   worbes-api:
-    container_name: worbes-api
-    image: aprileaf/worbes-api:latest
+    container_name: worbes-api-local
+    image: worbes-api:local
     ports:
       - 8080:8080
-    env_file: .env
+    env_file: .env.local
+    depends_on:
+      - worbes-db
 
   worbes-batch:
-    container_name: worbes-batch
-    image: aprileaf/worbes-batch:latest
-    env_file: .env
+    container_name: worbes-batch-local
+    image: worbes-batch:local
+    env_file: .env.local
+    depends_on:
+      - worbes-db
 
+  worbes-db:
+    container_name: worbes-db-local
+    image: postgres:17.3
+    env_file: .env.local
+    ports:
+      - 5432:5432
