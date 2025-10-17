@@ -52,7 +52,7 @@ public class SearchAuctionController {
                 )
         );
         if (items.isEmpty()) return new SliceImpl<>(List.of(), pageable, false);
-        log.debug("[AuctionSearch] Searching for items: {}", items);
+        
         List<SearchAuctionResponse> result = searchAuctionUseCase.execute(
                         new SearchAuctionSummaryQuery(
                                 request.region(),
