@@ -1,11 +1,9 @@
 spring:
   profiles:
-    active: api
+    active: local
     group:
-      api:
-        - db
-        - jpa
-        - mybatis
+      local: [ db, jpa, mybatis ]
+      dev: [ db, jpa, mybatis ]
 ---
 spring:
   config:
@@ -19,7 +17,6 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    clean-disabled: false
 ---
 spring:
   config:
@@ -30,11 +27,8 @@ spring:
     properties:
       hibernate:
         order_updates: true
-        format_sql: true
         jdbc:
           batch_size: 1000
-          #use_sql_comments: true
-          #generate_statistics: true
         hbm2ddl:
           auto: none
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -47,3 +41,13 @@ mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
+---
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    path: /api-docs
+    enabled: true

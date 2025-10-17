@@ -8,7 +8,7 @@ on:
       - 'docs/**'
       - 'http/**'
       - '**.md'
-      - '.github/**'
+
 jobs:
   Integration:
     runs-on: ubuntu-latest

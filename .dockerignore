@@ -4,7 +4,7 @@
 .github
 .gradle
 .idea
-.env
+.env.local
 .dockerignore
 .gitattributes
 .gitignore
