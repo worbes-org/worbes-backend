@@ -2,13 +2,13 @@ name: Integration Test
 
 on:
   pull_request:
-    branches: [ dev ]
+    branches: [ dev/** ]
     paths-ignore:
       - 'readme.md'
       - 'docs/**'
       - 'http/**'
       - '**.md'
-      - '.github/**'
+
 jobs:
   Integration:
     runs-on: ubuntu-latest

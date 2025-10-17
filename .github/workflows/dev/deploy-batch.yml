@@ -1,0 +1,102 @@
+name: Deploy Batch (Dev)
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'application/**'
+      - 'adapter/persistence/**'
+      - 'adapter/batch/**'
+      - 'adapter/client-blizzard/**'
+      - 'bootstrap/worbes-batch/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+    paths-ignore:
+      - 'readme.md'
+      - 'docs/**'
+      - 'http/**'
+      - '**.md'
+jobs:
+  deploy-batch:
+    runs-on: ubuntu-latest
+    steps:
+      # 빌드 & 푸시
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: aprileaf/worbes-batch:dev
+          file: ./bootstrap/worbes-batch/Dockerfile
+          cache-from: type=registry,ref=aprileaf/worbes-batch:buildcache
+          cache-to: type=registry,ref=aprileaf/worbes-batch:buildcache,mode=max
+
+  deploy:
+    needs: deploy-batch
+    if: success()
+    environment: dev
+    runs-on: self-hosted
+    steps:
+      - name: Checkout compose.dev.yml
+        with:
+          sparse-checkout: |
+            compose.dev.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Create .env
+        run: echo "${{ secrets.ENV }}" > .env.dev
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Check if remote docker context exists
+        id: check-context
+        run: |
+          if docker context inspect remote > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up docker context over SSH authentication
+        if: steps.check-context.outputs.exists == 'false'
+        uses: amirmarmul/docker-context-ssh-action@v2.1.3
+        with:
+          ssh-host: ${{ secrets.HOST }}
+          ssh-username: ${{ secrets.USERNAME }}
+          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+          ssh-port: ${{ secrets.PORT }}
+
+      - name: Use Remote Context
+        run: docker context use remote
+
+      - name: Docker compose pull
+        run: docker compose pull worbes-batch
+
+      - name: Docker compose up
+        run: docker compose up -d worbes-batch
+
+      - name: Remove unused Docker images
+        run: docker image prune -af
+
+      - name: Clean up runner workspace
+        if: always()
+        run: |
+          shopt -s dotglob
+          rm -rf $GITHUB_WORKSPACE/*

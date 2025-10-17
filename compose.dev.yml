@@ -1,0 +1,13 @@
+services:
+  worbes-api:
+    container_name: worbes-api-dev
+    image: aprileaf/worbes-api:dev
+    ports:
+      - 8080:8080
+    env_file: .env.dev
+
+  worbes-batch:
+    container_name: worbes-batch-dev
+    image: aprileaf/worbes-batch:dev
+    env_file: .env.dev
+
