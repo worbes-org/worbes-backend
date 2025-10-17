@@ -51,6 +51,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout compose.dev.yml
+        uses: actions/checkout@v4
         with:
           sparse-checkout: |
             compose.dev.yml
