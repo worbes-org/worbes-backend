@@ -12,11 +12,6 @@ on:
       - 'bootstrap/worbes-batch/**'
       - 'build.gradle'
       - 'settings.gradle'
-    paths-ignore:
-      - 'readme.md'
-      - 'docs/**'
-      - 'http/**'
-      - '**.md'
 jobs:
   deploy-batch:
     runs-on: ubuntu-latest
