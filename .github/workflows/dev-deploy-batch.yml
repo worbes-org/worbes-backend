@@ -86,10 +86,10 @@ jobs:
         run: docker context use remote
 
       - name: Docker compose pull
-        run: docker compose pull worbes-batch
+        run: docker compose -f compose.dev.yml pull worbes-batch
 
       - name: Docker compose up
-        run: docker compose up -d worbes-batch
+        run: docker compose -f compose.dev.yml up -d worbes-batch
 
       - name: Remove unused Docker images
         run: docker image prune -af
