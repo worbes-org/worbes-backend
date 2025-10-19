@@ -43,33 +43,34 @@ public class AuctionSnapshotJpaAdapter implements FindAuctionSnapshotPort, Delet
         long offset = query.pageInfo().offset();
         int pagedSize = query.pageInfo().pageSize();
 
-        QAuctionSnapshotWithItemView ash = QAuctionSnapshotWithItemView.auctionSnapshotWithItemView;
+        QAuctionSnapshotEntity qAuctionSnapshotEntity = QAuctionSnapshotEntity.auctionSnapshotEntity;
+        QAuctionSnapshotWithItemView view = QAuctionSnapshotWithItemView.auctionSnapshotWithItemView;
         QItemEntity item = QItemEntity.itemEntity;
 
         JPQLQuery<Instant> timeConditionSubquery = JPAExpressions
-                .select(ash.time.max())
-                .from(ash)
+                .select(qAuctionSnapshotEntity.time.max())
+                .from(qAuctionSnapshotEntity)
                 .where(
-                        ash.realmId.eq(realmId),
-                        ash.region.eq(region)
+                        qAuctionSnapshotEntity.realmId.eq(realmId),
+                        qAuctionSnapshotEntity.region.eq(region)
                 );
 
         BooleanExpression itemLevelCondition = new CaseBuilder()
-                .when(ash.baseLevel.isNotNull())
-                .then(ash.baseLevel.add(ash.bonusLevel.coalesce(0)))
-                .otherwise(item.level.add(ash.bonusLevel.coalesce(0)))
+                .when(view.baseLevel.isNotNull())
+                .then(view.baseLevel.add(view.bonusLevel.coalesce(0)))
+                .otherwise(item.level.add(view.bonusLevel.coalesce(0)))
                 .between(minItemLevel, maxItemLevel);
 
-        List<AuctionSnapshotWithItemView> fetched = queryFactory.selectFrom(ash)
-                .join(ash.item, item).fetchJoin()
+        List<AuctionSnapshotWithItemView> fetched = queryFactory.selectFrom(view)
+                .join(view.item, item).fetchJoin()
                 .where(
-                        ash.item.id.in(itemIds),
-                        ash.realmId.isNull().or(ash.realmId.eq(realmId)),
-                        ash.region.eq(region),
-                        ash.time.eq(timeConditionSubquery),
+                        view.item.id.in(itemIds),
+                        view.realmId.isNull().or(view.realmId.eq(realmId)),
+                        view.region.eq(region),
+                        view.time.eq(timeConditionSubquery),
                         itemLevelCondition
                 )
-                .orderBy(ash.item.id.desc())
+                .orderBy(view.item.id.desc())
                 .offset(offset)
                 .limit(pagedSize + 1)
                 .fetch();
