@@ -43,34 +43,34 @@ public class AuctionSnapshotJpaAdapter implements FindAuctionSnapshotPort, Delet
         long offset = query.pageInfo().offset();
         int pagedSize = query.pageInfo().pageSize();
 
-        QAuctionSnapshotEntity qAuctionSnapshotEntity = QAuctionSnapshotEntity.auctionSnapshotEntity;
-        QAuctionSnapshotWithItemView view = QAuctionSnapshotWithItemView.auctionSnapshotWithItemView;
-        QItemEntity item = QItemEntity.itemEntity;
-
+        QAuctionSnapshotEntity snapshotEntity = QAuctionSnapshotEntity.auctionSnapshotEntity;
         JPQLQuery<Instant> timeConditionSubquery = JPAExpressions
-                .select(qAuctionSnapshotEntity.time.max())
-                .from(qAuctionSnapshotEntity)
+                .select(snapshotEntity.time.max())
+                .from(snapshotEntity)
                 .where(
-                        qAuctionSnapshotEntity.realmId.eq(realmId),
-                        qAuctionSnapshotEntity.region.eq(region)
+                        snapshotEntity.realmId.eq(realmId),
+                        snapshotEntity.region.eq(region)
                 );
 
+        QAuctionSnapshotWithItemView snapshotView = QAuctionSnapshotWithItemView.auctionSnapshotWithItemView;
+        QItemEntity itemEntity = QItemEntity.itemEntity;
+
         BooleanExpression itemLevelCondition = new CaseBuilder()
-                .when(view.baseLevel.isNotNull())
-                .then(view.baseLevel.add(view.bonusLevel.coalesce(0)))
-                .otherwise(item.level.add(view.bonusLevel.coalesce(0)))
+                .when(snapshotView.baseLevel.isNotNull())
+                .then(snapshotView.baseLevel.add(snapshotView.bonusLevel.coalesce(0)))
+                .otherwise(itemEntity.level.add(snapshotView.bonusLevel.coalesce(0)))
                 .between(minItemLevel, maxItemLevel);
 
-        List<AuctionSnapshotWithItemView> fetched = queryFactory.selectFrom(view)
-                .join(view.item, item).fetchJoin()
+        List<AuctionSnapshotWithItemView> fetched = queryFactory.selectFrom(snapshotView)
+                .join(snapshotView.item, itemEntity).fetchJoin()
                 .where(
-                        view.item.id.in(itemIds),
-                        view.realmId.isNull().or(view.realmId.eq(realmId)),
-                        view.region.eq(region),
-                        view.time.eq(timeConditionSubquery),
+                        snapshotView.item.id.in(itemIds),
+                        snapshotView.realmId.isNull().or(snapshotView.realmId.eq(realmId)),
+                        snapshotView.region.eq(region),
+                        snapshotView.time.eq(timeConditionSubquery),
                         itemLevelCondition
                 )
-                .orderBy(view.item.id.desc())
+                .orderBy(snapshotView.item.id.desc())
                 .offset(offset)
                 .limit(pagedSize + 1)
                 .fetch();
