@@ -73,13 +73,18 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "Deploy worbes-batch" \
             --parameters commands="[
+              \"set -e\",
               \"mkdir -p /home/ubuntu/worbes\",
               \"echo $COMPOSE_B64 | base64 -d > /home/ubuntu/worbes/compose.dev.yml\",
               \"echo $ENV_B64 | base64 -d > /home/ubuntu/worbes/.env.dev\",
               \"cd /home/ubuntu/worbes\",
+              \"docker compose -f compose.dev.yml down worbes-batch || true\",
               \"docker compose -f compose.dev.yml pull worbes-batch\",
               \"docker compose -f compose.dev.yml up -d worbes-batch\",
               \"docker image prune -af\",
+              \"rm -f /home/ubuntu/worbes/compose.dev.yml\",
+              \"rm -f /home/ubuntu/worbes/.env.dev\",
+              \"rmdir --ignore-fail-on-non-empty /home/ubuntu/worbes\"
             ]" \
             --timeout-seconds 600 \
             --output text \
@@ -99,12 +104,29 @@ jobs:
           OUTPUT=$(echo $RESULT | jq -r '.StandardOutputContent')
           ERROR=$(echo $RESULT | jq -r '.StandardErrorContent')
           
-          echo "Status: $STATUS"
-          echo "Output: $OUTPUT"
+          echo "=========================================="
+          echo "📊 Deployment Status: $STATUS"
+          echo "=========================================="
+          
+          echo ""
+          echo "📝 Standard Output:"
+          echo "----------------------------------------"
+          echo "$OUTPUT"
+          echo "----------------------------------------"
+          
+          if [ -n "$ERROR" ] && [ "$ERROR" != "null" ]; then
+            echo ""
+            echo "⚠️ Standard Error:"
+            echo "----------------------------------------"
+            echo "$ERROR"
+            echo "----------------------------------------"
+          fi
           
           if [ "$STATUS" != "Success" ]; then
-            echo "Error: $ERROR"
+            echo ""
+            echo "❌ Deployment failed!"
             exit 1
           fi
           
+          echo ""
           echo "✅ Deployment completed successfully!"
