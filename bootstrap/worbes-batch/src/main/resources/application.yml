@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: local
+    group:
+      local: [ batch ]
+      dev: [ batch ]
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${POSTGRES_USER}
@@ -22,19 +25,24 @@ spring:
   cache:
     caffeine:
       spec: expireAfterWrite=86399s
-  batch:
-    job:
-      enabled: false
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
   type-handlers-package: com.worbes.adapter.persistence.mybatis.handler
-
+  
 blizzard:
   api:
     token-url: https://oauth.battle.net/token
     id: ${BLIZZARD_CLIENT_ID}
     secret: ${BLIZZARD_CLIENT_SECRET}
     token-key: "worbes:blizzard:access-token"
+---
+spring:
+  config:
+    activate:
+      on-profile: batch
+  batch:
+    job:
+      enabled: false
