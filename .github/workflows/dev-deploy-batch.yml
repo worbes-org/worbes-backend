@@ -109,14 +109,14 @@ jobs:
           echo "=========================================="
           
           echo ""
-          echo "📝 Standard Output:"
+          echo "📝 Deployment Output:"
           echo "----------------------------------------"
           echo "$OUTPUT"
           echo "----------------------------------------"
           
           if [ -n "$ERROR" ] && [ "$ERROR" != "null" ]; then
             echo ""
-            echo "⚠️ Standard Error:"
+            echo "📋 Progress Logs (stderr):"
             echo "----------------------------------------"
             echo "$ERROR"
             echo "----------------------------------------"
