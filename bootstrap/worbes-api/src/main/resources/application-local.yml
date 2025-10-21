@@ -17,5 +17,3 @@ logging:
   level:
     root: INFO
     com.worbes: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

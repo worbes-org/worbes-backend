@@ -1,13 +1,25 @@
 services:
   worbes-api:
+    restart: on-failure
     container_name: worbes-api-dev
     image: aprileaf/worbes-api:dev
     ports:
       - 8080:8080
     env_file: .env.dev
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
 
   worbes-batch:
     container_name: worbes-batch-dev
     image: aprileaf/worbes-batch:dev
     env_file: .env.dev
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
