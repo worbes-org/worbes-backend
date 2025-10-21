@@ -5,6 +5,7 @@ on:
     branches:
       - dev
     paths:
+      - '.github/workflows/*batch.yml'
       - 'application/**'
       - 'adapter/persistence/**'
       - 'adapter/batch/**'
@@ -46,7 +47,7 @@ jobs:
     needs: deploy-batch
     if: success()
     environment: dev
-    runs-on: [ self-hosted, batch-server ]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout compose.dev.yml
         uses: actions/checkout@v4
@@ -55,26 +56,58 @@ jobs:
             compose.dev.yml
           sparse-checkout-cone-mode: false
 
-      - name: Create .env
-        run: echo "${{ secrets.ENV }}" > .env.dev
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Docker compose pull
-        run: docker compose -f compose.dev.yml pull worbes-batch
-
-      - name: Docker compose up
-        run: docker compose -f compose.dev.yml up -d worbes-batch
-
-      - name: Remove unused Docker images
-        run: docker image prune -af
-
-      - name: Clean up runner workspace
-        if: always()
+      - name: Deploy to EC2
         run: |
-          shopt -s dotglob
-          rm -rf $GITHUB_WORKSPACE/*
+          COMPOSE_B64=$(base64 -w 0 compose.dev.yml)
+          ENV_B64=$(echo "${{ secrets.ENV }}" | base64 -w 0)
+          
+          COMMAND_ID=$(aws ssm send-command \
+            --instance-ids "${{ secrets.BATCH_EC2_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy worbes-batch" \
+            --parameters commands="[
+              \"mkdir -p /home/ubuntu/worbes\",
+              \"echo $COMPOSE_B64 | base64 -d > /home/ubuntu/worbes/compose.dev.yml\",
+              \"echo $ENV_B64 | base64 -d > /home/ubuntu/worbes/.env.dev\",
+              \"cd /home/ubuntu/worbes\",
+              \"docker compose -f compose.dev.yml pull worbes-batch\",
+              \"docker compose -f compose.dev.yml up -d worbes-batch\",
+              \"docker image prune -af\",
+              \"rm -f /home/ubuntu/worbes/compose.dev.yml\",
+              \"rm -f /home/ubuntu/worbes/.env.dev\",
+              \"rmdir --ignore-fail-on-non-empty /home/ubuntu/worbes\"
+            ]" \
+            --timeout-seconds 600 \
+            --output text \
+            --query "Command.CommandId")
+          
+          echo "Deployment started. Command ID: $COMMAND_ID"
+          
+          aws ssm wait command-executed \
+            --command-id "$COMMAND_ID" \
+            --instance-id "${{ secrets.BATCH_EC2_INSTANCE_ID }}"
+          
+          RESULT=$(aws ssm get-command-invocation \
+            --command-id "$COMMAND_ID" \
+            --instance-id "${{ secrets.BATCH_EC2_INSTANCE_ID }}")
+          
+          STATUS=$(echo $RESULT | jq -r '.Status')
+          OUTPUT=$(echo $RESULT | jq -r '.StandardOutputContent')
+          ERROR=$(echo $RESULT | jq -r '.StandardErrorContent')
+          
+          echo "Status: $STATUS"
+          echo "Output: $OUTPUT"
+          
+          if [ "$STATUS" != "Success" ]; then
+            echo "Error: $ERROR"
+            exit 1
+          fi
+          
+          echo "✅ Deployment completed successfully!"
