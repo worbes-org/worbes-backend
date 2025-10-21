@@ -1,14 +1,6 @@
 spring:
   profiles:
     active: local
-    group:
-      local: [ db,jpa,batch,blizzard,mybatis ]
-      dev: [ db,jpa,batch,blizzard,mybatis ]
----
-spring:
-  config:
-    activate:
-      on-profile: db
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${POSTGRES_USER}
@@ -18,11 +10,6 @@ spring:
     enabled: true
     locations: classpath:db/migration
     clean-disabled: false
----
-spring:
-  config:
-    activate:
-      on-profile: jpa
   jpa:
     properties:
       hibernate:
@@ -32,35 +19,22 @@ spring:
         hbm2ddl:
           auto: none
         dialect: org.hibernate.dialect.PostgreSQLDialect
----
-spring:
-  config:
-    activate:
-      on-profile: blizzard
   cache:
     caffeine:
       spec: expireAfterWrite=86399s
+  batch:
+    job:
+      enabled: false
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.worbes.adapter.persistence.mybatis.handler
+
 blizzard:
   api:
     token-url: https://oauth.battle.net/token
     id: ${BLIZZARD_CLIENT_ID}
     secret: ${BLIZZARD_CLIENT_SECRET}
     token-key: "worbes:blizzard:access-token"
----
-spring:
-  config:
-    activate:
-      on-profile: batch
-  batch:
-    job:
-      enabled: false
----
-spring:
-  config:
-    activate:
-      on-profile: mybatis
-mybatis:
-  mapper-locations: classpath:/mapper/**/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
-  type-handlers-package: com.worbes.adapter.persistence.mybatis.handler
