@@ -68,21 +68,53 @@ jobs:
           COMPOSE_B64=$(base64 -w 0 compose.dev.yml)
           ENV_B64=$(echo "${{ secrets.ENV }}" | base64 -w 0)
           
+          # 배포 스크립트 생성
+          cat > deploy.sh << 'SCRIPT'
+          #!/bin/bash
+          set -e  # 에러 시 중단
+          set -x  # 명령 출력
+          
+          echo "=== Step 1: Create directory ==="
+          mkdir -p /home/ubuntu/worbes
+          
+          echo "=== Step 2: Create compose file ==="
+          echo "$1" | base64 -d > /home/ubuntu/worbes/compose.dev.yml
+          
+          echo "=== Step 3: Create env file ==="
+          echo "$2" | base64 -d > /home/ubuntu/worbes/.env.dev
+          
+          echo "=== Step 4: Pull image ==="
+          cd /home/ubuntu/worbes
+          docker compose -f compose.dev.yml pull worbes-batch
+          
+          echo "=== Step 5: Start container ==="
+          docker compose -f compose.dev.yml up -d worbes-batch
+          
+          echo "=== Step 6: Verify container ==="
+          docker ps | grep worbes-batch
+          
+          echo "=== Step 7: Cleanup images ==="
+          docker image prune -af
+          
+          echo "=== Step 8: Cleanup files ==="
+          rm -f /home/ubuntu/worbes/compose.dev.yml
+          rm -f /home/ubuntu/worbes/.env.dev
+          rmdir --ignore-fail-on-non-empty /home/ubuntu/worbes
+          
+          echo "=== Deployment completed ==="
+          SCRIPT
+          
+          SCRIPT_B64=$(base64 -w 0 deploy.sh)
+          
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "${{ secrets.BATCH_EC2_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploy worbes-batch" \
             --parameters commands="[
-              \"mkdir -p /home/ubuntu/worbes\",
-              \"echo $COMPOSE_B64 | base64 -d > /home/ubuntu/worbes/compose.dev.yml\",
-              \"echo $ENV_B64 | base64 -d > /home/ubuntu/worbes/.env.dev\",
-              \"cd /home/ubuntu/worbes\",
-              \"docker compose -f compose.dev.yml pull worbes-batch\",
-              \"docker compose -f compose.dev.yml up -d worbes-batch\",
-              \"docker image prune -af\",
-              \"rm -f /home/ubuntu/worbes/compose.dev.yml\",
-              \"rm -f /home/ubuntu/worbes/.env.dev\",
-              \"rmdir --ignore-fail-on-non-empty /home/ubuntu/worbes\"
+              \"echo '$SCRIPT_B64' | base64 -d > /tmp/deploy.sh\",
+              \"chmod +x /tmp/deploy.sh\",
+              \"/tmp/deploy.sh '$COMPOSE_B64' '$ENV_B64'\",
+              \"rm -f /tmp/deploy.sh\"
             ]" \
             --timeout-seconds 600 \
             --output text \
@@ -103,10 +135,12 @@ jobs:
           ERROR=$(echo $RESULT | jq -r '.StandardErrorContent')
           
           echo "Status: $STATUS"
-          echo "Output: $OUTPUT"
+          echo "=== Output ==="
+          echo "$OUTPUT"
           
           if [ "$STATUS" != "Success" ]; then
-            echo "Error: $ERROR"
+            echo "=== Error ==="
+            echo "$ERROR"
             exit 1
           fi
           
