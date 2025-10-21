@@ -8,6 +8,7 @@ on:
       - 'docs/**'
       - 'http/**'
       - '**.md'
+      - '.github/**'
 
 jobs:
   Integration:
