@@ -6,6 +6,7 @@ on:
       - dev
     paths:
       - '.github/workflows/*api.yml'
+      - 'scripts/dev/*api-server.sh'
       - 'application/**'
       - 'adapter/persistence/**'
       - 'adapter/web/**'

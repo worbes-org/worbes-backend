@@ -6,6 +6,7 @@ on:
       - dev
     paths:
       - '.github/workflows/*batch.yml'
+      - 'scripts/dev/*batch-server.sh'
       - 'application/**'
       - 'adapter/persistence/**'
       - 'adapter/batch/**'
