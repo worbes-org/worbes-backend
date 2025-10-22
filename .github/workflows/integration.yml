@@ -9,7 +9,8 @@ on:
       - 'http/**'
       - '**.md'
       - '.github/**'
-
+      - 'scripts/**'
+      - 'appspec-*'
 jobs:
   Integration:
     runs-on: ubuntu-latest
