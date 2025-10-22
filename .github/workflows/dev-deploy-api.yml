@@ -67,13 +67,13 @@ jobs:
       - name: Rename appspec file
         run: cp appspec-$SERVICE-$ENVIRONMENT.yml appspec.yml
 
-      - name: 압축하기
+      - name: tar scripts
         run: tar -czvf $SERVICE-$GITHUB_SHA.tar.gz appspec.yml scripts .env.$ENVIRONMENT compose.$ENVIRONMENT.yml
 
-      - name: S3 업로드
+      - name: S3 upload
         run: aws s3 cp --region ap-northeast-2 ./$SERVICE-$GITHUB_SHA.tar.gz s3://worbes-s3/$SERVICE/$ENVIRONMENT/$GITHUB_SHA.tar.gz
 
-      - name: 배포 실행
+      - name: start code-deploy
         run: |
           aws deploy create-deployment \
             --application-name worbes-code-deploy \
