@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 echo "--------------- start deploy worbes-api -----------------"
 cd /home/ubuntu/worbes-server
 docker stop worbes-api-dev || true
@@ -10,3 +11,4 @@ docker image prune -af
 rm -rf compose.dev.yml
 rm -rf .env.dev
 echo "--------------- deploy end -----------------"
+exit 0
