@@ -31,7 +31,11 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
   type-handlers-package: com.worbes.adapter.persistence.mybatis.handler
-  
+
+management:
+  server:
+    port: 9292
+    
 blizzard:
   api:
     token-url: https://oauth.battle.net/token
