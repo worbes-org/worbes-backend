@@ -3,7 +3,7 @@ services:
     container_name: worbes-api-local
     image: worbes-api:local
     ports:
-      - 8080:8080
+      - "8080:8080"
     env_file: .env.local
     depends_on:
       - worbes-db
@@ -11,6 +11,8 @@ services:
   worbes-batch:
     container_name: worbes-batch-local
     image: worbes-batch:local
+    ports:
+      - "8080:8080"
     env_file: .env.local
     depends_on:
       - worbes-db
