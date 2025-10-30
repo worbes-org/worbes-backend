@@ -10,5 +10,5 @@ docker compose -f compose.dev.yml up -d worbes-batch
 docker image prune -af
 rm -rf compose.dev.yml
 rm -rf .env.dev
-echo "--------------- 서버 배포 끝 -----------------"
+echo "--------------- end deploy -----------------"
 exit 0
