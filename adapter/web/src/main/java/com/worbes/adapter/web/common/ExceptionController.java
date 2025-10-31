@@ -8,6 +8,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +20,7 @@ public class ExceptionController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        log.warn("Validation error", ex);
+        log.info("Validation error", ex);
         HttpStatus status = HttpStatus.BAD_REQUEST;
         List<ErrorResponse.FieldError> errors = ex.getBindingResult()
                 .getFieldErrors()
@@ -27,7 +29,7 @@ public class ExceptionController {
                 .collect(Collectors.toList());
         ErrorResponse errorResponse = new ErrorResponse(
                 status.name(),
-                "잘못된 요청입니다.",
+                "Invalid Request.",
                 errors
         );
 
@@ -36,9 +38,9 @@ public class ExceptionController {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        log.warn("Invalid argument type: {}", ex.getName(), ex);
+        log.info("Invalid argument type: {}", ex.getName(), ex);
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String message = ex.getName() + " 파라미터가 잘못되었습니다.";
+        String message = ex.getName() + " Parameter Errors.";
         ErrorResponse errorResponse = new ErrorResponse(
                 status.name(),
                 message,
@@ -49,11 +51,11 @@ public class ExceptionController {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
-        log.warn("Missing request parameter: {}", ex.getParameterName());
+        log.info("Missing request parameter: {}", ex.getParameterName());
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(
                 status.name(),
-                ex.getParameterName() + " 파라미터가 필요합니다.",
+                ex.getParameterName() + " Need Parameter.",
                 null
         );
         return ResponseEntity.status(status).body(errorResponse);
@@ -61,11 +63,23 @@ public class ExceptionController {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("Bad request", ex);
+        log.info("Bad request", ex);
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(
                 status.name(),
                 ex.getMessage(),
+                null
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(Exception ex) {
+        log.info("Not found: {}", ex.getMessage());
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ErrorResponse errorResponse = new ErrorResponse(
+                status.name(),
+                "Not found.",
                 null
         );
         return ResponseEntity.status(status).body(errorResponse);
@@ -77,7 +91,7 @@ public class ExceptionController {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorResponse errorResponse = new ErrorResponse(
                 status.name(),
-                "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+                "Internal Server Error.",
                 null
         );
 
