@@ -6,5 +6,5 @@ RUN ./gradlew clean bootJar -x test
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/bootstrap/worbes-batch/build/libs/*.jar worbes-batch.jar
-EXPOSE 8081
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "worbes-batch.jar"]

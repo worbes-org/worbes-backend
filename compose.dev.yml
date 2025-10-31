@@ -4,7 +4,7 @@ services:
     container_name: worbes-api-dev
     image: aprileaf/worbes-api:dev
     ports:
-      - 8080:8080
+      - "8080:8080"
     env_file: .env.dev
     logging:
       driver: "json-file"
@@ -16,6 +16,8 @@ services:
   worbes-batch:
     container_name: worbes-batch-dev
     image: aprileaf/worbes-batch:dev
+    ports:
+      - "8080:8080"
     env_file: .env.dev
     logging:
       driver: "json-file"

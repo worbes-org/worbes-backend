@@ -18,6 +18,9 @@ spring:
         hbm2ddl:
           auto: none
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  web:
+    resources:
+      add-mappings: false
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -34,3 +37,16 @@ springdoc:
     path: /api-docs
     enabled: true
 
+management:
+  server:
+    port: 9292
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: worbes-api
