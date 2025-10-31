@@ -4,6 +4,7 @@ services:
     image: worbes-api:local
     ports:
       - "8080:8080"
+      - "9292:9292"
     env_file: .env.local
     depends_on:
       - worbes-db
@@ -13,6 +14,7 @@ services:
     image: worbes-batch:local
     ports:
       - "8080:8080"
+      - "9292:9292"
     env_file: .env.local
     depends_on:
       - worbes-db
@@ -22,4 +24,18 @@ services:
     image: postgres:17.3
     env_file: .env.local
     ports:
-      - 5432:5432
+      - "5432:5432"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: worbes-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"

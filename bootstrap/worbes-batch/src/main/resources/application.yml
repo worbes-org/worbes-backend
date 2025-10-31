@@ -35,7 +35,17 @@ mybatis:
 management:
   server:
     port: 9292
-    
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: worbes-batch
+
 blizzard:
   api:
     token-url: https://oauth.battle.net/token
