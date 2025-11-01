@@ -51,10 +51,10 @@ public class BlizzardClientConfig {
     @Bean(name = "blizzardClientExecutor")
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(4);
+        executor.setCorePoolSize(0);
+        executor.setMaxPoolSize(5);
         executor.setKeepAliveSeconds(60);
-        executor.setQueueCapacity(100);
+        executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("blizzardClientExecutor-");
         executor.initialize();
         return executor;
