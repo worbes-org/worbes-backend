@@ -6,7 +6,6 @@ services:
       - "8080:8080"
       - "9292:9292"
     env_file: .env.dev
-    command: ["java", "-Xmx256m", "-Xms128m", "-XX:+UseContainerSupport", "-XX:MaxMetaspaceSize=256m", "-XX:+ExitOnOutOfMemoryError", "-jar", "worbes-api.jar"]
     logging:
       driver: "json-file"
       options:
@@ -21,7 +20,6 @@ services:
       - "8080:8080"
       - "9292:9292"
     env_file: .env.dev
-    command: ["java", "-Xmx256m", "-Xms128m", "-XX:+UseContainerSupport", "-XX:MaxMetaspaceSize=256m", "-XX:+ExitOnOutOfMemoryError", "-jar", "worbes-batch.jar"]
     logging:
       driver: "json-file"
       options:
