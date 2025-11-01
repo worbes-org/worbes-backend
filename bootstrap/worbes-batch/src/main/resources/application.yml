@@ -9,10 +9,15 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 600000       # 10분
+      max-lifetime: 1800000      # 30분
   flyway:
     enabled: true
     locations: classpath:db/migration
-    clean-disabled: false
   jpa:
     properties:
       hibernate:
@@ -22,9 +27,12 @@ spring:
         hbm2ddl:
           auto: none
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        cache:
+          use_second_level_cache: false  # L2 캐시 비활성화 (메모리 절약)
+          use_query_cache: false        # 쿼리 캐시 비활성화
   cache:
     caffeine:
-      spec: expireAfterWrite=86399s
+      spec: maximumSize=10,expireAfterWrite=86399s  # accessToken 캐시 크기 제한
 
 server:
   tomcat:
