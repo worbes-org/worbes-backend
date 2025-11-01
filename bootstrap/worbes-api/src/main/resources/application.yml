@@ -37,6 +37,13 @@ springdoc:
     path: /api-docs
     enabled: true
 
+server:
+  tomcat:
+    threads:
+      max: 50
+      min-spare: 5
+    accept-count: 25
+
 management:
   server:
     port: 9292
@@ -50,3 +57,4 @@ management:
   metrics:
     tags:
       application: worbes-api
+

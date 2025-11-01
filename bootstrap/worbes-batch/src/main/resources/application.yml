@@ -26,6 +26,13 @@ spring:
     caffeine:
       spec: expireAfterWrite=86399s
 
+server:
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 2
+    accept-count: 5
+
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:
